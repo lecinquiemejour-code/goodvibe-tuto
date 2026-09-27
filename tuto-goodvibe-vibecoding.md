@@ -580,15 +580,15 @@ flowchart TD
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
-**Ce que fait l'agent** : ajoute `gradio` à `requirements.txt` ; `interface.py` (`gr.Blocks` avec `gr.Tabs`, `gr.ChatInterface` pour le chat, une fonction génératrice pour le streaming, `auth` lu dans `.env`) ; commande de lancement sur le port 7860, figée dans `archi-stack.md`. Il lance la page et vous donne l'adresse.
+**Ce que fait l'agent** : ajoute `gradio` à `requirements.txt` ; `interface.py` (`gr.Blocks` avec `gr.Tabs`, `gr.ChatInterface` pour le chat, une fonction génératrice pour le streaming, `auth` lu dans `.env`) ; commande de lancement sur le port 7860, figée dans `archi-stack.md`. Il choisit un identifiant et un mot de passe de départ, les écrit dans `.env` (`WEB_USER`, `WEB_PASSWORD`) et vous les donne dans la discussion. Il lance la page et vous donne l'adresse.
 
-**Ce que vous faites** : choisir le mot de passe et le mettre dans `.env` (`WEB_USER`, `WEB_PASSWORD`).
+**Ce que vous faites** : vous connecter avec ces identifiants. Vous pouvez les changer à tout moment : ouvrez `.env`, modifiez `WEB_PASSWORD`, relancez la page.
 
 **La solution du tuto** : `gr.ChatInterface` dans des `gr.Tabs` : le composant gère saisie, historique et streaming, et les onglets attendent les features suivantes. **Pourquoi pas autrement** : tout écrire à la main avec `gr.Blocks` demande beaucoup de code pour le même résultat ; Chainlit est une autre bibliothèque, citée en fin de tuto.
 
-**À relire** : `interface.py` ne contient **aucune logique métier** : il appelle `agent.py`, exactement comme `chat_terminal.py` ; la fonction de chat est une **génératrice** (`yield`) qui relaie les fragments ; `auth` est présent même en local, pour ne pas l'oublier au déploiement ; `MAX_TOURS` s'applique aussi depuis la page web (il vit dans `agent.py`, pas dans le terminal).
+**À relire** : `interface.py` ne contient **aucune logique métier** : il appelle `agent.py`, exactement comme `chat_terminal.py` ; la fonction de chat est une **génératrice** (`yield`) qui relaie les fragments ; `auth` est présent même en local, pour ne pas l'oublier au déploiement ; le mot de passe vit dans `.env`, jamais dans le code, et le changer ne demande aucune modification de `interface.py` ; `MAX_TOURS` s'applique aussi depuis la page web (il vit dans `agent.py`, pas dans le terminal).
 
-**CHECK** : ouvrez http://localhost:7860, connectez-vous avec le mot de passe, posez une question : la réponse arrive mot à mot. Sans mot de passe, la page est refusée.
+**CHECK** : ouvrez http://localhost:7860, connectez-vous avec le mot de passe, posez une question : la réponse arrive mot à mot. Sans mot de passe, la page est refusée. Changez le mot de passe dans `.env`, relancez : l'ancien est refusé, le nouveau est accepté.
 
 **Pièges** : Gradio exposé sans `auth` ; `return` au lieu de `yield` (la réponse arrive d'un bloc) ; le port 7860 déjà pris par une page laissée ouverte ; la logique métier qui glisse dans `interface.py` au lieu de rester dans `agent.py`.
 
@@ -1118,7 +1118,7 @@ flowchart TD
 
 **Ce que fait l'agent** : installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, clone du dépôt, venv, installation de `uvx` pour le serveur MCP, fichiers `deploy/goodvibe-web.service`, `deploy/Caddyfile` versionnés dans le dépôt, règle `sudoers` limitée au `systemctl restart` du service, la ligne `crontab` de l'utilisateur `goodvibe` (7 h, **chemin absolu** du Python du venv, log redirigé vers un fichier), script de sauvegarde, création d'une paire de clés SSH dédiée au déploiement (clé publique installée, clé privée remise à vous pour la fiche 14).
 
-**Ce que vous faites** : créer le compte Hetzner et un jeton API dédié (révocable) ; pointer un sous-domaine vers l'IP du serveur (enregistrement A chez votre registrar) ; copier les secrets dans le `.env` du serveur (l'agent vous indique lesquels et vous guide, il ne doit jamais les voir passer dans le chat si vous préférez les saisir vous-même en SSH).
+**Ce que vous faites** : créer le compte Hetzner et un jeton API dédié (révocable) ; pointer un sous-domaine vers l'IP du serveur (enregistrement A chez votre registrar) ; copier les secrets dans le `.env` du serveur (l'agent vous indique lesquels et vous guide, il ne doit jamais les voir passer dans le chat si vous préférez les saisir vous-même en SSH). Avant la mise en ligne, remplacez le mot de passe de départ par un mot de passe à vous, long, que vous n'avez donné à personne, dans le `.env` du serveur : celui de départ a été affiché dans la discussion, il ne doit pas protéger une page publique.
 
 **La solution du tuto** : une installation directe avec `systemd` et Caddy : tout est lisible, aucun conteneur à expliquer. **Pourquoi pas autrement** : Docker Compose et Coolify (une interface web qui déploie depuis GitHub) ajoutent une couche à apprendre ; ils sont présentés en fin de tuto.
 
