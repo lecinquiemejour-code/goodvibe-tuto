@@ -969,7 +969,7 @@ flowchart LR
 
 **La solution du tuto** : `gr.Dataframe` rafraîchi à la demande : simple, lisible, exact, sans charge ajoutée. **Pourquoi pas autrement** : un rafraîchissement automatique toutes les N secondes charge la page pour rien ; des graphiques `gr.Plot` montrent moins bien le détail qu'un tableau brut.
 
-**À relire** : les vues sont en **lecture seule** sur la base ; les euros sont affichés comme **estimation** ; le bouton « Oublie-moi » demande confirmation et appelle la même fonction que l'outil de la fiche 5 ; le journal n'affiche aucune donnée personnelle, même en mode « détails techniques ».
+**À relire** : les vues sont en **lecture seule** sur la base ; les euros sont affichés comme **estimation** ; le bouton « Oublie-moi » demande confirmation et appelle la même fonction que l'outil de la fiche 5 ; le journal n'affiche aucune donnée personnelle, même en mode « détails techniques » : ce mode ajoute les durées et les erreurs brutes, jamais les arguments des outils, qui ne se voient qu'en direct dans les coulisses.
 
 **CHECK** : discutez dans l'onglet Chat, basculez sur Mémoire, cliquez Rafraîchir : la conversation est là. Onglet Activité : la ligne de l'appel, ses tokens, sa latence, le compteur du jour qui a bougé, le coût. Cliquez « Oublie-moi », confirmez : les tableaux se vident. Dans le chat : « explique ce que tu viens de faire » raconte le dernier tour.
 

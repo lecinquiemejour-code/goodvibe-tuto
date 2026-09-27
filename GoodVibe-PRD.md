@@ -70,7 +70,7 @@ Ce que ce produit ne cherche **pas** à être :
 ## 6. Spécifications visuelles / d'interface
 
 - **Apparence :** sobre et lisible, page web en quatre onglets (Chat, Brief du jour, Mémoire, Activité). L'image du jour, si présente, s'affiche au-dessus du texte du brief. Les tableaux de la mémoire et du journal sont bruts et complets : c'est une vitrine pédagogique, pas une interface grand public.
-- **Comportement :** le chat affiche les réponses mot à mot ; les onglets Mémoire et Activité ont un bouton « Rafraîchir » ; les coulisses sont repliées par défaut ; un interrupteur « détails techniques » dans l'onglet Activité ajoute arguments d'outils, durées et erreurs brutes.
+- **Comportement :** le chat affiche les réponses mot à mot ; les onglets Mémoire et Activité ont un bouton « Rafraîchir » ; les coulisses sont repliées par défaut ; un interrupteur « détails techniques » dans l'onglet Activité ajoute les durées et les erreurs brutes. Les arguments des outils ne s'y affichent jamais : ils ne se voient qu'en direct, dans les coulisses.
 
 ## 7. Contraintes (exigences non-fonctionnelles)
 
