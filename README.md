@@ -59,7 +59,7 @@ Ce dépôt ne contient **pas de code** : c'est le kit de départ. Le code, c'est
 |---|---|
 | [`GoodVibe-PRD.md`](GoodVibe-PRD.md) | Le cahier des charges produit : **quoi** construire (fonctionnalités, contraintes, critères de succès). Fourni prêt à l'emploi. |
 | [`tuto-goodvibe-vibecoding.md`](tuto-goodvibe-vibecoding.md) | Le tuto : **comment** le construire. Sert de référence à l'agent de codage : options de chaque étape, points à relire, tests à faire. |
-| `README.md` | Ce fichier. |
+| `README.md` | Ce fichier : la présentation du projet. Dans votre dossier de travail, l'agent le renomme en `GoodVibe-presentation.md` et s'en sert pour vous présenter le projet avant de commencer. |
 
 ## Pour qui ?
 
@@ -93,16 +93,17 @@ Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils
 
 ### 1. Préparez un répertoire vierge
 
-Créez un dossier vide (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE**.
+Créez un dossier vide (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE**. Vous n'y mettrez qu'un seul fichier : le ZIP du kit.
 
-### 2. Récupérez les deux fichiers du tuto
+### 2. Déposez le ZIP du kit dans le dossier
 
-Ce dépôt est privé : vous avez reçu une **invitation GitHub par mail**. Acceptez-la, connectez-vous à GitHub, puis sur la page d'accueil du dépôt cliquez sur le bouton vert **`<> Code`** → **Download ZIP**. Ouvrez l'archive et copiez dans votre dossier vierge **uniquement** ces deux fichiers :
+Ce dépôt est privé : vous avez reçu une **invitation GitHub par mail**. Acceptez-la, connectez-vous à GitHub, puis sur la page d'accueil du dépôt cliquez sur le bouton vert **`<> Code`** → **Download ZIP**. Déposez ce fichier ZIP tel quel dans votre dossier vierge, sans l'ouvrir : c'est l'agent qui le décompressera. Il contient :
 
 - `GoodVibe-PRD.md`
 - `tuto-goodvibe-vibecoding.md`
+- `README.md` : la présentation du projet, que l'agent renommera en `GoodVibe-presentation.md`
 
-> ⚠️ Rien d'autre : pas de venv, pas de Git, pas de skill, et pas le `README.md`. Ne clonez pas ce dépôt dans votre dossier de travail : l'agent initialisera lui-même **votre** dépôt Git. L'agent s'occupe du reste.
+> ⚠️ Rien d'autre : pas de venv, pas de Git, pas de skill. Ne clonez pas ce dépôt dans votre dossier de travail : l'agent initialisera lui-même **votre** dépôt Git. L'agent s'occupe du reste.
 
 > 💡 Les schémas du tuto sont en Mermaid : ils s'affichent sur GitHub, mais pas dans l'aperçu Markdown d'Antigravity sans extension. Installez **Markdown Preview Mermaid Support** : Ctrl + Maj + X, tapez `bierner.markdown-mermaid` (la marketplace d'Antigravity est Open VSX, la recherche en clair la classe mal), puis Ctrl + Maj + V pour l'aperçu. Ou lisez le tuto **sur GitHub**.
 
@@ -111,7 +112,7 @@ Ce dépôt est privé : vous avez reçu une **invitation GitHub par mail**. Acce
 ```
 Nous démarrons le projet GoodVibe dans ce répertoire vierge.
 
-Étape 1, avant toute autre chose : installe le skill VibeCoding Copilote depuis https://github.com/lecinquiemejour-code/vibecoding-copilote dans .agent/skills/vibecoding-copilote/, vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, puis dis-moi si je dois redémarrer la session pour qu'il soit pris en compte.
+Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier, place ses trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md) à la racine, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas). Puis installe le skill VibeCoding Copilote depuis https://github.com/lecinquiemejour-code/vibecoding-copilote dans .agent/skills/vibecoding-copilote/, vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, puis dis-moi si je dois redémarrer la session pour qu'il soit pris en compte.
 
 Étape 2 : lance le vibecoding sur GoodVibe-PRD.md.
 

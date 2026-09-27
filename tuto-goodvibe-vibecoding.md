@@ -5,11 +5,11 @@
 
 > **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les quatre règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO.
 >
-> **Règle 1. Avant tout document : la visite guidée du projet.** Après la carte du voyage et avant `archi-stack.md`, tu présentes GoodVibe au pilote. Tant que cette visite n'est pas finie, tu ne rédiges aucun document et tu ne cites ni fichier ni bibliothèque. Quatre temps, un message par temps, et tu attends la réponse du pilote entre chacun :
+> **Règle 1. Avant tout document : la visite guidée du projet.** Après la carte du voyage et avant `archi-stack.md`, tu présentes GoodVibe au pilote. Tant que cette visite n'est pas finie, tu ne rédiges aucun document et tu ne cites ni fichier ni bibliothèque. Tu t'appuies sur `GoodVibe-presentation.md` (la présentation du projet) et sur ce tuto : tu racontes ces textes avec tes mots, adaptés au profil du pilote, tu ne les colles pas. Dans `GoodVibe-presentation.md`, tu ignores les sections « Démarrage rapide », « Si ça coince » et « Liens », qui concernent le téléchargement du kit. Quatre temps, un message par temps, et tu attends la réponse du pilote entre chacun :
 >
-> 1. **Ce qu'on construit, et pour quoi faire.** GoodVibe vu par son utilisateur : une journée type (le brief du matin, une question dans la journée, un pense-bête envoyé du téléphone). Puis le vrai but : apprendre à construire un agent autonome ; l'horoscope et la météo sont un prétexte.
+> 1. **Ce qu'on construit, et pour quoi faire.** Tu racontes « Un projet pour apprendre » puis « C'est quoi GoodVibe ? » (`GoodVibe-presentation.md`) : d'abord le vrai but, apprendre à construire et à héberger un agent autonome ; puis GoodVibe vu par son utilisateur, sur une journée type (le brief du matin, une question dans la journée, un pense-bête envoyé du téléphone). L'horoscope et la météo sont un prétexte.
 > 2. **Ce qu'est un agent.** Un modèle, des outils, une boucle, une condition d'arrêt (section 2.1), et ce qui le distingue d'un simple programme, sur un exemple tiré de GoodVibe.
-> 3. **Les capacités de GoodVibe**, une par une, en langage courant, avec ce que chacune permet et la feature où elle arrive : parler, se souvenir et oublier, raconter ce qu'il fait et ce qu'il coûte, préparer un brief, se servir d'outils (météo, horoscope), créer une image, se limiter, agir seul à heure fixe, réagir à un événement extérieur.
+> 3. **Les capacités de GoodVibe.** Tu parcours le tableau « Ce que vous allez apprendre » (`GoodVibe-presentation.md`), une brique à la fois, en langage courant, avec ce que chacune permet et la feature où elle arrive : parler, se souvenir et oublier, raconter ce qu'il fait et ce qu'il coûte, préparer un brief, se servir d'outils (météo, horoscope), créer une image, se limiter, agir seul à heure fixe, réagir à un événement extérieur.
 > 4. **La vue d'architecture.** Le schéma cible de la section 5.0, présenté comme une carte : les quatre portes d'entrée, le cœur (la boucle et le modèle), les outils, la mémoire, le journal. Tu le dessines et tu commentes chaque brique en une phrase.
 >
 > Tu termines par : « (A) c'est clair, on passe au cadrage ; (B) j'ai une question ».
@@ -33,7 +33,7 @@
 ## Démarrage rapide
 
 1. Créez un **répertoire vierge** (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE**.
-2. Déposez-y les deux fichiers fournis avec ce tuto : `GoodVibe-PRD.md` et `tuto-goodvibe-vibecoding.md`. Rien d'autre : pas de venv, pas de Git, pas de skill. L'agent s'occupe du reste.
+2. Déposez-y le fichier ZIP du kit, tel quel, sans l'ouvrir : c'est l'agent qui le décompressera. Il contient `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `README.md` (la présentation du projet, que l'agent renommera en `GoodVibe-presentation.md`). Rien d'autre : pas de venv, pas de Git, pas de skill. L'agent s'occupe du reste.
 
    > Pour lire ce tuto **dans Antigravity** avec ses schémas : ils sont en Mermaid, que l'aperçu Markdown ne dessine pas seul. Ouvrez les extensions (**Ctrl + Maj + X**), tapez **`bierner.markdown-mermaid`** (la marketplace d'Antigravity est Open VSX, et la recherche en clair classe mal cette extension), installez **Markdown Preview Mermaid Support**, puis ouvrez l'aperçu avec **Ctrl + Maj + V**. Sinon, lisez le tuto sur GitHub, qui dessine les schémas nativement.
 
@@ -42,7 +42,7 @@
 ```
 Nous démarrons le projet GoodVibe dans ce répertoire vierge.
 
-Étape 1, avant toute autre chose : installe le skill VibeCoding Copilote depuis https://github.com/lecinquiemejour-code/vibecoding-copilote dans .agent/skills/vibecoding-copilote/, vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, puis dis-moi si je dois redémarrer la session pour qu'il soit pris en compte.
+Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier, place ses trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md) à la racine, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas). Puis installe le skill VibeCoding Copilote depuis https://github.com/lecinquiemejour-code/vibecoding-copilote dans .agent/skills/vibecoding-copilote/, vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, puis dis-moi si je dois redémarrer la session pour qu'il soit pris en compte.
 
 Étape 2 : lance le vibecoding sur GoodVibe-PRD.md.
 
@@ -127,9 +127,9 @@ Le skill est un dossier de fichiers Markdown : https://github.com/lecinquiemejou
 - Vérifier que `SKILL.md`, `references/` et `assets/CLAUDE.md` sont bien présents.
 - Annoncer qu'il suivra ces règles.
 
-**Les trois fichiers vivent dans le projet** : le skill (dans `.agent/skills/`), `GoodVibe-PRD.md` et `tuto-goodvibe-vibecoding.md` à la racine. Le pilote lit le tuto ; l'agent le suit (voir la note en tête du document et la section 3.4).
+**Tout vit dans le projet** : le skill (dans `.agent/skills/`) et, à la racine, `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `GoodVibe-presentation.md` (le `README.md` du kit, renommé par l'agent). Le pilote lit le tuto ; l'agent le suit (voir la note en tête du document et la section 3.4).
 
-**Ce que vous faites** : ouvrir le répertoire vierge dans Antigravity et y déposer le PRD et le tuto, puis, après le redémarrage de la session d'agent (Antigravity redétecte les skills au redémarrage), vérifier que le skill répond. Le test : dites « lance le vibecoding sur mon PRD ». L'agent doit **se présenter**, résumer la méthode PDCA en une phrase et poser **une seule question** de calibrage (débutant ou développeur). S'il écrit du code d'emblée ou saute la présentation, le skill n'est pas chargé : revenez à cette étape.
+**Ce que vous faites** : ouvrir le répertoire vierge dans Antigravity et y déposer le ZIP du kit, puis, après le redémarrage de la session d'agent (Antigravity redétecte les skills au redémarrage), vérifier que le skill répond. Le test : dites « lance le vibecoding sur mon PRD ». L'agent doit **se présenter**, résumer la méthode PDCA en une phrase et poser **une seule question** de calibrage (débutant ou développeur). S'il écrit du code d'emblée ou saute la présentation, le skill n'est pas chargé : revenez à cette étape.
 
 > Lisez toujours le contenu d'un skill avant de l'activer. Celui-ci ne contient que du Markdown : aucun script, aucune dépendance.
 
@@ -320,7 +320,7 @@ Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la 
 3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui valide, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
 5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les quatre règles de sa note d'en-tête, il prime sur le skill. »
-6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent présente une seule solution, celle du tuto, et l'explique : il ne propose pas trois options. »
+6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent présente une seule solution, celle du tuto, et l'explique : il ne propose pas trois options. »
 
 Si vous utilisez Gemini dans Antigravity plutôt que Claude Code, demandez aussi à l'agent de déposer une copie du fichier sous le nom `AGENTS.md`, que les agents non-Claude lisent. Le contenu du gabarit est volontairement agnostique.
 
@@ -330,7 +330,7 @@ Si vous utilisez Gemini dans Antigravity plutôt que Claude Code, demandez aussi
 
 ### 4.1 Le lancement
 
-Le répertoire ouvert dans Antigravity contient `GoodVibe-PRD.md` et `tuto-goodvibe-vibecoding.md`, et l'agent vient d'installer le skill (étape 1 du prompt de la section « Démarrage rapide »). L'étape 2 du même prompt lance le skill.
+Le répertoire ouvert dans Antigravity contient `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `GoodVibe-presentation.md`, et l'agent vient d'installer le skill (étape 1 du prompt de la section « Démarrage rapide »). L'étape 2 du même prompt lance le skill.
 
 Ce qui doit se passer, dans l'ordre :
 
