@@ -11,6 +11,9 @@
 
 1. Créez un **répertoire vierge** (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE**.
 2. Déposez-y les deux fichiers fournis avec ce tuto : `GoodVibe-PRD.md` et `tuto-goodvibe-vibecoding.md`. Rien d'autre : pas de venv, pas de Git, pas de skill. L'agent s'occupe du reste.
+
+   > Pour lire ce tuto **dans Antigravity** avec ses schémas : ils sont en Mermaid, que l'aperçu Markdown ne dessine pas seul. Ouvrez les extensions (**Ctrl + Maj + X**), tapez **`bierner.markdown-mermaid`** (la marketplace d'Antigravity est Open VSX, et la recherche en clair classe mal cette extension), installez **Markdown Preview Mermaid Support**, puis ouvrez l'aperçu avec **Ctrl + Maj + V**. Sinon, lisez le tuto sur GitHub, qui dessine les schémas nativement.
+
 3. Collez ce prompt dans l'agent d'Antigravity :
 
 ```

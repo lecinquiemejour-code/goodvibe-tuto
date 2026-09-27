@@ -104,7 +104,7 @@ Ce dépôt est privé : vous avez reçu une **invitation GitHub par mail**. Acce
 
 > ⚠️ Rien d'autre : pas de venv, pas de Git, pas de skill, et pas le `README.md`. Ne clonez pas ce dépôt dans votre dossier de travail : l'agent initialisera lui-même **votre** dépôt Git. L'agent s'occupe du reste.
 
-> 💡 Les schémas du tuto sont en Mermaid : ils s'affichent sur GitHub, mais pas dans l'aperçu Markdown d'Antigravity sans extension. Lisez le tuto **sur GitHub**, ou installez l'extension *Markdown Preview Mermaid Support* dans l'IDE.
+> 💡 Les schémas du tuto sont en Mermaid : ils s'affichent sur GitHub, mais pas dans l'aperçu Markdown d'Antigravity sans extension. Installez **Markdown Preview Mermaid Support** : Ctrl + Maj + X, tapez `bierner.markdown-mermaid` (la marketplace d'Antigravity est Open VSX, la recherche en clair la classe mal), puis Ctrl + Maj + V pour l'aperçu. Ou lisez le tuto **sur GitHub**.
 
 ### 3. Collez ce prompt dans l'agent d'Antigravity
 
