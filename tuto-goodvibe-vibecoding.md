@@ -10,11 +10,28 @@
 > 1. **Ce qu'on construit, et pour quoi faire.** Tu racontes « Un projet pour apprendre » puis « C'est quoi GoodVibe ? » (`GoodVibe-presentation.md`) : d'abord le vrai but, apprendre à construire et à héberger un agent autonome ; puis GoodVibe vu par son utilisateur, sur une journée type (le brief du matin, une question dans la journée, un pense-bête envoyé du téléphone). L'horoscope et la météo sont un prétexte.
 > 2. **Ce qu'est un agent.** Un modèle, des outils, une boucle, une condition d'arrêt (section 2.1), et ce qui le distingue d'un simple programme, sur un exemple tiré de GoodVibe.
 > 3. **Les capacités de GoodVibe.** Tu parcours le tableau « Ce que vous allez apprendre » (`GoodVibe-presentation.md`), une brique à la fois, en langage courant, avec ce que chacune permet et la feature où elle arrive : parler, se souvenir et oublier, raconter ce qu'il fait et ce qu'il coûte, préparer un brief, se servir d'outils (météo, horoscope), créer une image, se limiter, agir seul à heure fixe, réagir à un événement extérieur.
-> 4. **La vue d'architecture.** Le schéma cible de la section 5.0, présenté comme une carte : les quatre portes d'entrée, le cœur (la boucle et le modèle), les outils, la mémoire, le journal. Tu le dessines et tu commentes chaque brique en une phrase.
+> 4. **La vue d'architecture.** Tu dessines la carte ci-dessous, en schéma texte, puis tu commentes chaque brique en une phrase, en disant comment on passe de l'une à l'autre. Tu ne recopies pas le schéma de la section 5.0 : c'est la version technique, avec les noms de fichiers.
+>
+>    ```text
+>    LES QUATRE PORTES D'ENTRÉE
+>      [ vous, au terminal ]    [ vous, sur la page web ]
+>      [ l'horloge, à 7 h  ]    [ un message venu de l'extérieur ]
+>                  │
+>                  ▼
+>    LE CŒUR
+>      [ la boucle d'agent + le modèle Gemini ]
+>                  │
+>          ┌───────┼────────────┐
+>          ▼       ▼            ▼
+>    LES OUTILS  LA MÉMOIRE   LE JOURNAL
+>      météo       profil       ce que fait l'agent
+>      horoscope   notes        ce que ça coûte
+>      image       pense-bêtes
+>    ```
 >
 > Tu termines par : « (A) c'est clair, on passe au cadrage ; (B) j'ai une question ».
 >
-> **Règle 2. Le niveau de langue.** Pour un pilote de profil (1), chaque mot technique est expliqué à sa première apparition, dans le dialogue comme dans les documents. Dans `archi-stack.md`, chaque ligne de la stack a une colonne « En clair ». Avant de montrer un document, tu dis en trois phrases ce qu'il contient et ce que le pilote doit y regarder.
+> **Règle 2. Le niveau de langue.** Pour un pilote de profil (1), chaque mot technique est expliqué à sa première apparition, dans le dialogue comme dans les documents. Dans `archi-stack.md`, chaque ligne de la stack a une colonne « En clair ». Avant de montrer un document, tu dis en trois phrases ce qu'il contient et ce que le pilote doit y regarder. Dans la discussion, tu n'écris jamais de Mermaid : la fenêtre ne le dessine pas. Tu dessines un schéma en texte, boîtes et flèches, dans un bloc de code. Pour un pilote de profil (1), tes schémas emploient des mots courants, jamais un nom de fichier ni de bibliothèque. Si le pilote veut le diagramme complet, tu lui indiques la section du tuto à ouvrir en aperçu (Ctrl + Maj + V).
 >
 > **Règle 3. Au PLAN, une seule solution : celle du tuto.** Tu ne proposes pas trois options et tu ne fais pas choisir le pilote entre des variantes. Au PLAN de chaque feature, tu commences par « Ce que vous verrez », tu situes la feature sur la carte d'architecture (ce qui existe déjà, ce qu'on ajoute), puis tu présentes la solution que la fiche retient (« La solution du tuto ») et tu l'expliques. Tu peux dire en une phrase pourquoi on ne fait pas autrement (« Pourquoi pas autrement ») : pour faire comprendre, jamais pour faire choisir. Tu demandes le GO #1 ainsi : « (A) GO ; (B) j'ai une question ». De même au cadrage : l'organisation du code est « un fichier par responsabilité » ; tu l'expliques, tu ne proposes pas de variantes.
 >
@@ -337,7 +354,7 @@ Ce qui doit se passer, dans l'ordre :
 1. L'agent **se présente** et résume la méthode en une phrase : PDCA, une feature à la fois, je propose, tu valides, je code, tu testes.
 2. Il pose **une seule question** : « plutôt débutant, ou tu codes déjà ? ». Répondez **(2) je code déjà**. Il n'expliquera pas Git ni le déploiement ; il accompagnera ce qui est neuf pour vous : laisser l'agent proposer, valider par des GO, piloter en PDCA.
 3. Il donne la « carte du voyage » (pourquoi la méthode, puis les trois temps : cadrage, construction, mise en ligne) et demande un **premier GO** pour vérifier le `CLAUDE.md` et attaquer le cadrage.
-4. Il vous fait la **visite guidée du projet**, en quatre messages : ce qu'on construit et pour quoi faire, ce qu'est un agent, les capacités de GoodVibe, la vue d'architecture. Aucun document n'est rédigé avant la fin de cette visite.
+4. Il vous fait la **visite guidée du projet**, en quatre messages : ce qu'on construit et pour quoi faire, ce qu'est un agent, les capacités de GoodVibe, la vue d'architecture. Aucun document n'est rédigé avant la fin de cette visite. La vue d'architecture arrive en schéma texte, car la fenêtre de discussion ne dessine pas les diagrammes ; le diagramme complet est en section 5.0.
 
 Signal d'alerte : s'il ne se présente pas, ne pose pas la question, ou commence à écrire du code, le skill n'est pas chargé. Revenez à la section 1.5.
 
