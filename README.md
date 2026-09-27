@@ -47,7 +47,7 @@ Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai ag
 | Webhook | Un pense-bête envoyé depuis votre téléphone via un client HTTP en ligne (Hoppscotch), protégé par un jeton secret |
 | MCP | L'horoscope récupéré via le serveur MCP officiel `fetch` |
 | Mémoire | Le profil, les notes et les conversations en SQLite, avec « Oublie-moi » |
-| Observabilité | Un journal d'activité : tokens, latence, coût en euros |
+| Observabilité | Un journal d'activité : tokens, latence, coût en euros. Et les coulisses, en direct : la réflexion du modèle, puis chaque appel d'outil avec ses JSON |
 | CI/CD | Déploiement automatique par GitHub Actions à chaque push |
 | Production | Un VPS Ubuntu, `systemd`, Caddy en HTTPS |
 | Sous-agents | La version 2 : horoscope et météo délégués à des agents spécialisés |

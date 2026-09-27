@@ -183,7 +183,7 @@ stateDiagram-v2
     LimiteTours --> [*] : arrêt forcé, journalisé
 ```
 
-Le tour : le modèle reçoit l'objectif et la description des outils, choisit un outil, notre code l'exécute, on renvoie le résultat, il recommence. L'arrêt : le modèle répond sans demander d'outil, ou on atteint le **nombre maximal de tours**. Ce garde-fou n'est pas optionnel : un agent qui boucle consomme des tokens jusqu'à ce qu'on le tue.
+Le tour : le modèle reçoit l'objectif et la description des outils, choisit un outil, notre code l'exécute, on renvoie le résultat, il recommence. Le modèle n'appelle un outil que s'il en a besoin : si la réponse est déjà dans ses consignes ou dans la conversation, il répond directement. L'arrêt : le modèle répond sans demander d'outil, ou on atteint le **nombre maximal de tours**. Ce garde-fou n'est pas optionnel : un agent qui boucle consomme des tokens jusqu'à ce qu'on le tue.
 
 La différence avec un script : le script suit des étapes fixées à l'avance ; l'agent décide de l'étape suivante à chaque tour. C'est aussi le critère pour savoir si un agent est utile : si la tâche n'exige aucune décision, un script suffit, il est plus rapide, gratuit et prévisible.
 
@@ -361,7 +361,7 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 ### 3.3 Les fonctionnalités, en bref
 
-**Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; « oublie-moi » ; brief du matin par cron avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir la réflexion ».
+**Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; « oublie-moi » ; brief du matin par cron avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir les coulisses » (réflexion, appels d'outils et leurs JSON).
 
 **Souhaitable (Should)** : image du jour (météo, lieu, horoscope) ; « explique ce que tu viens de faire » ; budget quotidien et mode économe.
 
@@ -614,7 +614,7 @@ flowchart TD
 
 **Ce que vous verrez** : chaque geste de GoodVibe laisse une trace lisible : tour par tour, les tokens consommés (entrée, sortie, réflexion), la latence, et, si vous le demandez, un résumé de ce qu'il a « pensé » avant de répondre.
 
-**Ce qu'on construit** : un `logging` qui écrit à la fois dans le terminal et dans une table `journal` en SQLite, la mesure des tokens et des temps, la commande « explique ce que tu viens de faire » et le réglage « voir la réflexion ».
+**Ce qu'on construit** : un `logging` qui écrit à la fois dans le terminal et dans une table `journal` en SQLite, la mesure des tokens et des temps, la commande « explique ce que tu viens de faire » et la case « Voir les coulisses », qui montre pour l'instant la réflexion du modèle.
 
 ```mermaid
 flowchart LR
@@ -625,7 +625,7 @@ flowchart LR
     G -- "steps de type thought<br/>(thinking_summaries: auto)" --> A
 ```
 
-**Ce que fait l'agent** : `db.py` avec `initialiser()` et la table `journal` (date, exécution, agent, étape, détail, tokens_entree, tokens_sortie, tokens_reflexion, latence_ms, duree_ms) ; `journal.py` (un handler `logging` personnalisé, une seule ligne d'appel, deux destinations) ; branchement dans `agent.py` ; lecture de `interaction.usage` ; mesure du **temps avant le premier fragment** et de la **durée totale** en streaming ; option `thinking_summaries: "auto"` et affichage des `steps` de type `thought` dans un bloc grisé quand le réglage est actif ; `gr.Checkbox` « Voir la réflexion » dans `interface.py`, qui pilote le même réglage que la commande du terminal.
+**Ce que fait l'agent** : `db.py` avec `initialiser()` et la table `journal` (date, exécution, agent, étape, détail, tokens_entree, tokens_sortie, tokens_reflexion, latence_ms, duree_ms) ; `journal.py` (un handler `logging` personnalisé, une seule ligne d'appel, deux destinations) ; branchement dans `agent.py` ; lecture de `interaction.usage` ; mesure du **temps avant le premier fragment** et de la **durée totale** en streaming ; option `thinking_summaries: "auto"` et affichage des `steps` de type `thought` dans un bloc repliable, les coulisses, quand le réglage est actif ; `gr.Checkbox` « Voir les coulisses » dans `interface.py`, qui pilote le même réglage que la commande du terminal. À la fiche 4, les appels d'outils rejoindront ce bloc.
 
 **Ce que vous faites** : rien, sauf observer. L'agent installe DB Browser for SQLite pour vous et vous indique comment ouvrir `data/agent.db`.
 
@@ -637,7 +637,7 @@ flowchart LR
 - La latence est mesurée autour de l'appel au modèle, pas autour de tout le tour.
 - Si `total_thought_tokens` est absent (modèle sans réflexion), la colonne vaut `null`, rien ne plante.
 
-**CHECK** : dialoguez, puis ouvrez `data/agent.db` avec DB Browser, table `journal` : les lignes avec leurs chiffres. Activez « voir la réflexion », dans le terminal (l'agent vous donne la commande) ou dans la page web (la case à cocher), et constatez le bloc grisé avant la réponse. Verdict à deux issues.
+**CHECK** : dialoguez, puis ouvrez `data/agent.db` avec DB Browser, table `journal` : les lignes avec leurs chiffres. Activez « Voir les coulisses », dans le terminal (l'agent vous donne la commande) ou dans la page web (la case à cocher), et constatez le bloc de réflexion avant la réponse. Verdict à deux issues.
 
 **Pièges** : logs en double si le handler est ajouté deux fois (ouvrir deux fois le chat dans le même processus) ; base verrouillée si deux connexions écrivent sans se fermer ; résumé de réflexion vide sur une question trop simple (le modèle n'a pas assez raisonné pour produire un résumé, c'est normal).
 
@@ -706,7 +706,7 @@ erDiagram
     }
 ```
 
-**Ce que fait l'agent** : étend `db.py` ; crée `outils.py` (chaque outil = une fonction Python + sa description pour le modèle) ; modifie `agent.py` pour déclarer les outils, exécuter les appels d'outils demandés dans les `steps`, renvoyer les résultats, et injecter profil et notes à la suite du prompt système au démarrage ; complète `prompt_systeme.md` (« tu ne connais l'utilisateur que par tes outils ») ; ajoute `signe_depuis_date()` en Python pur ; `interface.py` enregistre chaque échange dans `conversations` et recharge l'historique à l'ouverture de la page.
+**Ce que fait l'agent** : étend `db.py` ; crée `outils.py` (chaque outil = une fonction Python + sa description pour le modèle) ; modifie `agent.py` pour déclarer les outils, exécuter les appels d'outils demandés dans les `steps`, renvoyer les résultats, et injecter profil et notes à la suite du prompt système au démarrage ; complète `prompt_systeme.md` (« tu ne connais l'utilisateur que par tes outils ») ; ajoute `signe_depuis_date()` en Python pur ; `interface.py` enregistre chaque échange dans `conversations` et recharge l'historique à l'ouverture de la page ; étend les coulisses : chaque appel d'outil s'y affiche avec son nom, le JSON de ses arguments et le JSON de son résultat, par un code écrit une seule fois dans la boucle.
 
 **Ce que vous faites** : rien.
 
@@ -715,10 +715,11 @@ erDiagram
 **À relire** :
 - Le signe est **calculé en Python** à partir de la date, pas demandé au modèle (il se trompe aux dates limites).
 - La date de naissance complète **n'est pas conservée** une fois le signe connu : minimisation.
-- Chaque outil journalise son appel (nom, durée), sans ses arguments dans le journal pédagogique.
+- Chaque outil journalise son appel (nom, durée), sans ses arguments : les JSON des coulisses s'affichent à l'écran et ne sont jamais enregistrés dans le journal.
+- L'affichage des coulisses est écrit une seule fois, dans la boucle : il vaut pour toutes les fonctions Python et pour les outils MCP à venir.
 - Le profil n'est injecté qu'**une fois** dans le prompt système, pas à chaque tour en plus.
 
-**CHECK** : dites « Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo ». Fermez le chat, relancez, demandez « qu'est-ce que tu sais de moi ? » : prénom, signe Poissons, ville, intérêts. Vérifiez la ligne dans DB Browser, table `profil`, et l'absence de la date complète. Rechargez la page web : l'historique de la conversation est toujours là.
+**CHECK** : cochez « Voir les coulisses ». Dites « Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo » : l'appel à `enregistrer_profil` apparaît, avec le JSON de ses arguments et le JSON de son résultat. Fermez le chat, relancez, demandez « qu'est-ce que tu sais de moi ? » : prénom, signe Poissons, ville, intérêts, et cette fois **aucun appel d'outil**. Le profil est déjà dans ses consignes : il n'a pas besoin d'agir pour répondre. Dites « en fait, j'habite Marseille » : l'outil repart. Vérifiez la ligne dans DB Browser, table `profil`, et l'absence de la date complète ; dans la table `journal`, le nom de l'outil figure sans ses arguments. Rechargez la page web : l'historique de la conversation est toujours là.
 
 **Pièges** : le modèle « invente » le profil au lieu d'appeler l'outil (renforcer le prompt système : « tu ne connais l'utilisateur que par l'outil `lire_profil` ») ; signe faux aux dates limites (tester le 20 et le 21 mars) ; appels d'outils non exécutés parce que la boucle ne lit pas les `steps` de type `function_call` ; historique de la page web perdu au rechargement (gardé dans une variable, pas en base).
 
@@ -767,7 +768,7 @@ sequenceDiagram
 
 **À relire** : la suppression touche les trois tables mais **pas** `journal` ni `traites` ; le journal note « profil effacé » sans le contenu ; la mémoire de travail de la session en cours est aussi vidée (sinon l'agent « se souvient » jusqu'au redémarrage).
 
-**CHECK** : « oublie-moi », confirmez, relancez le chat, « qu'est-ce que tu sais de moi ? » donne « rien ». Tables vides dans DB Browser.
+**CHECK** : cochez « Voir les coulisses ». « Oublie-moi » : GoodVibe demande confirmation, et aucun outil n'est appelé. Confirmez : l'appel à `oublier_utilisateur` apparaît avec ses JSON. Relancez le chat, « qu'est-ce que tu sais de moi ? » donne « rien ». Tables vides dans DB Browser.
 
 **Pièges** : suppression sans confirmation ; oubli de `conversations` ; profil encore dans le prompt système jusqu'au redémarrage.
 
@@ -861,7 +862,7 @@ sequenceDiagram
 
 **À relire** : timeout sur les deux appels ; le repli « météo indisponible » est un texte renvoyé, pas une exception qui remonte ; l'outil renvoie une phrase, pas le JSON brut (le modèle n'a pas à le décoder, et ça économise des tokens).
 
-**CHECK** : « quel temps à Lyon ? » dans le chat, puis un brief forcé qui contient la météo. Coupez le réseau (ou mettez une mauvaise URL dans la config) et vérifiez le repli.
+**CHECK** : « quel temps à Lyon ? » dans le chat, coulisses ouvertes : l'appel à `meteo` apparaît avec ses JSON, sans qu'on ait touché à l'affichage. Puis un brief forcé qui contient la météo. Coupez le réseau (ou mettez une mauvaise URL dans la config) et vérifiez le repli.
 
 **Pièges** : ville ambiguë (plusieurs « Lyon » dans le géocodage : prendre le premier et journaliser le pays) ; appel bloquant sans timeout ; unités.
 
@@ -924,7 +925,7 @@ sequenceDiagram
 - La réécriture cite prénom et ville, et se fait en français.
 - Si l'API ne répond pas, le plan B produit un horoscope local, et le journal note « source indisponible, plan B ».
 
-**CHECK** : brief forcé. Dans le journal : l'appel à l'outil `fetch`, le texte anglais reçu (résumé), puis l'horoscope personnalisé en français. Comparez les deux : c'est la valeur ajoutée du modèle, visible.
+**CHECK** : brief forcé. Dans le journal : l'appel à l'outil `fetch`, le texte anglais reçu (résumé), puis l'horoscope personnalisé en français. Comparez les deux : c'est la valeur ajoutée du modèle, visible. Dans le chat, coulisses ouvertes, demandez votre horoscope : l'appel à l'outil MCP `fetch` s'affiche comme celui d'une fonction Python, avec ses JSON. La boucle ne fait pas la différence : c'est la promesse du standard.
 
 **Pièges** : serveur MCP non démarré (`uvx` absent : l'agent l'installe) ; schémas d'outils mal convertis (le modèle ne « voit » pas l'outil) ; API indisponible sans plan B ; oubli de fermer la connexion MCP à la fin du brief.
 
@@ -1401,6 +1402,7 @@ Chaque piste est un nouveau tour de roue PDCA, avec le skill, à partir du `plan
 - **Streaming** : recevoir la réponse du modèle fragment par fragment, au lieu d'attendre la fin.
 - **Token** : l'unité de texte facturée par l'API. Entrée (ce qu'on envoie), sortie (ce que le modèle écrit), réflexion (ce qu'il « pense » avant de répondre, facturé même si on ne le voit pas).
 - **Résumé de réflexion (thought summary)** : le compte rendu que le modèle donne de son raisonnement, quand on l'active. Ce n'est pas le raisonnement brut.
+- **Coulisses** : ce que GoodVibe montre quand on le lui demande : la réflexion du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Affichées à l'écran, jamais enregistrées.
 - **Latence** : le temps entre l'envoi d'une requête et la réponse. En streaming, on distingue le temps avant le premier fragment et la durée totale.
 - **CI/CD** : intégration continue (tester à chaque push) et déploiement continu (mettre en ligne automatiquement quand les tests passent).
 - **Sous-agent** : une seconde boucle d'agent, avec son rôle et ses outils, appelée par l'orchestrateur comme un outil.
