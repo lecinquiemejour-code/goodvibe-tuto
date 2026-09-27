@@ -4,6 +4,12 @@
 > Public : développeurs intermédiaires qui découvrent les agents et le vibe coding. Version 1.0, septembre 2026.
 
 > **Note à l'agent de codage.** Ce document est la référence du projet. Au PLAN de chaque feature, tu présentes les trois options telles que la fiche les décrit, en recommandant celle que la fiche retient, et tu expliques pourquoi. Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO.
+>
+> **Modèles : c'est toi qui cherches, c'est le pilote qui choisit.** Ce tuto ne fixe aucun modèle. Au cadrage, avant de rédiger `archi-stack.md`, tu consultes toi-même la documentation officielle de Google (<https://ai.google.dev/gemini-api/docs/models>, <https://ai.google.dev/gemini-api/docs/interactions>, <https://ai.google.dev/gemini-api/docs/pricing>) et tu présentes ta recommandation au pilote, pour le modèle texte puis pour le modèle image : le modèle que tu recommandes et deux alternatives, avec pour chacun l'identifiant exact, le statut, le prix et la raison de ton choix.
+>
+> Tes critères : pour le texte, le modèle **Gemini Flash stable le plus récent** que Google recommande pour les agents, compatible avec l'API Interactions, les appels d'outils, le streaming et la réflexion ; pour l'image, le modèle **stable le moins coûteux**. Jamais de modèle « preview » ou « experimental ».
+>
+> Le pilote ne fait aucune recherche : il valide ou choisit une alternative. Tu consignes le choix dans `archi-stack.md` (identifiants, date de la recherche, pages consultées) et dans `config.py` (`MODELE_TEXTE`, `MODELE_IMAGE`). Tu refais la vérification au PLAN des fiches 1 et 10, et à chaque reprise après plus d'un mois d'arrêt. Tu vérifies de la même façon la syntaxe de l'API et les noms de champs. À titre d'exemple, en septembre 2026, cette recherche donnait `gemini-3.8-flash` et `gemini-3.1-flash-lite-image`.
 
 ---
 
@@ -26,7 +32,7 @@ Nous démarrons le projet GoodVibe dans ce répertoire vierge.
 Contexte du projet :
 - Le skill VibeCoding Copilote fait loi : suis-le à la lettre (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2).
 - Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Les options du PLAN, les points « À relire » et le CHECK de chaque feature s'y conforment. Ne me dévoile pas les « pièges » avant mon verdict.
-- Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions).
+- Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne reprends aucun nom de modèle de mémoire : au cadrage, recherche dans la documentation officielle de Google les modèles recommandés aujourd'hui et présente-moi ta recommandation (texte et image), selon les critères de la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
 - Profil de calibrage : (2) je code déjà, je découvre le vibe coding.
 
@@ -286,7 +292,7 @@ Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la 
 
 1. **Mise en ligne** : « La publication se fait sur le VPS via GitHub Actions, pas sur Netlify. Le GO MISE EN LIGNE déclenche le push sur `main` et le pipeline. »
 2. **CHECK** : « Le test humain ne passe pas toujours par un navigateur : selon la feature, il se fait dans le terminal, avec `curl`, dans l'onglet Activité ou dans la page Gradio. Le critère de réussite du `plan-action.md` précise lequel. »
-3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Ne pas proposer un autre fournisseur sans demande explicite. »
+3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui choisit. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
 5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : options du PLAN, exigences de code et CHECK de chaque feature s'y conforment. »
 
@@ -331,7 +337,7 @@ Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du cod
 Le skill rédige chaque document, l'écrit réellement sur le disque, vous le montre, et attend votre validation avant le suivant. Voici ce que vous devez vérifier.
 
 **`archi-stack.md`**
-Le skill propose normalement 2 ou 3 stacks. Comme le PRD impose la stack, il doit proposer des **variantes d'organisation du code**, pas des technologies différentes. Attendez-vous à : (une) tout dans deux ou trois gros fichiers ; (une autre) un fichier par responsabilité ; (une troisième) une organisation en paquets Python. Retenez **un fichier par responsabilité** : c'est ce qui rend chaque feature lisible et testable seule. Le document fige aussi la commande de lancement local (le chat terminal et Gradio sur le port 7860 dès les premières features, le webhook sur le port 8000 à la fin). Vérifiez que la ligne « Hébergement / déploiement » dit VPS + GitHub Actions, pas Netlify.
+Le skill propose normalement 2 ou 3 stacks. Comme le PRD impose la stack, il doit proposer des **variantes d'organisation du code**, pas des technologies différentes. Attendez-vous à : (une) tout dans deux ou trois gros fichiers ; (une autre) un fichier par responsabilité ; (une troisième) une organisation en paquets Python. Retenez **un fichier par responsabilité** : c'est ce qui rend chaque feature lisible et testable seule. Le document fige aussi la commande de lancement local (le chat terminal et Gradio sur le port 7860 dès les premières features, le webhook sur le port 8000 à la fin). Vérifiez que la ligne « Hébergement / déploiement » dit VPS + GitHub Actions, pas Netlify. **La recommandation de modèles** : vous n'avez rien à chercher. L'agent a consulté la documentation de Google et vous a présenté, pour le texte et pour l'image, un modèle recommandé et deux alternatives avec leur prix. Vérifiez que `archi-stack.md` cite les modèles retenus, la date de la recherche et les pages consultées. S'il a recopié un nom sans source, demandez-lui de refaire la recherche.
 
 **`fdd.md`**
 La liste des features, formulées « action, résultat, objet » (« afficher le brief du jour »). Vérifiez qu'elles correspondent à la liste de la section 5 (quinze features) et que le **tableau de couverture** relie chaque fonction du PRD à une feature. Si une manque, réclamez-la : le skill vous demande explicitement de confirmer le découpage, ne validez pas à l'aveugle.
@@ -392,10 +398,10 @@ flowchart TD
     WH["webhook.py (FastAPI)"] --> DB
     BR --> AG["agent.py<br/>la boucle"]
     AG --> OUT["outils.py"]
-    AG --> GEM["Gemini<br/>gemini-3.8-flash"]
+    AG --> GEM["Gemini<br/>modèle texte du jour J"]
     OUT --> MCP["mcp_client.py<br/>serveur fetch"] --> HOR["horoscope.py"]
     OUT --> MET["outils_meteo.py<br/>Open-Meteo"]
-    BR --> IMG["image.py<br/>gemini-3.1-flash-lite-image"]
+    BR --> IMG["image.py<br/>modèle image du jour J"]
     AG & BR & WH --> DB["db.py<br/>SQLite"]
     AG & BR --> JR["journal.py"] --> DB
     AG & IMG --> BUD["budget.py"]
@@ -435,12 +441,13 @@ sequenceDiagram
 **À relire** :
 - `MAX_TOURS` est défini dans `config.py` et vérifié dans la boucle.
 - La clé vient de `config.py`, jamais en dur, et `.env` est dans `.gitignore`.
+- Le nom du modèle vit dans `config.py` (`MODELE_TEXTE`), jamais dans le code : le jour où Google le retire, on change une ligne.
 - L'appel utilise l'**API Interactions** du SDK (`client.interactions.create`) avec `stream=True`, et distingue les fragments de texte des autres événements (préparation de la feature 4, où arriveront les appels d'outils).
 - Un log au début et à la fin de chaque tour.
 
 **CHECK** : lancez le chat (l'agent vous donne la commande), posez une question, voyez la réponse arriver mot à mot. Tapez `quitte` : sortie propre. Verdict : **(A) OK** si les deux sont constatés.
 
-**Pièges** : clé absente ou mal nommée (erreur 401 ou 403) ; Python installé sans être dans le PATH (redémarrer le terminal) ; venv non activé (module introuvable) ; streaming « qui bloque » parce que le code accumule tout et affiche à la fin ; sur Windows, PowerShell n'accepte pas `&&`, l'agent enchaîne avec `;`.
+**Pièges** : clé absente ou mal nommée (erreur 401 ou 403) ; modèle retiré ou renommé par Google (erreur 404, « model not found » : vérifier la documentation, changer `MODELE_TEXTE` dans `config.py`) ; Python installé sans être dans le PATH (redémarrer le terminal) ; venv non activé (module introuvable) ; streaming « qui bloque » parce que le code accumule tout et affiche à la fin ; sur Windows, PowerShell n'accepte pas `&&`, l'agent enchaîne avec `;`.
 
 **Où on en est** : GoodVibe parle. Fichiers : `config.py`, `agent.py`, `chat_terminal.py`, `requirements.txt`, `.env.example`, `.gitignore`.
 
@@ -879,7 +886,7 @@ sequenceDiagram
     participant B as brief.py
     participant I as image.py
     participant G as Gemini texte
-    participant N as Gemini image (gemini-3.1-flash-lite-image)
+    participant N as Gemini image (MODELE_IMAGE)
     participant D as SQLite / disque
     B->>I: generer_image(meteo, ville, horoscope)
     I->>D: image déjà produite aujourd'hui ?
@@ -891,13 +898,13 @@ sequenceDiagram
     I-->>B: chemin de l'image (ou None si échec)
 ```
 
-**Ce que fait l'agent** : `image.py` ; appel du modèle image via l'API Interactions (`model="gemini-3.1-flash-lite-image"`, lecture de `interaction.output_image.data` en base64) ; `gr.Image` dans l'onglet Brief et affichage dans le chat sur « montre-moi l'image du jour » ; `allowed_paths=["data/images"]` au lancement de Gradio ; comptage des images à part dans le journal.
+**Ce que fait l'agent** : `image.py` ; appel du modèle image via l'API Interactions (`model=MODELE_IMAGE`, lecture de `interaction.output_image.data` en base64) ; `gr.Image` dans l'onglet Brief et affichage dans le chat sur « montre-moi l'image du jour » ; `allowed_paths=["data/images"]` au lancement de Gradio ; comptage des images à part dans le journal.
 
 **Ce que vous faites** : vérifier dans AI Studio que votre plan donne accès au modèle image et connaître son quota.
 
 **Options attendues** : (une) prompt visuel composé par le modèle texte, **recommandée** : c'est l'agent qui crée, et le prompt est journalisé ; (une autre) prompt par gabarit fixe rempli en Python ; (une troisième) image choisie dans une banque locale selon la météo. La troisième sert de plan B.
 
-**À relire** : une image par jour maximum (clé `image-AAAA-MM-JJ` dans `traites`) ; le brief **sort même si l'image échoue** ; le prompt visuel est journalisé, l'image comptée hors tokens ; `data/images/` dans `.gitignore`.
+**À relire** : une image par jour maximum (clé `image-AAAA-MM-JJ` dans `traites`) ; le brief **sort même si l'image échoue** ; le prompt visuel est journalisé, l'image comptée hors tokens ; `data/images/` dans `.gitignore` ; le nom du modèle image vit dans `config.py` (`MODELE_IMAGE`), vérifié dans la documentation de Google au PLAN.
 
 **CHECK** : brief forcé : l'image apparaît au-dessus du texte et reflète bien météo et lieu. Coupez l'accès au modèle image (mauvais nom de modèle dans la config) et vérifiez que le brief sort quand même, avec un texte de repli.
 
