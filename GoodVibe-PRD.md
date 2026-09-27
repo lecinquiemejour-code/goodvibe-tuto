@@ -44,6 +44,7 @@ Ce que ce produit ne cherche **pas** à être :
   - Afficher dans la page web le journal d'activité de l'agent : pour chaque exécution, les outils appelés, les tokens consommés (entrée, sortie, réflexion), la latence de chaque appel, avec compteurs par jour et cumul et une estimation du coût en euros.
   - Enregistrer, pour chaque réponse en conversation, le temps avant le premier mot et la durée totale.
   - Permettre d'afficher ou de masquer les coulisses de chaque réponse, via une case à cocher dans la page web et une commande dans le terminal : le résumé de réflexion (« thinking ») du modèle, puis chaque appel d'outil avec son nom, le JSON de ses arguments et le JSON de son résultat. L'affichage est le même pour tous les outils : fonctions Python, serveurs MCP actuels et futurs. Les coulisses s'affichent à l'écran ; les arguments et les résultats des outils ne sont jamais enregistrés dans le journal.
+  - Montrer en direct le travail de l'agent chaque fois que l'utilisateur le déclenche, dans le chat comme dans la génération du brief. Dans l'ordre : chaque appel d'outil avec son nom, ses JSON et sa durée ; le résumé de réflexion du modèle, au fil de l'eau ; la réponse, mot à mot ; puis un relevé : tokens d'entrée, de réflexion et de sortie, temps avant le premier mot, durée totale. Les chiffres du relevé sont ceux que renvoie l'API, jamais une estimation. Déclenché par le cron, l'agent travaille en silence : seul le journal en garde la trace, sans donnée personnelle.
 - **Should have** :
   - Générer une image du jour inspirée de trois éléments : la météo du jour, le lieu de résidence et la prévision d'horoscope ; l'afficher au-dessus du brief et sur demande dans le chat.
   - Expliquer dans le chat ce que l'agent vient de faire, outil par outil, à partir de son journal.
@@ -60,7 +61,7 @@ Ce que ce produit ne cherche **pas** à être :
 - L'utilisateur demande « qu'est-ce que tu sais de moi ? » → l'agent liste prénom, signe, ville, centres d'intérêt et notes, avec ses mots.
 - L'utilisateur dit « oublie-moi » → l'agent demande confirmation, puis efface profil, notes et conversations, et confirme.
 - Il est 7 h → le brief du jour est généré et enregistré ; s'il existe déjà, rien n'est refait et le journal le mentionne.
-- L'utilisateur clique « Générer le brief maintenant » → même génération, immédiate, avec l'anti-doublon contournable pour les tests.
+- L'utilisateur clique « Générer le brief maintenant » → même génération, immédiate, avec l'anti-doublon contournable pour les tests. Il voit les étapes défiler en direct (outils, réflexion, texte), puis le relevé.
 - Un service externe envoie un pense-bête sur le webhook avec le bon jeton → réponse immédiate « reçu », enregistrement, intégration au brief suivant. Sans jeton ou avec un mauvais jeton → refus.
 - L'utilisateur ouvre la page web → mot de passe demandé ; puis onglets Chat, Brief du jour, Mémoire, Activité.
 - L'utilisateur coche « Voir les coulisses » → avant chaque réponse, un bloc repliable montre le résumé de raisonnement du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Si le modèle répond sans outil, le bloc ne montre que la réflexion.
@@ -70,7 +71,7 @@ Ce que ce produit ne cherche **pas** à être :
 ## 6. Spécifications visuelles / d'interface
 
 - **Apparence :** sobre et lisible, page web en quatre onglets (Chat, Brief du jour, Mémoire, Activité). L'image du jour, si présente, s'affiche au-dessus du texte du brief. Les tableaux de la mémoire et du journal sont bruts et complets : c'est une vitrine pédagogique, pas une interface grand public.
-- **Comportement :** le chat affiche les réponses mot à mot ; les onglets Mémoire et Activité ont un bouton « Rafraîchir » ; les coulisses sont repliées par défaut ; un interrupteur « détails techniques » dans l'onglet Activité ajoute les durées et les erreurs brutes. Les arguments des outils ne s'y affichent jamais : ils ne se voient qu'en direct, dans les coulisses.
+- **Comportement :** le chat affiche les réponses mot à mot ; les onglets Mémoire et Activité ont un bouton « Rafraîchir » ; la case « Voir les coulisses » est cochée par défaut, et on peut la décocher pour un affichage épuré ; un interrupteur « détails techniques » dans l'onglet Activité ajoute les durées et les erreurs brutes. Les arguments des outils ne s'y affichent jamais : ils ne se voient qu'en direct, dans les coulisses.
 
 ## 7. Contraintes (exigences non-fonctionnelles)
 

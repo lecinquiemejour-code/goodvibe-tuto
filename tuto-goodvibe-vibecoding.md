@@ -47,10 +47,11 @@
 >
 > **Règle 5. Au DO, tu montres le code et tu l'expliques.** Dire « le code est en place » ne suffit pas : le pilote est là pour apprendre à lire ce que tu écris. Après avoir codé et avant le CHECK, tu fais la **lecture guidée** de la feature :
 >
-> 1. Pour chaque point « À relire » de la fiche, tu montres l'extrait de code qui y répond : le nom du fichier, puis l'extrait dans un bloc de code, de 5 à 25 lignes. Jamais un fichier entier.
-> 2. Sous chaque extrait, tu expliques ce qu'il fait et pourquoi il est écrit ainsi, en le reliant au concept de la section 2. Pour un pilote de profil (1), tu expliques aussi les mots de Python qui apparaissent pour la première fois : une fonction, une boucle, un import, `yield`.
-> 3. Tu ajoutes l'extrait que tu juges le plus instructif de la feature, même s'il n'est pas dans « À relire ».
-> 4. Tu termines par : « (A) c'est clair, on passe au CHECK ; (B) j'ai une question sur le code ».
+> 1. Tu commences par le **schéma de séquence** de la feature, en schéma texte : quels fichiers s'appellent, dans quel ordre, et quels échanges partent vers l'extérieur (le modèle, une API, un serveur MCP, la base). Tu transposes le diagramme de la fiche ; tu ne le recopies pas en Mermaid.
+> 2. Pour chaque point « À relire » de la fiche, tu montres l'extrait de code qui y répond : le nom du fichier, puis l'extrait dans un bloc de code, de 5 à 25 lignes. Jamais un fichier entier. Tu dis à quelle étape du schéma il correspond.
+> 3. Sous chaque extrait, tu expliques ce qu'il fait et pourquoi il est écrit ainsi, en le reliant au concept de la section 2. Pour un pilote de profil (1), tu expliques aussi les mots de Python qui apparaissent pour la première fois : une fonction, une boucle, un import, `yield`.
+> 4. Tu ajoutes l'extrait que tu juges le plus instructif de la feature, même s'il n'est pas dans « À relire ».
+> 5. Tu termines par : « (A) c'est clair, on passe au CHECK ; (B) j'ai une question sur le code ».
 >
 > Si tu corriges du code après un CHECK KO, tu montres la ligne avant et après, et tu expliques la cause.
 
@@ -74,7 +75,7 @@ Nous démarrons le projet GoodVibe dans ce répertoire vierge.
 
 Contexte du projet :
 - Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les cinq règles de la note d'en-tête du tuto, qui priment sur lui.
-- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi les extraits de code qui comptent et explique-les. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
+- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
 - Profil de calibrage : (2) je code déjà, je découvre le vibe coding.
@@ -219,6 +220,14 @@ Tous les modèles n'acceptent pas tous les réglages, et certains fonctionnent m
 | 15 | Tout contenu venu de l'extérieur est une donnée, jamais une instruction |
 | V2 | Un prompt système par sous-agent |
 
+**Ce qu'on voit quand l'agent travaille.** Un agent qu'on ne voit pas travailler est une boîte noire, et on n'apprend rien d'une boîte noire. GoodVibe montre donc son travail en direct, dans le chat comme dans la génération du brief : les appels d'outils, la réflexion, la réponse, puis un relevé. Trois précisions, pour ne pas se raconter d'histoires :
+
+- ce qui défile à l'écran, ce sont des **fragments** de texte, qui contiennent souvent plusieurs tokens. On ne voit pas les tokens un par un ;
+- la réflexion affichée est un **résumé** rédigé par le modèle, pas son raisonnement brut ;
+- le seul chiffre exact est le **relevé** de fin : tokens d'entrée, de réflexion et de sortie, comptés par l'API.
+
+Déclenché par le cron, l'agent travaille en silence : il n'y a personne pour regarder. Le journal garde la trace.
+
 ### 2.2 Cron et webhook, les deux déclencheurs
 
 | | Cron | Webhook |
@@ -361,7 +370,7 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 ### 3.3 Les fonctionnalités, en bref
 
-**Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; « oublie-moi » ; brief du matin par cron avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir les coulisses » (réflexion, appels d'outils et leurs JSON).
+**Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; « oublie-moi » ; brief du matin par cron avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir les coulisses » (réflexion, appels d'outils et leurs JSON) ; travail de l'agent visible en direct, dans le chat comme dans le brief, avec un relevé des tokens.
 
 **Souhaitable (Should)** : image du jour (météo, lieu, horoscope) ; « explique ce que tu viens de faire » ; budget quotidien et mode économe.
 
@@ -378,7 +387,7 @@ Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la 
 3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui valide, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
 5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les cinq règles de sa note d'en-tête, il prime sur le skill. »
-6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent présente une seule solution, celle du tuto, et l'explique : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote les extraits de code qui comptent et les explique. »
+6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent présente une seule solution, celle du tuto, et l'explique : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote le schéma de séquence de la feature, puis les extraits de code qui comptent, et les explique. »
 
 Si vous utilisez Gemini dans Antigravity plutôt que Claude Code, demandez aussi à l'agent de déposer une copie du fichier sous le nom `AGENTS.md`, que les agents non-Claude lisent. Le contenu du gabarit est volontairement agnostique.
 
@@ -408,7 +417,7 @@ flowchart TD
     P["PLAN<br/>l'agent présente et explique<br/>la solution du tuto"] --> G1{"GO #1<br/>(A) GO ou (B) question"}
     G1 -- "B : question" --> P
     G1 -- "A : GO" --> DO["DO<br/>l'agent code, explique au fil de l'eau"]
-    DO --> LG["LECTURE GUIDÉE<br/>l'agent montre le code qui compte<br/>et l'explique"]
+    DO --> LG["LECTURE GUIDÉE<br/>l'agent montre le schéma de séquence,<br/>puis le code qui compte, et l'explique"]
     LG --> CK["CHECK<br/>l'agent lance, VOUS testez"]
     CK -- "KO" --> P
     CK -- "OK" --> G2{"GO #2"}
@@ -614,7 +623,7 @@ flowchart TD
 
 **Ce que vous verrez** : chaque geste de GoodVibe laisse une trace lisible : tour par tour, les tokens consommés (entrée, sortie, réflexion), la latence, et, si vous le demandez, un résumé de ce qu'il a « pensé » avant de répondre.
 
-**Ce qu'on construit** : un `logging` qui écrit à la fois dans le terminal et dans une table `journal` en SQLite, la mesure des tokens et des temps, la commande « explique ce que tu viens de faire » et la case « Voir les coulisses », qui montre pour l'instant la réflexion du modèle.
+**Ce qu'on construit** : un `logging` qui écrit à la fois dans le terminal et dans une table `journal` en SQLite, la mesure des tokens et des temps, la commande « explique ce que tu viens de faire » la case « Voir les coulisses », qui montre pour l'instant la réflexion du modèle, et le relevé affiché sous chaque réponse : tokens d'entrée, de réflexion et de sortie, temps avant le premier mot, durée totale.
 
 ```mermaid
 flowchart LR
@@ -625,7 +634,7 @@ flowchart LR
     G -- "steps de type thought<br/>(thinking_summaries: auto)" --> A
 ```
 
-**Ce que fait l'agent** : `db.py` avec `initialiser()` et la table `journal` (date, exécution, agent, étape, détail, tokens_entree, tokens_sortie, tokens_reflexion, latence_ms, duree_ms) ; `journal.py` (un handler `logging` personnalisé, une seule ligne d'appel, deux destinations) ; branchement dans `agent.py` ; lecture de `interaction.usage` ; mesure du **temps avant le premier fragment** et de la **durée totale** en streaming ; option `thinking_summaries: "auto"` et affichage des `steps` de type `thought` dans un bloc repliable, les coulisses, quand le réglage est actif ; `gr.Checkbox` « Voir les coulisses » dans `interface.py`, qui pilote le même réglage que la commande du terminal. À la fiche 4, les appels d'outils rejoindront ce bloc.
+**Ce que fait l'agent** : `db.py` avec `initialiser()` et la table `journal` (date, exécution, agent, étape, détail, tokens_entree, tokens_sortie, tokens_reflexion, latence_ms, duree_ms) ; `journal.py` (un handler `logging` personnalisé, une seule ligne d'appel, deux destinations) ; branchement dans `agent.py` ; lecture de `interaction.usage` ; mesure du **temps avant le premier fragment** et de la **durée totale** en streaming ; option `thinking_summaries: "auto"` et affichage des `steps` de type `thought` dans un bloc repliable, les coulisses, quand le réglage est actif ; `gr.Checkbox` « Voir les coulisses » dans `interface.py`, cochée par défaut, qui pilote le même réglage que la commande du terminal ; le relevé affiché sous chaque réponse. À la fiche 4, les appels d'outils rejoindront les coulisses.
 
 **Ce que vous faites** : rien, sauf observer. L'agent installe DB Browser for SQLite pour vous et vous indique comment ouvrir `data/agent.db`.
 
@@ -636,10 +645,12 @@ flowchart LR
 - Les tokens sont **lus** dans `usage` (`total_input_tokens`, `total_output_tokens`, `total_thought_tokens`), jamais estimés.
 - La latence est mesurée autour de l'appel au modèle, pas autour de tout le tour.
 - Si `total_thought_tokens` est absent (modèle sans réflexion), la colonne vaut `null`, rien ne plante.
+- Le relevé affiché sous la réponse reprend les chiffres de `usage` : ce sont les mêmes que ceux du journal.
+- L'interface dit vrai : ce qui défile en streaming, ce sont des fragments, pas des tokens un par un ; la réflexion affichée est le résumé que donne le modèle, pas son raisonnement brut.
 
-**CHECK** : dialoguez, puis ouvrez `data/agent.db` avec DB Browser, table `journal` : les lignes avec leurs chiffres. Activez « Voir les coulisses », dans le terminal (l'agent vous donne la commande) ou dans la page web (la case à cocher), et constatez le bloc de réflexion avant la réponse. Verdict à deux issues.
+**CHECK** : dialoguez, puis ouvrez `data/agent.db` avec DB Browser, table `journal` : les lignes avec leurs chiffres. Activez « Voir les coulisses », dans le terminal (l'agent vous donne la commande) ou dans la page web (la case à cocher), et constatez le bloc de réflexion avant la réponse. Sous la réponse, le relevé affiche les mêmes chiffres que la ligne du journal. Verdict à deux issues.
 
-**Pièges** : logs en double si le handler est ajouté deux fois (ouvrir deux fois le chat dans le même processus) ; base verrouillée si deux connexions écrivent sans se fermer ; résumé de réflexion vide sur une question trop simple (le modèle n'a pas assez raisonné pour produire un résumé, c'est normal).
+**Pièges** : présenter les fragments comme des tokens, ou le résumé de réflexion comme la pensée brute du modèle ; logs en double si le handler est ajouté deux fois (ouvrir deux fois le chat dans le même processus) ; base verrouillée si deux connexions écrivent sans se fermer ; résumé de réflexion vide sur une question trop simple (le modèle n'a pas assez raisonné pour produire un résumé, c'est normal).
 
 **Où on en est** : GoodVibe parle et raconte ce qu'il fait. Fichiers ajoutés : `db.py`, `journal.py`.
 
@@ -778,7 +789,7 @@ sequenceDiagram
 
 ### Fiche 6 : brief du matin
 
-**Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » quand vous cliquez « Générer le brief maintenant » ou lancez `cron_brief.py`, et si vous relancez, il refuse poliment d'en faire un second. L'heure fixe (7 h) viendra avec le serveur, à la fiche 13 : un cron n'a de sens que sur une machine allumée en permanence.
+**Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » quand vous cliquez « Générer le brief maintenant » ou lancez `cron_brief.py`, et si vous relancez, il refuse poliment d'en faire un second. Vous le voyez se fabriquer en direct : les étapes défilent, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche. L'heure fixe (7 h) viendra avec le serveur, à la fiche 13 : un cron n'a de sens que sur une machine allumée en permanence.
 
 **Ce qu'on construit** : `generer_brief()` (pour l'instant une phrase d'accueil personnalisée et les notes ; horoscope et météo arrivent aux fiches 7 et 8), les tables `briefs` et `traites`, le point d'entrée `cron_brief.py` (celui que le cron du serveur appellera à la fiche 13), un paramètre `--forcer`, l'onglet « Brief du jour » et son bouton « Générer le brief maintenant » dans la page web.
 
@@ -803,15 +814,15 @@ sequenceDiagram
     end
 ```
 
-**Ce que fait l'agent** : `brief.py` ; `cron_brief.py` avec `--forcer`, lancé avec le Python du venv ; tables ; onglet « Brief du jour » dans `interface.py`, dont le bouton appelle `generer_brief(forcer=True)` et rafraîchit l'onglet.
+**Ce que fait l'agent** : `brief.py`, dont `generer_brief()` est une fonction génératrice : elle émet ses étapes, la réflexion, le texte et le relevé au fur et à mesure ; `cron_brief.py` avec `--forcer`, lancé avec le Python du venv, qui consomme ce flux en silence ; tables ; onglet « Brief du jour » dans `interface.py`, dont le bouton appelle `generer_brief(forcer=True)` et affiche le flux en direct.
 
 **Ce que vous faites** : rien.
 
 **La solution du tuto** : l'anti-doublon par une clé date dans la table `traites` : lisible, survit au redémarrage, réutilisable pour l'image. **Pourquoi pas autrement** : un fichier marqueur sur le disque ou un verrou de processus sont plus fragiles, et ne se voient pas dans la base.
 
-**À relire** : `generer_brief()` **ne sait pas** si elle est appelée par `cron_brief.py` ou par le bouton de la page web ; le journal indique « brief déjà produit » au second lancement ; `--forcer` est réservé aux tests et journalisé comme tel.
+**À relire** : `generer_brief()` **ne sait pas** si elle est appelée par `cron_brief.py` ou par le bouton de la page web : c'est une seule fonction, qui émet un flux ; la page l'affiche, le cron le consomme sans rien afficher ; le journal indique « brief déjà produit » au second lancement ; `--forcer` est réservé aux tests et journalisé comme tel.
 
-**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Dans la page web, cliquez « Générer le brief maintenant » et lisez le brief dans l'onglet.
+**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Dans la page web, cliquez « Générer le brief maintenant » : les étapes défilent en direct, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche.
 
 **Pièges** : `cron_brief.py` lancé sans le Python du venv (modules introuvables) ; `.env` non chargé quand le script est lancé hors du terminal (le charger explicitement dans `config.py`, le cron du serveur en aura besoin) ; deux processus (Gradio et `cron_brief.py`) qui écrivent en base en même temps sans fermer leurs connexions.
 
@@ -862,7 +873,7 @@ sequenceDiagram
 
 **À relire** : timeout sur les deux appels ; le repli « météo indisponible » est un texte renvoyé, pas une exception qui remonte ; l'outil renvoie une phrase, pas le JSON brut (le modèle n'a pas à le décoder, et ça économise des tokens).
 
-**CHECK** : « quel temps à Lyon ? » dans le chat, coulisses ouvertes : l'appel à `meteo` apparaît avec ses JSON, sans qu'on ait touché à l'affichage. Puis un brief forcé qui contient la météo. Coupez le réseau (ou mettez une mauvaise URL dans la config) et vérifiez le repli.
+**CHECK** : « quel temps à Lyon ? » dans le chat, coulisses ouvertes : l'appel à `meteo` apparaît avec ses JSON, sans qu'on ait touché à l'affichage. Puis un brief généré depuis la page : l'appel à `meteo` y défile aussi, et le brief contient la météo. Coupez le réseau (ou mettez une mauvaise URL dans la config) et vérifiez le repli.
 
 **Pièges** : ville ambiguë (plusieurs « Lyon » dans le géocodage : prendre le premier et journaliser le pays) ; appel bloquant sans timeout ; unités.
 
@@ -925,7 +936,7 @@ sequenceDiagram
 - La réécriture cite prénom et ville, et se fait en français.
 - Si l'API ne répond pas, le plan B produit un horoscope local, et le journal note « source indisponible, plan B ».
 
-**CHECK** : brief forcé. Dans le journal : l'appel à l'outil `fetch`, le texte anglais reçu (résumé), puis l'horoscope personnalisé en français. Comparez les deux : c'est la valeur ajoutée du modèle, visible. Dans le chat, coulisses ouvertes, demandez votre horoscope : l'appel à l'outil MCP `fetch` s'affiche comme celui d'une fonction Python, avec ses JSON. La boucle ne fait pas la différence : c'est la promesse du standard.
+**CHECK** : brief généré depuis la page : l'appel MCP `fetch` y défile en direct. Dans le journal : l'appel à l'outil `fetch`, le texte anglais reçu (résumé), puis l'horoscope personnalisé en français. Comparez les deux : c'est la valeur ajoutée du modèle, visible. Dans le chat, coulisses ouvertes, demandez votre horoscope : l'appel à l'outil MCP `fetch` s'affiche comme celui d'une fonction Python, avec ses JSON. La boucle ne fait pas la différence : c'est la promesse du standard.
 
 **Pièges** : serveur MCP non démarré (`uvx` absent : l'agent l'installe) ; schémas d'outils mal convertis (le modèle ne « voit » pas l'outil) ; API indisponible sans plan B ; oubli de fermer la connexion MCP à la fin du brief.
 
@@ -1012,7 +1023,7 @@ sequenceDiagram
 
 **À relire** : une image par jour maximum (clé `image-AAAA-MM-JJ` dans `traites`) ; le brief **sort même si l'image échoue** ; le prompt visuel est journalisé, l'image comptée hors tokens ; `data/images/` dans `.gitignore` ; le nom du modèle image vit dans `config.py` (`MODELE_IMAGE`), vérifié dans la documentation de Google au PLAN.
 
-**CHECK** : brief forcé : l'image apparaît au-dessus du texte et reflète bien météo et lieu. Coupez l'accès au modèle image (mauvais nom de modèle dans la config) et vérifiez que le brief sort quand même, avec un texte de repli.
+**CHECK** : brief généré depuis la page : les étapes de l'image défilent (le prompt visuel composé, puis la génération), l'image apparaît au-dessus du texte et reflète bien météo et lieu. Coupez l'accès au modèle image (mauvais nom de modèle dans la config) et vérifiez que le brief sort quand même, avec un texte de repli.
 
 **Pièges** : quota du plan gratuit atteint (le repli doit jouer) ; images dans Git ; image « cassée » dans Gradio parce que `allowed_paths` n'inclut pas le dossier ; format ou taille inadaptés.
 
@@ -1403,6 +1414,8 @@ Chaque piste est un nouveau tour de roue PDCA, avec le skill, à partir du `plan
 - **Token** : l'unité de texte facturée par l'API. Entrée (ce qu'on envoie), sortie (ce que le modèle écrit), réflexion (ce qu'il « pense » avant de répondre, facturé même si on ne le voit pas).
 - **Résumé de réflexion (thought summary)** : le compte rendu que le modèle donne de son raisonnement, quand on l'active. Ce n'est pas le raisonnement brut.
 - **Coulisses** : ce que GoodVibe montre quand on le lui demande : la réflexion du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Affichées à l'écran, jamais enregistrées.
+- **Fragment** : un morceau de réponse reçu en streaming. Il contient souvent plusieurs tokens : on ne voit pas les tokens un par un.
+- **Relevé** : le décompte affiché sous chaque réponse : tokens d'entrée, de réflexion et de sortie, temps avant le premier mot, durée totale. Ses chiffres viennent de l'API.
 - **Latence** : le temps entre l'envoi d'une requête et la réponse. En streaming, on distingue le temps avant le premier fragment et la durée totale.
 - **CI/CD** : intégration continue (tester à chaque push) et déploiement continu (mettre en ligne automatiquement quand les tests passent).
 - **Sous-agent** : une seconde boucle d'agent, avec son rôle et ses outils, appelée par l'orchestrateur comme un outil.
