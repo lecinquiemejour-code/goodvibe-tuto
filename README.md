@@ -42,6 +42,7 @@ Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai ag
 | Brique | Dans GoodVibe |
 |---|---|
 | Boucle d'agent | Le chat en streaming, avec appels d'outils |
+| Prompt système et réglages | La fiche de poste de GoodVibe, dans un fichier Markdown, et le tempérament du modèle : température, longueur de réponse, réflexion |
 | Cron | Le brief généré chaque matin à 7 h sur le serveur, une seule fois par jour |
 | Webhook | Un pense-bête envoyé depuis votre téléphone via un client HTTP en ligne (Hoppscotch), protégé par un jeton secret |
 | MCP | L'horoscope récupéré via le serveur MCP officiel `fetch` |
