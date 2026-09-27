@@ -5,11 +5,16 @@
 
 > **Note à l'agent de codage.** Ce document est la référence du projet. Au PLAN de chaque feature, tu présentes les trois options telles que la fiche les décrit, en recommandant celle que la fiche retient, et tu expliques pourquoi. Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO.
 >
-> **Modèles : c'est toi qui cherches, c'est le pilote qui choisit.** Ce tuto ne fixe aucun modèle. Au cadrage, avant de rédiger `archi-stack.md`, tu consultes toi-même la documentation officielle de Google (<https://ai.google.dev/gemini-api/docs/models>, <https://ai.google.dev/gemini-api/docs/interactions>, <https://ai.google.dev/gemini-api/docs/pricing>) et tu présentes ta recommandation au pilote, pour le modèle texte puis pour le modèle image : le modèle que tu recommandes et deux alternatives, avec pour chacun l'identifiant exact, le statut, le prix et la raison de ton choix.
+> **Modèles : au moment du besoin, et c'est toi qui cherches.** Ce tuto ne fixe aucun modèle, et tu n'en choisis aucun au cadrage : dans `archi-stack.md`, tu écris « modèle texte : choisi à la fiche 1 ; modèle image : choisi à la fiche 10 ». Au PLAN de la fiche 1, puis au PLAN de la fiche 10, tu consultes toi-même la documentation officielle de Google (<https://ai.google.dev/gemini-api/docs/models>, <https://ai.google.dev/gemini-api/docs/interactions>, <https://ai.google.dev/gemini-api/docs/pricing>) et tu présentes ta recommandation au pilote. Tes critères : pour le texte, le modèle **Gemini Flash stable le plus récent** que Google recommande pour les agents, compatible avec l'API Interactions, les appels d'outils, le streaming et la réflexion ; pour l'image, le modèle **stable le moins coûteux**. Jamais de modèle « preview » ou « experimental ». Tu vérifies de la même façon la syntaxe de l'API et les noms de champs.
 >
-> Tes critères : pour le texte, le modèle **Gemini Flash stable le plus récent** que Google recommande pour les agents, compatible avec l'API Interactions, les appels d'outils, le streaming et la réflexion ; pour l'image, le modèle **stable le moins coûteux**. Jamais de modèle « preview » ou « experimental ».
+> **Comment tu présentes ta recommandation.** C'est une décision à part entière : tu la poses seule, avant les trois options de la fiche, jamais fusionnée avec elles. En quatre temps :
 >
-> Le pilote ne fait aucune recherche : il valide ou choisit une alternative. Tu consignes le choix dans `archi-stack.md` (identifiants, date de la recherche, pages consultées) et dans `config.py` (`MODELE_TEXTE`, `MODELE_IMAGE`). Tu refais la vérification au PLAN des fiches 1 et 10, et à chaque reprise après plus d'un mois d'arrêt. Tu vérifies de la même façon la syntaxe de l'API et les noms de champs. À titre d'exemple, en septembre 2026, cette recherche donnait `gemini-3.8-flash` et `gemini-3.1-flash-lite-image`.
+> 1. **Le pourquoi**, en trois phrases. Le modèle est le « cerveau » que GoodVibe interroge à chaque message. Google en publie plusieurs et les renouvelle souvent : c'est pour cela qu'on choisit aujourd'hui, au lieu de recopier un nom. Ce choix tient en une ligne de `config.py` et se change à tout moment.
+> 2. **Les mots**, selon le profil du pilote. Pour un débutant, tu expliques avant tout identifiant : « token » (l'unité de texte facturée), « stable » et « preview », et les trois familles (Flash-Lite : le plus économique ; Flash : l'équilibre ; Pro : le plus puissant, le plus cher).
+> 3. **Le choix**, dans un tableau de trois lignes qui montrent un vrai compromis : le modèle recommandé, une alternative plus économique, une alternative plus puissante. Jamais trois versions successives du même modèle. Pour chacun : ce qu'il apporte à GoodVibe, et son coût **ramené à l'usage de GoodVibe** (un brief par jour et quelques échanges : combien par mois, en euros), pas seulement le prix par million de tokens.
+> 4. **La question**, une seule : (A) le recommandé, (B) le plus économique, (C) le plus puissant, (D) j'ai une question.
+>
+> Le pilote ne fait aucune recherche : il choisit. Une fois le choix fait, tu l'écris dans `config.py` (`MODELE_TEXTE`, `MODELE_IMAGE`) et tu complètes `archi-stack.md` : identifiant, date de la recherche, pages consultées. À chaque reprise après plus d'un mois d'arrêt, tu vérifies que les modèles retenus sont toujours en service.
 
 ---
 
@@ -32,7 +37,7 @@ Nous démarrons le projet GoodVibe dans ce répertoire vierge.
 Contexte du projet :
 - Le skill VibeCoding Copilote fait loi : suis-le à la lettre (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2).
 - Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Les options du PLAN, les points « À relire » et le CHECK de chaque feature s'y conforment. Ne me dévoile pas les « pièges » avant mon verdict.
-- Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne reprends aucun nom de modèle de mémoire : au cadrage, recherche dans la documentation officielle de Google les modèles recommandés aujourd'hui et présente-moi ta recommandation (texte et image), selon les critères de la note d'en-tête du tuto.
+- Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
 - Profil de calibrage : (2) je code déjà, je découvre le vibe coding.
 
@@ -250,6 +255,14 @@ Deux jobs : **test** à chaque push (le code est installé, vérifié par `ruff`
 
 Un sous-agent est une **seconde boucle d'agent** avec son propre rôle, ses propres outils et sa propre mémoire de travail, appelée par l'orchestrateur comme un outil parmi d'autres. On délègue pour trois raisons : un contexte plus léger pour l'orchestrateur, des outils cloisonnés, un journal plus lisible. On y viendra en **version 2**, après avoir déployé une version 1 à agent unique qui fonctionne. On ne complexifie une architecture que quand le besoin est là, et on le fait par refactorisation d'un code qui marche.
 
+### 2.8 Choisir un modèle
+
+Le modèle est le « cerveau » que GoodVibe interroge à chaque message. Google en propose plusieurs familles : **Flash-Lite**, le plus économique ; **Flash**, l'équilibre entre prix et capacité ; **Pro**, le plus puissant et le plus cher. Un modèle « stable » ne changera pas sous vos pieds ; un modèle « preview » est un essai que Google peut retirer sans délai.
+
+On paie à l'usage, au **token** : un morceau de mot. Pour un agent personnel comme GoodVibe (un brief par jour, quelques échanges), la facture se compte en général en centimes par mois ; l'agent vous donnera le chiffre du jour.
+
+Google renouvelle ses modèles plusieurs fois par an et retire les anciens. **Ce tuto ne vous en impose donc aucun** : à la fiche 1 pour le texte, à la fiche 10 pour l'image, l'agent consulte la documentation du jour, vous explique les choix possibles et vous recommande un modèle. Vous choisissez. Ce choix tient en une ligne de `config.py` et se change à tout moment.
+
 ---
 
 ## 3. Le PRD de GoodVibe et les règles du projet
@@ -292,7 +305,7 @@ Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la 
 
 1. **Mise en ligne** : « La publication se fait sur le VPS via GitHub Actions, pas sur Netlify. Le GO MISE EN LIGNE déclenche le push sur `main` et le pipeline. »
 2. **CHECK** : « Le test humain ne passe pas toujours par un navigateur : selon la feature, il se fait dans le terminal, avec `curl`, dans l'onglet Activité ou dans la page Gradio. Le critère de réussite du `plan-action.md` précise lequel. »
-3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui choisit. Ne pas proposer un autre fournisseur sans demande explicite. »
+3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui choisit, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
 5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : options du PLAN, exigences de code et CHECK de chaque feature s'y conforment. »
 
@@ -337,7 +350,7 @@ Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du cod
 Le skill rédige chaque document, l'écrit réellement sur le disque, vous le montre, et attend votre validation avant le suivant. Voici ce que vous devez vérifier.
 
 **`archi-stack.md`**
-Le skill propose normalement 2 ou 3 stacks. Comme le PRD impose la stack, il doit proposer des **variantes d'organisation du code**, pas des technologies différentes. Attendez-vous à : (une) tout dans deux ou trois gros fichiers ; (une autre) un fichier par responsabilité ; (une troisième) une organisation en paquets Python. Retenez **un fichier par responsabilité** : c'est ce qui rend chaque feature lisible et testable seule. Le document fige aussi la commande de lancement local (le chat terminal et Gradio sur le port 7860 dès les premières features, le webhook sur le port 8000 à la fin). Vérifiez que la ligne « Hébergement / déploiement » dit VPS + GitHub Actions, pas Netlify. **La recommandation de modèles** : vous n'avez rien à chercher. L'agent a consulté la documentation de Google et vous a présenté, pour le texte et pour l'image, un modèle recommandé et deux alternatives avec leur prix. Vérifiez que `archi-stack.md` cite les modèles retenus, la date de la recherche et les pages consultées. S'il a recopié un nom sans source, demandez-lui de refaire la recherche.
+Le skill propose normalement 2 ou 3 stacks. Comme le PRD impose la stack, il doit proposer des **variantes d'organisation du code**, pas des technologies différentes. Attendez-vous à : (une) tout dans deux ou trois gros fichiers ; (une autre) un fichier par responsabilité ; (une troisième) une organisation en paquets Python. Retenez **un fichier par responsabilité** : c'est ce qui rend chaque feature lisible et testable seule. Le document fige aussi la commande de lancement local (le chat terminal et Gradio sur le port 7860 dès les premières features, le webhook sur le port 8000 à la fin). Vérifiez que la ligne « Hébergement / déploiement » dit VPS + GitHub Actions, pas Netlify. **Les modèles ne se choisissent pas au cadrage** : `archi-stack.md` doit dire « modèle texte : choisi à la fiche 1 ; modèle image : choisi à la fiche 10 ». Si l'agent vous propose des modèles dès maintenant, dites-lui d'attendre : on choisit un modèle quand on s'apprête à s'en servir (section 2.8).
 
 **`fdd.md`**
 La liste des features, formulées « action, résultat, objet » (« afficher le brief du jour »). Vérifiez qu'elles correspondent à la liste de la section 5 (quinze features) et que le **tableau de couverture** relie chaque fonction du PRD à une feature. Si une manque, réclamez-la : le skill vous demande explicitement de confirmer le découpage, ne validez pas à l'aveugle.
@@ -434,7 +447,9 @@ sequenceDiagram
 
 **Ce que fait l'agent** : vérifie que Python 3.12 et Git sont installés, et les installe sinon (gestionnaire de paquets du système : `winget` sur Windows, `brew` sur macOS, `apt` sur Ubuntu) ; crée le venv ; `requirements.txt` (`google-genai`, `python-dotenv`, `httpx`) ; `.env.example` ; `.gitignore` (venv, `.env`, `data/`) ; `config.py` (lecture des variables d'environnement, une seule source de vérité) ; `agent.py` (la boucle, l'appel en streaming, le nombre maximal de tours) ; `chat_terminal.py`. Il lance le chat.
 
-**Ce que vous faites** : créer votre clé sur https://aistudio.google.com/apikey et la coller dans `.env` sous `GEMINI_API_KEY`. C'est la seule action manuelle de la fiche.
+**Ce que vous faites** : choisir le modèle texte parmi les trois que l'agent vous présente ; créer votre clé sur https://aistudio.google.com/apikey et la coller dans `.env` sous `GEMINI_API_KEY`. C'est la seule action manuelle de la fiche.
+
+**Le choix du modèle texte** : au PLAN, avant les trois options, l'agent vous présente sa recherche du jour : pourquoi on choisit, les mots à connaître, un tableau de trois modèles (le recommandé, un plus économique, un plus puissant) avec leur coût mensuel pour GoodVibe. Vous répondez par une lettre. Si le tableau aligne trois versions du même modèle ou des prix sans explication, demandez-lui de recommencer (section 2.8).
 
 **Options attendues** : (une) boucle écrite à la main avec le SDK, **recommandée** : on voit chaque étape ; (une autre) boucle encapsulée dans une classe `Agent` ; (une troisième) mini-framework d'agent. Le tuto retient la première : le sujet est la boucle, il faut la voir.
 
@@ -900,7 +915,9 @@ sequenceDiagram
 
 **Ce que fait l'agent** : `image.py` ; appel du modèle image via l'API Interactions (`model=MODELE_IMAGE`, lecture de `interaction.output_image.data` en base64) ; `gr.Image` dans l'onglet Brief et affichage dans le chat sur « montre-moi l'image du jour » ; `allowed_paths=["data/images"]` au lancement de Gradio ; comptage des images à part dans le journal.
 
-**Ce que vous faites** : vérifier dans AI Studio que votre plan donne accès au modèle image et connaître son quota.
+**Ce que vous faites** : choisir le modèle image parmi ceux que l'agent vous présente ; vérifier dans AI Studio que votre plan y donne accès et connaître son quota.
+
+**Le choix du modèle image** : au PLAN, avant les trois options, l'agent refait pour l'image la recherche de la fiche 1 : un tableau de trois modèles (le recommandé, le moins coûteux, le plus fidèle) avec le prix par image et le coût mensuel pour GoodVibe, à raison d'une image par jour. Vous répondez par une lettre.
 
 **Options attendues** : (une) prompt visuel composé par le modèle texte, **recommandée** : c'est l'agent qui crée, et le prompt est journalisé ; (une autre) prompt par gabarit fixe rempli en Python ; (une troisième) image choisie dans une banque locale selon la météo. La troisième sert de plan B.
 
