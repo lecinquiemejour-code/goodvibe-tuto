@@ -116,8 +116,8 @@ Nous démarrons le projet GoodVibe dans ce répertoire vierge.
 Étape 2 : lance le vibecoding sur GoodVibe-PRD.md.
 
 Contexte du projet :
-- Le skill VibeCoding Copilote fait loi : suis-le à la lettre (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2).
-- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Les options du PLAN, les points « À relire » et le CHECK de chaque feature s'y conforment. Ne me dévoile pas les « pièges » avant mon verdict.
+- Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les quatre règles de la note d'en-tête du tuto, qui priment sur lui.
+- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
 - Profil de calibrage : (2) je code déjà, je découvre le vibe coding.
@@ -175,7 +175,7 @@ flowchart TD
     G --> H["Version 2 : sous-agents<br/>(nouveau cycle PDCA)"]
 ```
 
-Chaque feature suit la même boucle **PDCA** : l'agent propose un **PLAN** (trois options, une recommandée) → vous donnez le **GO #1** → l'agent **code** → vous faites le **CHECK** → **GO #2** → commit.
+Chaque feature suit la même boucle **PDCA** : l'agent présente son **PLAN** (la solution du tuto, expliquée) → vous donnez le **GO #1** → l'agent **code** → vous faites le **CHECK** → **GO #2** → commit.
 
 Tout tourne **en local jusqu'à la feature 12 incluse** : vous avez un produit complet sur votre machine avant de dépenser un centime d'hébergement. Les deux déclencheurs autonomes, le cron et le webhook, n'arrivent qu'avec le serveur : c'est là qu'ils ont un sens.
 
@@ -202,7 +202,7 @@ Tout tourne **en local jusqu'à la feature 12 incluse** : vous avez un produit c
 Imposée par le PRD. C'est l'agent qui l'installe.
 
 - **Langage** : Python 3.12
-- **IA** : SDK `google-genai` (API Interactions). Les modèles ne sont pas imposés : au moment où une feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), l'agent recherche dans la [documentation de Google](https://ai.google.dev/gemini-api/docs/models) ceux qui sont recommandés ce jour-là (le Gemini Flash stable le plus récent pour le texte, le modèle image stable le moins coûteux) et vous présente sa recommandation. Vous choisissez.
+- **IA** : SDK `google-genai` (API Interactions). Les modèles ne sont pas imposés : au moment où une feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), l'agent recherche dans la [documentation de Google](https://ai.google.dev/gemini-api/docs/models) ceux qui sont recommandés ce jour-là (le Gemini Flash stable le plus récent pour le texte, le modèle image stable le moins coûteux) et vous recommande un modèle, en l'expliquant. Vous validez.
 - **Web** : FastAPI + uvicorn (webhook), Gradio (page web)
 - **Données** : SQLite
 - **Outils** : bibliothèque `mcp` (client MCP), `httpx`, `logging`
