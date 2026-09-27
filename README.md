@@ -1,7 +1,17 @@
-# GoodVibe : construire un agent Python autonome en vibe coding
+# Apprendre à créer et héberger des agents autonomes en Python
 
-> Un tuto complet pour construire, pas à pas avec un agent de codage, un vrai agent IA en production : webhook, cron, MCP, mémoire, observabilité, VPS et sous-agents.
+> **Ceci est un projet pédagogique.** Son but n'est pas de livrer une application, mais de vous apprendre à **concevoir, coder et mettre en production un agent IA autonome écrit en Python**, pas à pas, en vibe coding.
 > Par **Le Cinquième Jour** · Version 1.0 · septembre 2026
+
+## 🎯 Un projet pour apprendre
+
+À la fin de ce parcours, vous saurez :
+
+- **créer** un agent autonome en Python : un programme qui raisonne avec un modèle d'IA, appelle des outils, garde une mémoire et se déclenche tout seul (cron, webhook) ;
+- **l'observer** : voir ce qu'il fait, ce qu'il sait et ce qu'il coûte ;
+- **l'héberger** : le déployer sur votre propre serveur (VPS), en HTTPS, mis à jour automatiquement à chaque modification.
+
+Pour apprendre tout cela sur du concret, vous construisez un agent complet : **GoodVibe**. Ce n'est qu'un prétexte, un fil rouge. Ce qui compte, ce sont les briques que vous apprenez à assembler, réutilisables pour n'importe quel autre agent.
 
 ---
 
