@@ -332,7 +332,7 @@ Le skill propose normalement 2 ou 3 stacks. Comme le PRD impose la stack, il doi
 La liste des features, formulées « action, résultat, objet » (« afficher le brief du jour »). Vérifiez qu'elles correspondent à la liste de la section 5 (quinze features) et que le **tableau de couverture** relie chaque fonction du PRD à une feature. Si une manque, réclamez-la : le skill vous demande explicitement de confirmer le découpage, ne validez pas à l'aveugle.
 
 **`plan-action.md`**
-L'ordre des features et leur **critère de réussite**. L'ordre attendu est celui de la section 5 : la page web dès la feature 2, pour que chaque feature suivante soit visible dans le navigateur ; le journal d'activité juste après (feature 3) pour que tout le reste soit observable ; la base et le profil avant le brief ; les tests avant le VPS ; le CI/CD après le VPS ; le webhook en dernier, après la mise en ligne, pour être la première feature déployée par le pipeline. Ce document est **vivant** : il sera mis à jour à chaque tour, et c'est lui que vous relirez pour reprendre une session interrompue.
+L'ordre des features et leur **critère de réussite**. L'ordre attendu est celui de la section 5 : la page web dès la feature 2, pour que chaque feature suivante soit visible dans le navigateur ; le journal d'activité juste après (feature 3) pour que tout le reste soit observable ; la base et le profil avant le brief ; les tests avant le VPS ; le cron avec le serveur (feature 13) ; le CI/CD après le VPS ; le webhook en dernier, après la mise en ligne, pour être la première feature déployée par le pipeline. Ce document est **vivant** : il sera mis à jour à chaque tour, et c'est lui que vous relirez pour reprendre une session interrompue.
 
 **Le sas**
 Avant d'entrer en construction, le skill vous demandera de **citer le critère de réussite de la première feature**, en ouvrant `plan-action.md`. Ce n'est pas un piège : c'est pour garantir que vous avez réellement lu un document de cadrage. Puis il fait un **commit de cadrage** (les quatre documents et le `CLAUDE.md`) : c'est le point de reprise propre du projet.
@@ -364,7 +364,7 @@ L'ordre des quinze features est celui du `plan-action.md` :
 | 3 | [Journal d'activité](#fiche-3--journal-dactivité) | Terminal + navigateur + DB Browser |
 | 4 | [Base et profil](#fiche-4--base-et-profil) | Terminal + navigateur + DB Browser |
 | 5 | [Oublier l'utilisateur](#fiche-5--oublier-lutilisateur) | Terminal + DB Browser |
-| 6 | [Brief du matin et cron](#fiche-6--brief-du-matin-et-cron) | Terminal + navigateur + DB Browser |
+| 6 | [Brief du matin](#fiche-6--brief-du-matin) | Terminal + navigateur + DB Browser |
 | 7 | [Météo](#fiche-7--météo) | Terminal |
 | 8 | [Horoscope via MCP](#fiche-8--horoscope-via-mcp) | Terminal + journal |
 | 9 | [Onglets Mémoire et Activité](#fiche-9--onglets-mémoire-et-activité) | Navigateur |
@@ -663,15 +663,15 @@ sequenceDiagram
 
 ---
 
-### Fiche 6 : brief du matin et cron
+### Fiche 6 : brief du matin
 
-**Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » à 7 h (ou quand vous cliquez « Générer le brief maintenant »), et si vous relancez le cron, il refuse poliment d'en faire un second.
+**Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » quand vous cliquez « Générer le brief maintenant » ou lancez `cron_brief.py`, et si vous relancez, il refuse poliment d'en faire un second. L'heure fixe (7 h) viendra avec le serveur, à la fiche 13 : un cron n'a de sens que sur une machine allumée en permanence.
 
-**Ce qu'on construit** : `generer_brief()` (pour l'instant une phrase d'accueil personnalisée et les notes ; horoscope et météo arrivent aux fiches 7 et 8), les tables `briefs` et `traites`, le point d'entrée `cron_brief.py`, la ligne `crontab`, un paramètre `--forcer`, l'onglet « Brief du jour » et son bouton « Générer le brief maintenant » dans la page web.
+**Ce qu'on construit** : `generer_brief()` (pour l'instant une phrase d'accueil personnalisée et les notes ; horoscope et météo arrivent aux fiches 7 et 8), les tables `briefs` et `traites`, le point d'entrée `cron_brief.py` (celui que le cron du serveur appellera à la fiche 13), un paramètre `--forcer`, l'onglet « Brief du jour » et son bouton « Générer le brief maintenant » dans la page web.
 
 ```mermaid
 sequenceDiagram
-    participant C as cron (7h00)
+    participant C as lancement à la main<br/>(cron du serveur à la fiche 13)
     participant S as cron_brief.py
     participant B as brief.py
     participant D as SQLite
@@ -690,19 +690,19 @@ sequenceDiagram
     end
 ```
 
-**Ce que fait l'agent** : `brief.py` ; `cron_brief.py` avec `--forcer` ; tables ; la ligne `crontab` avec le **chemin absolu** du Python du venv et un log redirigé vers un fichier ; installation de la ligne dans votre crontab (ou un timer `systemd` en alternative, mentionné, pas construit) ; onglet « Brief du jour » dans `interface.py`, dont le bouton appelle `generer_brief(forcer=True)` et rafraîchit l'onglet.
+**Ce que fait l'agent** : `brief.py` ; `cron_brief.py` avec `--forcer`, lancé avec le Python du venv ; tables ; onglet « Brief du jour » dans `interface.py`, dont le bouton appelle `generer_brief(forcer=True)` et rafraîchit l'onglet.
 
 **Ce que vous faites** : rien.
 
 **Options attendues** : (une) anti-doublon par une clé date dans la table `traites`, **recommandée** : lisible, survit au redémarrage, réutilisable pour l'image ; (une autre) fichier marqueur sur le disque ; (une troisième) verrou de processus.
 
-**À relire** : `generer_brief()` **ne sait pas** si elle est appelée par le cron ou par le bouton de la page web ; le journal indique « brief déjà produit » au second lancement ; `--forcer` est réservé aux tests et journalisé comme tel.
+**À relire** : `generer_brief()` **ne sait pas** si elle est appelée par `cron_brief.py` ou par le bouton de la page web ; le journal indique « brief déjà produit » au second lancement ; `--forcer` est réservé aux tests et journalisé comme tel.
 
-**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Dans la page web, cliquez « Générer le brief maintenant » et lisez le brief dans l'onglet. Pour voir le cron lui-même, l'agent peut poser une entrée à l'heure suivante et vous constatez la ligne le moment venu.
+**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Dans la page web, cliquez « Générer le brief maintenant » et lisez le brief dans l'onglet.
 
-**Pièges** : `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; variables d'environnement absentes dans l'environnement du cron (charger `.env` explicitement dans `config.py`) ; fuseau horaire du serveur différent du vôtre (à noter pour le VPS) ; deux processus (Gradio et le cron) qui écrivent en base en même temps sans fermer leurs connexions.
+**Pièges** : `cron_brief.py` lancé sans le Python du venv (modules introuvables) ; `.env` non chargé quand le script est lancé hors du terminal (le charger explicitement dans `config.py`, le cron du serveur en aura besoin) ; deux processus (Gradio et `cron_brief.py`) qui écrivent en base en même temps sans fermer leurs connexions.
 
-**Où on en est** : GoodVibe parle, retient, et produit un brief chaque matin, une seule fois : trois déclencheurs sur quatre sont là (terminal, page web, cron). Fichiers ajoutés : `brief.py`, `cron_brief.py`.
+**Où on en est** : GoodVibe parle, retient, et produit un brief à la demande, une seule fois par jour : deux déclencheurs sur quatre (terminal, page web) ; le cron et le webhook arriveront avec le serveur. Fichiers ajoutés : `brief.py`, `cron_brief.py`.
 
 ```mermaid
 flowchart TD
@@ -971,7 +971,7 @@ flowchart LR
 
 **Options attendues** : (une) `pytest` avec simulations (mocks) du modèle et des API, **recommandée** : rapide, gratuit, reproductible ; (une autre) tests d'intégration réels contre les vraies API (lents, coûteux, cassent quand une API bouge) ; (une troisième) pas de tests (le PRD l'exclut : la CI en a besoin).
 
-**À relire** : **aucun test ne fait un vrai appel réseau** ; le test du cron couvre l'anti-doublon ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
+**À relire** : **aucun test ne fait un vrai appel réseau** ; le test du brief couvre l'anti-doublon ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
 
 **CHECK** : `pytest` vert, `ruff` sans erreur. Demandez à l'agent de casser volontairement `signe_depuis_date()` : un test rougit. Il répare, tout revient au vert.
 
@@ -985,7 +985,7 @@ flowchart LR
 
 **Ce que vous verrez** : GoodVibe répond sur `https://goodvibe.votre-domaine.fr` avec le cadenas, depuis n'importe où, et son brief tombe à 7 h sans que votre ordinateur soit allumé.
 
-**Ce qu'on construit** : le serveur prêt à recevoir GoodVibe : utilisateur dédié non root, code déployé, venv, un service `systemd` (interface), Caddy en HTTPS, cron, pare-feu, sauvegarde nocturne de la base, clé SSH de déploiement pour la fiche 14.
+**Ce qu'on construit** : le serveur prêt à recevoir GoodVibe : utilisateur dédié non root, code déployé, venv, un service `systemd` (interface), Caddy en HTTPS, le cron du brief à 7 h (premier déclencheur autonome), pare-feu, sauvegarde nocturne de la base, clé SSH de déploiement pour la fiche 14.
 
 ```mermaid
 flowchart TD
@@ -997,17 +997,17 @@ flowchart TD
     SSH["SSH par clé uniquement<br/>utilisateur goodvibe, sudo limité"] -.-> GR
 ```
 
-**Ce que fait l'agent** : installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, clone du dépôt, venv, installation de `uvx` pour le serveur MCP, fichiers `deploy/goodvibe-web.service`, `deploy/Caddyfile` versionnés dans le dépôt, règle `sudoers` limitée au `systemctl restart` du service, crontab, script de sauvegarde, création d'une paire de clés SSH dédiée au déploiement (clé publique installée, clé privée remise à vous pour la fiche 14).
+**Ce que fait l'agent** : installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, clone du dépôt, venv, installation de `uvx` pour le serveur MCP, fichiers `deploy/goodvibe-web.service`, `deploy/Caddyfile` versionnés dans le dépôt, règle `sudoers` limitée au `systemctl restart` du service, la ligne `crontab` de l'utilisateur `goodvibe` (7 h, **chemin absolu** du Python du venv, log redirigé vers un fichier), script de sauvegarde, création d'une paire de clés SSH dédiée au déploiement (clé publique installée, clé privée remise à vous pour la fiche 14).
 
 **Ce que vous faites** : créer le compte Hetzner et un jeton API dédié (révocable) ; pointer un sous-domaine vers l'IP du serveur (enregistrement A chez votre registrar) ; copier les secrets dans le `.env` du serveur (l'agent vous indique lesquels et vous guide, il ne doit jamais les voir passer dans le chat si vous préférez les saisir vous-même en SSH).
 
 **Options attendues** : (une) installation directe avec `systemd` et Caddy, **recommandée** : tout est lisible, aucun conteneur à expliquer ; (une autre) Docker Compose ; (une troisième) Coolify (une interface web qui déploie depuis GitHub). Les deux dernières en fin de tuto.
 
-**À relire** : aucun service ne tourne en root ; `.env` en `chmod 600` ; Caddy est le seul exposé sur 80 et 443, Gradio écoute sur `127.0.0.1` ; la base est hors du dossier synchronisé par Git ; les fichiers de service ont `Restart=always`.
+**À relire** : aucun service ne tourne en root ; `.env` en `chmod 600` ; Caddy est le seul exposé sur 80 et 443, Gradio écoute sur `127.0.0.1` ; la base est hors du dossier synchronisé par Git ; les fichiers de service ont `Restart=always` ; le cron charge `.env` via `config.py`, pas l'environnement du shell.
 
 **CHECK** : `https://goodvibe.votre-domaine.fr` répond avec le cadenas, connexion, brief généré via le bouton ; `journalctl -u goodvibe-web -f` montre le service vivant ; le lendemain, un brief en base à 7 h (heure du serveur : vérifiez le fuseau).
 
-**Pièges** : DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; crontab posé pour le mauvais utilisateur ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
+**Pièges** : DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; crontab posé pour le mauvais utilisateur ; `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
 
 **Où on en est** : GoodVibe est en production, mais toute mise à jour demande encore une connexion SSH. Fichiers ajoutés : `deploy/`.
 
