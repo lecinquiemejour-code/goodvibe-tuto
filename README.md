@@ -42,8 +42,8 @@ Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai ag
 | Brique | Dans GoodVibe |
 |---|---|
 | Boucle d'agent | Le chat en streaming, avec appels d'outils |
-| Cron | Le brief généré chaque matin à 7 h, une seule fois par jour |
-| Webhook | Un pense-bête envoyé depuis votre téléphone, protégé par un jeton secret |
+| Cron | Le brief généré chaque matin à 7 h sur le serveur, une seule fois par jour |
+| Webhook | Un pense-bête envoyé depuis votre téléphone via un client HTTP en ligne (Hoppscotch), protégé par un jeton secret |
 | MCP | L'horoscope récupéré via le serveur MCP officiel `fetch` |
 | Mémoire | Le profil, les notes et les conversations en SQLite, avec « Oublie-moi » |
 | Observabilité | Un journal d'activité : tokens, latence, coût en euros |
@@ -81,6 +81,12 @@ Le principe : **l'agent de codage fait, vous pilotez.** L'agent écrit le code, 
 
 Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils manquent.
 
+## Ce qui est gratuit, ce qui coûte
+
+- **Gratuit** : Antigravity, la clé Gemini en plan gratuit (avec des quotas : c'est pour cela que Claude Code est recommandé en relais), Open-Meteo et l'API horoscope (sans clé), GitHub et son pipeline GitHub Actions (le quota gratuit suffit largement).
+- **Payant, à partir de la fiche 13 seulement** : le VPS (quelques euros par mois chez Hetzner, résiliable à tout moment) et un nom de domaine ou sous-domaine si vous n'en avez pas. Jusque-là, tout tourne sur votre machine sans dépenser un centime.
+- **À surveiller** : la génération d'images (fiche 10) dépend du quota de votre plan Google AI ; le tuto prévoit un repli si le quota est atteint.
+
 ---
 
 ## 🚀 Démarrage rapide
@@ -89,16 +95,16 @@ Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils
 
 Créez un dossier vide (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE**.
 
-### 2. Déposez les deux fichiers du tuto
+### 2. Récupérez les deux fichiers du tuto
 
-Copiez dans ce dossier **uniquement** ces deux fichiers :
+Ce dépôt est privé : vous avez reçu une **invitation GitHub par mail**. Acceptez-la, connectez-vous à GitHub, puis sur la page d'accueil du dépôt cliquez sur le bouton vert **`<> Code`** → **Download ZIP**. Ouvrez l'archive et copiez dans votre dossier vierge **uniquement** ces deux fichiers :
 
 - `GoodVibe-PRD.md`
 - `tuto-goodvibe-vibecoding.md`
 
-Pour les récupérer, ouvrez chaque fichier sur GitHub et cliquez sur l'icône **Download raw file** (flèche vers le bas, en haut à droite du fichier).
+> ⚠️ Rien d'autre : pas de venv, pas de Git, pas de skill, et pas le `README.md`. Ne clonez pas ce dépôt dans votre dossier de travail : l'agent initialisera lui-même **votre** dépôt Git. L'agent s'occupe du reste.
 
-> ⚠️ Rien d'autre : pas de venv, pas de Git, pas de skill. Ne clonez pas ce dépôt dans votre dossier de travail : l'agent initialisera lui-même **votre** dépôt Git. L'agent s'occupe du reste.
+> 💡 Les schémas du tuto sont en Mermaid : ils s'affichent sur GitHub, mais pas dans l'aperçu Markdown d'Antigravity sans extension. Lisez le tuto **sur GitHub**, ou installez l'extension *Markdown Preview Mermaid Support* dans l'IDE.
 
 ### 3. Collez ce prompt dans l'agent d'Antigravity
 
@@ -118,6 +124,8 @@ Contexte du projet :
 
 Commence par l'étape 1.
 ```
+
+> 💡 **Claude Code plutôt que l'agent Gemini d'Antigravity ?** Remplacez, dans l'étape 1 du prompt, `.agent/skills/vibecoding-copilote/` par `~/.claude/skills/vibecoding-copilote/` : c'est là que Claude Code cherche ses skills.
 
 ### 4. Si l'agent demande un redémarrage
 
@@ -139,6 +147,17 @@ Un seul prompt suffit :
 reprends le vibecoding sur GoodVibe
 ```
 
+## Si ça coince
+
+| Symptôme | Que faire |
+|---|---|
+| L'agent écrit du code d'emblée, sans se présenter ni poser la question de calibrage | Le skill n'est pas chargé : vérifiez que `SKILL.md` est dans le dossier des skills, redémarrez la session d'agent, recollez le prompt de reprise. |
+| L'agent code ou modifie des fichiers sans attendre votre GO | Rappelez-lui la **Règle 0** du `CLAUDE.md` : jamais de code sans GO. S'il récidive, redémarrez la session, le fichier de règles est relu. |
+| « Quota exceeded », réponses qui s'arrêtent : le plan gratuit Gemini est épuisé | Attendez le renouvellement, ou passez le relais à **Claude Code** avec « reprends le vibecoding sur GoodVibe ». |
+| Vous reprenez après plusieurs jours sans savoir où vous en êtes | Ouvrez `plan-action.md` dans votre projet : il dit quelle feature est « fait » et laquelle est en cours. Puis « reprends le vibecoding sur GoodVibe ». |
+| Un CHECK est KO et l'agent n'arrive pas à réparer | Chaque fiche du tuto a une rubrique **Pièges** : donnez-la à lire à l'agent, elle liste les causes classiques. |
+| Sur GitHub, les schémas affichent « Unable to render rich display » | Ce n'est pas le tuto : une extension du navigateur empêche GitHub de dessiner les schémas. Ouvrez la page en navigation privée, ou désactivez les extensions une par une pour trouver la fautive. |
+
 ---
 
 ## Le parcours
@@ -147,34 +166,35 @@ reprends le vibecoding sur GoodVibe
 flowchart TD
     A["Skill installé par l'agent,<br/>clé Gemini créée par vous"] --> B["PRD et tuto déposés dans le projet<br/>(vous)"]
     B --> C["Cadrage : architecture et stack, FDD, plan d'action<br/>(l'agent rédige, vous validez)"]
-    C --> D["15 features V1, une par une<br/>(l'agent code, vous testez)"]
-    D --> E["Installation du VPS et CI/CD<br/>(l'agent configure, vous fournissez les secrets)"]
+    C --> D["Features 1 à 12, en local, une par une<br/>(l'agent code, vous testez)"]
+    D --> E["Features 13 et 14 : VPS et CI/CD<br/>(l'agent configure, vous fournissez les secrets)"]
     E --> F["GO MISE EN LIGNE<br/>(vous vérifiez l'URL publique)"]
-    F --> G["Walkthrough, post-mortem, pistes<br/>(l'agent rédige, vous relisez)"]
+    F --> F2["Feature 15 : le webhook,<br/>déployé par le pipeline"]
+    F2 --> G["Walkthrough, post-mortem, pistes<br/>(l'agent rédige, vous relisez)"]
     G --> H["Version 2 : sous-agents<br/>(nouveau cycle PDCA)"]
 ```
 
 Chaque feature suit la même boucle **PDCA** : l'agent propose un **PLAN** (trois options, une recommandée) → vous donnez le **GO #1** → l'agent **code** → vous faites le **CHECK** → **GO #2** → commit.
 
-Tout tourne **en local jusqu'à la feature 13 incluse** : vous avez un produit complet sur votre machine avant de dépenser un centime d'hébergement.
+Tout tourne **en local jusqu'à la feature 12 incluse** : vous avez un produit complet sur votre machine avant de dépenser un centime d'hébergement. Les deux déclencheurs autonomes, le cron et le webhook, n'arrivent qu'avec le serveur : c'est là qu'ils ont un sens.
 
 **Les 15 fiches de la version 1** (détaillées dans le tuto, section 5) :
 
 1. Squelette et chat terminal
-2. Journal d'activité
-3. Base et profil
-4. Oublier l'utilisateur
-5. Brief du matin et cron
-6. Météo
-7. Horoscope via MCP
-8. Webhook pense-bête
-9. Page web
-10. Onglets Mémoire et Activité
-11. Image du jour
-12. Budget et mode économe
-13. Tests automatisés
-14. Installation du VPS
-15. CI/CD GitHub Actions, puis GO MISE EN LIGNE
+2. Page web
+3. Journal d'activité
+4. Base et profil
+5. Oublier l'utilisateur
+6. Brief du matin
+7. Météo
+8. Horoscope via MCP
+9. Onglets Mémoire et Activité
+10. Image du jour
+11. Budget et mode économe
+12. Tests automatisés
+13. Installation du VPS, et le cron du matin
+14. CI/CD GitHub Actions, puis GO MISE EN LIGNE
+15. Webhook pense-bête, déployé par le pipeline
 
 ## Stack technique
 
@@ -191,7 +211,7 @@ Imposée par le PRD. C'est l'agent qui l'installe.
 ## Règles d'or
 
 - **Aucun secret dans le code** : les clés et mots de passe vont dans le fichier `.env`, qui n'est jamais commité.
-- **Aucune donnée personnelle** dans les logs, les tests ou le dépôt Git. Utilisez un **profil fictif** pour la démo.
+- **Aucune donnée personnelle** dans les logs, les tests ou le dépôt Git. Utilisez un **profil fictif** pour la démo : le tuto prend Marc, né le 12 mars 1988, habitant Lyon, amateur de vélo. Reprenez-le tel quel.
 - **C'est vous qui jugez** chaque étape. Ne donnez jamais un GO sans avoir testé.
 
 ## Liens

@@ -30,6 +30,8 @@ Contexte du projet :
 Commence par l'étape 1.
 ```
 
+> Si vous utilisez **Claude Code** plutôt que l'agent Gemini d'Antigravity, remplacez dans l'étape 1 `.agent/skills/vibecoding-copilote/` par `~/.claude/skills/vibecoding-copilote/` : c'est là que Claude Code cherche ses skills.
+
 Si l'agent demande un redémarrage après l'installation du skill, redémarrez la session et collez simplement : **« lance le vibecoding sur GoodVibe-PRD.md, en suivant le contexte du prompt précédent »**. Ce prompt reprend les cinq lignes du `CLAUDE.md` pour couvrir le premier lancement, avant que le skill dépose le fichier de règles. Pour les sessions suivantes, **« reprends le vibecoding sur GoodVibe »** suffit. Tout le reste du document explique ce qui va se passer et ce que vous devez vérifier à chaque étape.
 
 ---
