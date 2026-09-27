@@ -326,13 +326,13 @@ Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du cod
 Le skill rédige chaque document, l'écrit réellement sur le disque, vous le montre, et attend votre validation avant le suivant. Voici ce que vous devez vérifier.
 
 **`archi-stack.md`**
-Le skill propose normalement 2 ou 3 stacks. Comme le PRD impose la stack, il doit proposer des **variantes d'organisation du code**, pas des technologies différentes. Attendez-vous à : (une) tout dans deux ou trois gros fichiers ; (une autre) un fichier par responsabilité ; (une troisième) une organisation en paquets Python. Retenez **un fichier par responsabilité** : c'est ce qui rend chaque feature lisible et testable seule. Le document fige aussi la commande de lancement local (le chat terminal au début, puis Gradio sur le port 7860 et le webhook sur le port 8000). Vérifiez que la ligne « Hébergement / déploiement » dit VPS + GitHub Actions, pas Netlify.
+Le skill propose normalement 2 ou 3 stacks. Comme le PRD impose la stack, il doit proposer des **variantes d'organisation du code**, pas des technologies différentes. Attendez-vous à : (une) tout dans deux ou trois gros fichiers ; (une autre) un fichier par responsabilité ; (une troisième) une organisation en paquets Python. Retenez **un fichier par responsabilité** : c'est ce qui rend chaque feature lisible et testable seule. Le document fige aussi la commande de lancement local (le chat terminal et Gradio sur le port 7860 dès les premières features, le webhook sur le port 8000 à la fin). Vérifiez que la ligne « Hébergement / déploiement » dit VPS + GitHub Actions, pas Netlify.
 
 **`fdd.md`**
 La liste des features, formulées « action, résultat, objet » (« afficher le brief du jour »). Vérifiez qu'elles correspondent à la liste de la section 5 (quinze features) et que le **tableau de couverture** relie chaque fonction du PRD à une feature. Si une manque, réclamez-la : le skill vous demande explicitement de confirmer le découpage, ne validez pas à l'aveugle.
 
 **`plan-action.md`**
-L'ordre des features et leur **critère de réussite**. L'ordre attendu est celui de la section 5 : le journal d'activité arrive tôt (feature 2) pour que tout le reste soit observable ; la base et le profil avant le brief ; la page web avant l'image ; les tests avant le VPS ; le CI/CD après le VPS ; le webhook en dernier, après la mise en ligne, pour être la première feature déployée par le pipeline. Ce document est **vivant** : il sera mis à jour à chaque tour, et c'est lui que vous relirez pour reprendre une session interrompue.
+L'ordre des features et leur **critère de réussite**. L'ordre attendu est celui de la section 5 : la page web dès la feature 2, pour que chaque feature suivante soit visible dans le navigateur ; le journal d'activité juste après (feature 3) pour que tout le reste soit observable ; la base et le profil avant le brief ; les tests avant le VPS ; le CI/CD après le VPS ; le webhook en dernier, après la mise en ligne, pour être la première feature déployée par le pipeline. Ce document est **vivant** : il sera mis à jour à chaque tour, et c'est lui que vous relirez pour reprendre une session interrompue.
 
 **Le sas**
 Avant d'entrer en construction, le skill vous demandera de **citer le critère de réussite de la première feature**, en ouvrant `plan-action.md`. Ce n'est pas un piège : c'est pour garantir que vous avez réellement lu un document de cadrage. Puis il fait un **commit de cadrage** (les quatre documents et le `CLAUDE.md`) : c'est le point de reprise propre du projet.
@@ -360,13 +360,13 @@ L'ordre des quinze features est celui du `plan-action.md` :
 | # | Feature | Onglet ou canal du CHECK |
 |---|---------|--------------------------|
 | 1 | [Squelette et chat terminal](#fiche-1--squelette-et-chat-terminal) | Terminal |
-| 2 | [Journal d'activité](#fiche-2--journal-dactivité) | Terminal + DB Browser |
-| 3 | [Base et profil](#fiche-3--base-et-profil) | Terminal + DB Browser |
-| 4 | [Oublier l'utilisateur](#fiche-4--oublier-lutilisateur) | Terminal + DB Browser |
-| 5 | [Brief du matin et cron](#fiche-5--brief-du-matin-et-cron) | Terminal + DB Browser |
-| 6 | [Météo](#fiche-6--météo) | Terminal |
-| 7 | [Horoscope via MCP](#fiche-7--horoscope-via-mcp) | Terminal + journal |
-| 8 | [Page web](#fiche-8--page-web) | Navigateur |
+| 2 | [Page web](#fiche-2--page-web) | Navigateur |
+| 3 | [Journal d'activité](#fiche-3--journal-dactivité) | Terminal + navigateur + DB Browser |
+| 4 | [Base et profil](#fiche-4--base-et-profil) | Terminal + navigateur + DB Browser |
+| 5 | [Oublier l'utilisateur](#fiche-5--oublier-lutilisateur) | Terminal + DB Browser |
+| 6 | [Brief du matin et cron](#fiche-6--brief-du-matin-et-cron) | Terminal + navigateur + DB Browser |
+| 7 | [Météo](#fiche-7--météo) | Terminal |
+| 8 | [Horoscope via MCP](#fiche-8--horoscope-via-mcp) | Terminal + journal |
 | 9 | [Onglets Mémoire et Activité](#fiche-9--onglets-mémoire-et-activité) | Navigateur |
 | 10 | [Image du jour](#fiche-10--image-du-jour) | Navigateur |
 | 11 | [Budget et mode économe](#fiche-11--budget-et-mode-économe) | Navigateur, onglet Activité |
@@ -375,7 +375,7 @@ L'ordre des quinze features est celui du `plan-action.md` :
 | 14 | [CI/CD GitHub Actions](#fiche-14--cicd-github-actions-puis-go-mise-en-ligne) | GitHub + navigateur |
 | 15 | [Webhook pense-bête](#fiche-15--webhook-pense-bête) | Hoppscotch + onglet Mémoire |
 
-Tout tourne en local jusqu'à la feature 12. Le webhook (feature 15) est construit après la mise en ligne et déployé par le pipeline. DB Browser for SQLite (https://sqlitebrowser.org) est utile pour les premiers CHECK, avant que l'onglet Mémoire existe : demandez à l'agent de l'installer à la fiche 2.
+Tout tourne en local jusqu'à la feature 12. Le webhook (feature 15) est construit après la mise en ligne et déployé par le pipeline. DB Browser for SQLite (https://sqlitebrowser.org) est utile pour les premiers CHECK, avant que l'onglet Mémoire existe : demandez à l'agent de l'installer à la fiche 3.
 
 Le schéma ci-dessous est **l'architecture cible de la V1**. Il réapparaît en fin de chaque fiche, les briques construites en couleur, les autres en gris.
 
@@ -430,7 +430,7 @@ sequenceDiagram
 **À relire** :
 - `MAX_TOURS` est défini dans `config.py` et vérifié dans la boucle.
 - La clé vient de `config.py`, jamais en dur, et `.env` est dans `.gitignore`.
-- L'appel utilise l'**API Interactions** du SDK (`client.interactions.create`) avec `stream=True`, et distingue les fragments de texte des autres événements (préparation de la feature 3, où arriveront les appels d'outils).
+- L'appel utilise l'**API Interactions** du SDK (`client.interactions.create`) avec `stream=True`, et distingue les fragments de texte des autres événements (préparation de la feature 4, où arriveront les appels d'outils).
 - Un log au début et à la fin de chaque tour.
 
 **CHECK** : lancez le chat (l'agent vous donne la commande), posez une question, voyez la réponse arriver mot à mot. Tapez `quitte` : sortie propre. Verdict : **(A) OK** si les deux sont constatés.
@@ -454,7 +454,53 @@ flowchart TD
 
 ---
 
-### Fiche 2 : journal d'activité
+### Fiche 2 : page web
+
+**Ce que vous verrez** : GoodVibe dans votre navigateur, derrière un mot de passe, et sa réponse qui s'affiche mot à mot. À partir d'ici, chaque feature aura un endroit où se montrer.
+
+**Ce qu'on construit** : `interface.py` avec Gradio : un onglet Chat en streaming, un mot de passe. Les autres onglets viendront avec leurs features : Brief du jour (fiche 6), Mémoire et Activité (fiche 9).
+
+```mermaid
+flowchart TD
+    B["Navigateur<br/>localhost:7860"] -- "mot de passe" --> G["interface.py (Gradio)"]
+    G --> T1["Onglet Chat<br/>ChatInterface en streaming"]
+    G --> T2["Onglet Brief du jour<br/>(fiche 6)"]:::todo
+    G --> T3["Onglet Mémoire<br/>(fiche 9)"]:::todo
+    G --> T4["Onglet Activité<br/>(fiche 9)"]:::todo
+    T1 --> AG["agent.py"]
+    classDef todo fill:#eee,stroke:#bbb,color:#999
+```
+
+**Ce que fait l'agent** : ajoute `gradio` à `requirements.txt` ; `interface.py` (`gr.Blocks` avec `gr.Tabs`, `gr.ChatInterface` pour le chat, une fonction génératrice pour le streaming, `auth` lu dans `.env`) ; commande de lancement sur le port 7860, figée dans `archi-stack.md`. Il lance la page et vous donne l'adresse.
+
+**Ce que vous faites** : choisir le mot de passe et le mettre dans `.env` (`WEB_USER`, `WEB_PASSWORD`).
+
+**Options attendues** : (une) `gr.ChatInterface` dans des `gr.Tabs`, **recommandée** : le composant gère saisie, historique et streaming, et les onglets attendent les features suivantes ; (une autre) `gr.Blocks` entièrement à la main ; (une troisième) Chainlit (cité en fin de tuto).
+
+**À relire** : `interface.py` ne contient **aucune logique métier** : il appelle `agent.py`, exactement comme `chat_terminal.py` ; la fonction de chat est une **génératrice** (`yield`) qui relaie les fragments ; `auth` est présent même en local, pour ne pas l'oublier au déploiement ; `MAX_TOURS` s'applique aussi depuis la page web (il vit dans `agent.py`, pas dans le terminal).
+
+**CHECK** : ouvrez http://localhost:7860, connectez-vous avec le mot de passe, posez une question : la réponse arrive mot à mot. Sans mot de passe, la page est refusée.
+
+**Pièges** : Gradio exposé sans `auth` ; `return` au lieu de `yield` (la réponse arrive d'un bloc) ; le port 7860 déjà pris par une page laissée ouverte ; la logique métier qui glisse dans `interface.py` au lieu de rester dans `agent.py`.
+
+**Où on en est** : GoodVibe parle, dans le terminal et dans le navigateur : deux déclencheurs sur quatre. Fichiers ajoutés : `interface.py`.
+
+```mermaid
+flowchart TD
+    CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
+    WEB["interface.py"] --> AG
+    CRON["cron_brief.py"]:::todo --> BR["brief.py"]:::todo --> AG
+    WH["webhook.py"]:::todo --> DB["db.py"]:::todo
+    AG --> OUT["outils.py"]:::todo --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]:::todo
+    BR --> IMG["image.py"]:::todo
+    AG --> JR["journal.py"]:::todo --> DB
+    AG --> BUD["budget.py"]:::todo
+    classDef todo fill:#eee,stroke:#bbb,color:#999
+```
+
+---
+
+### Fiche 3 : journal d'activité
 
 **Ce que vous verrez** : chaque geste de GoodVibe laisse une trace lisible : tour par tour, les tokens consommés (entrée, sortie, réflexion), la latence, et, si vous le demandez, un résumé de ce qu'il a « pensé » avant de répondre.
 
@@ -469,7 +515,7 @@ flowchart LR
     G -- "steps de type thought<br/>(thinking_summaries: auto)" --> A
 ```
 
-**Ce que fait l'agent** : `db.py` avec `initialiser()` et la table `journal` (date, exécution, agent, étape, détail, tokens_entree, tokens_sortie, tokens_reflexion, latence_ms, duree_ms) ; `journal.py` (un handler `logging` personnalisé, une seule ligne d'appel, deux destinations) ; branchement dans `agent.py` ; lecture de `interaction.usage` ; mesure du **temps avant le premier fragment** et de la **durée totale** en streaming ; option `thinking_summaries: "auto"` et affichage des `steps` de type `thought` dans un bloc grisé quand le réglage est actif.
+**Ce que fait l'agent** : `db.py` avec `initialiser()` et la table `journal` (date, exécution, agent, étape, détail, tokens_entree, tokens_sortie, tokens_reflexion, latence_ms, duree_ms) ; `journal.py` (un handler `logging` personnalisé, une seule ligne d'appel, deux destinations) ; branchement dans `agent.py` ; lecture de `interaction.usage` ; mesure du **temps avant le premier fragment** et de la **durée totale** en streaming ; option `thinking_summaries: "auto"` et affichage des `steps` de type `thought` dans un bloc grisé quand le réglage est actif ; `gr.Checkbox` « Voir la réflexion » dans `interface.py`, qui pilote le même réglage que la commande du terminal.
 
 **Ce que vous faites** : rien, sauf observer. L'agent installe DB Browser for SQLite pour vous et vous indique comment ouvrir `data/agent.db`.
 
@@ -481,7 +527,7 @@ flowchart LR
 - La latence est mesurée autour de l'appel au modèle, pas autour de tout le tour.
 - Si `total_thought_tokens` est absent (modèle sans réflexion), la colonne vaut `null`, rien ne plante.
 
-**CHECK** : dialoguez, puis ouvrez `data/agent.db` avec DB Browser, table `journal` : les lignes avec leurs chiffres. Activez « voir la réflexion » dans le chat (l'agent vous donne la commande) et constatez le bloc grisé avant la réponse. Verdict à deux issues.
+**CHECK** : dialoguez, puis ouvrez `data/agent.db` avec DB Browser, table `journal` : les lignes avec leurs chiffres. Activez « voir la réflexion », dans le terminal (l'agent vous donne la commande) ou dans la page web (la case à cocher), et constatez le bloc grisé avant la réponse. Verdict à deux issues.
 
 **Pièges** : logs en double si le handler est ajouté deux fois (ouvrir deux fois le chat dans le même processus) ; base verrouillée si deux connexions écrivent sans se fermer ; résumé de réflexion vide sur une question trop simple (le modèle n'a pas assez raisonné pour produire un résumé, c'est normal).
 
@@ -490,7 +536,7 @@ flowchart LR
 ```mermaid
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
-    WEB["interface.py"]:::todo --> AG
+    WEB["interface.py"] --> AG
     CRON["cron_brief.py"]:::todo --> BR["brief.py"]:::todo --> AG
     WH["webhook.py"]:::todo --> DB["db.py"]
     AG --> OUT["outils.py"]:::todo --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]:::todo
@@ -502,11 +548,11 @@ flowchart TD
 
 ---
 
-### Fiche 3 : base et profil
+### Fiche 4 : base et profil
 
 **Ce que vous verrez** : vous vous présentez une fois ; vous fermez le chat, vous le relancez, et GoodVibe vous appelle par votre prénom et connaît votre signe.
 
-**Ce qu'on construit** : les tables `profil`, `notes`, `conversations` ; les premiers **outils** exposés au modèle (`enregistrer_profil`, `lire_profil`, `ecrire_note`, `lire_notes`) ; l'injection du profil et des notes dans le prompt système ; le calcul du signe en Python.
+**Ce qu'on construit** : les tables `profil`, `notes`, `conversations` ; les premiers **outils** exposés au modèle (`enregistrer_profil`, `lire_profil`, `ecrire_note`, `lire_notes`) ; l'injection du profil et des notes dans le prompt système ; le calcul du signe en Python ; le rechargement de l'historique de la page web depuis `conversations`.
 
 ```mermaid
 erDiagram
@@ -549,7 +595,7 @@ erDiagram
     }
 ```
 
-**Ce que fait l'agent** : étend `db.py` ; crée `outils.py` (chaque outil = une fonction Python + sa description pour le modèle) ; modifie `agent.py` pour déclarer les outils, exécuter les appels d'outils demandés dans les `steps`, renvoyer les résultats, et injecter profil et notes dans le prompt système au démarrage ; ajoute `signe_depuis_date()` en Python pur.
+**Ce que fait l'agent** : étend `db.py` ; crée `outils.py` (chaque outil = une fonction Python + sa description pour le modèle) ; modifie `agent.py` pour déclarer les outils, exécuter les appels d'outils demandés dans les `steps`, renvoyer les résultats, et injecter profil et notes dans le prompt système au démarrage ; ajoute `signe_depuis_date()` en Python pur ; `interface.py` enregistre chaque échange dans `conversations` et recharge l'historique à l'ouverture de la page.
 
 **Ce que vous faites** : rien.
 
@@ -561,16 +607,16 @@ erDiagram
 - Chaque outil journalise son appel (nom, durée), sans ses arguments dans le journal pédagogique.
 - Le profil n'est injecté qu'**une fois** dans le prompt système, pas à chaque tour en plus.
 
-**CHECK** : dites « Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo ». Fermez le chat, relancez, demandez « qu'est-ce que tu sais de moi ? » : prénom, signe Poissons, ville, intérêts. Vérifiez la ligne dans DB Browser, table `profil`, et l'absence de la date complète.
+**CHECK** : dites « Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo ». Fermez le chat, relancez, demandez « qu'est-ce que tu sais de moi ? » : prénom, signe Poissons, ville, intérêts. Vérifiez la ligne dans DB Browser, table `profil`, et l'absence de la date complète. Rechargez la page web : l'historique de la conversation est toujours là.
 
-**Pièges** : le modèle « invente » le profil au lieu d'appeler l'outil (renforcer le prompt système : « tu ne connais l'utilisateur que par l'outil `lire_profil` ») ; signe faux aux dates limites (tester le 20 et le 21 mars) ; appels d'outils non exécutés parce que la boucle ne lit pas les `steps` de type `function_call`.
+**Pièges** : le modèle « invente » le profil au lieu d'appeler l'outil (renforcer le prompt système : « tu ne connais l'utilisateur que par l'outil `lire_profil` ») ; signe faux aux dates limites (tester le 20 et le 21 mars) ; appels d'outils non exécutés parce que la boucle ne lit pas les `steps` de type `function_call` ; historique de la page web perdu au rechargement (gardé dans une variable, pas en base).
 
 **Où on en est** : GoodVibe parle, raconte, et retient. Fichiers ajoutés : `outils.py`.
 
 ```mermaid
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
-    WEB["interface.py"]:::todo --> AG
+    WEB["interface.py"] --> AG
     CRON["cron_brief.py"]:::todo --> BR["brief.py"]:::todo --> AG
     WH["webhook.py"]:::todo --> DB["db.py"]
     AG --> OUT["outils.py"] --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]:::todo
@@ -582,7 +628,7 @@ flowchart TD
 
 ---
 
-### Fiche 4 : oublier l'utilisateur
+### Fiche 5 : oublier l'utilisateur
 
 **Ce que vous verrez** : « oublie-moi », une confirmation, et GoodVibe ne sait plus rien de vous. Les tables se vident sous vos yeux.
 
@@ -613,15 +659,15 @@ sequenceDiagram
 
 **Pièges** : suppression sans confirmation ; oubli de `conversations` ; profil encore dans le prompt système jusqu'au redémarrage.
 
-**Où on en est** : GoodVibe parle, raconte, retient, et oublie sur demande. Pas de nouveau fichier ; l'architecture est inchangée par rapport à la fiche 3.
+**Où on en est** : GoodVibe parle, raconte, retient, et oublie sur demande. Pas de nouveau fichier ; l'architecture est inchangée par rapport à la fiche 4.
 
 ---
 
-### Fiche 5 : brief du matin et cron
+### Fiche 6 : brief du matin et cron
 
-**Ce que vous verrez** : un brief signé GoodVibe apparaît en base à 7 h (ou quand vous le forcez), et si vous relancez, il refuse poliment d'en faire un second.
+**Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » à 7 h (ou quand vous cliquez « Générer le brief maintenant »), et si vous relancez le cron, il refuse poliment d'en faire un second.
 
-**Ce qu'on construit** : `generer_brief()` (pour l'instant une phrase d'accueil personnalisée et les notes ; horoscope et météo arrivent aux fiches 6 et 7), les tables `briefs` et `traites`, le point d'entrée `cron_brief.py`, la ligne `crontab`, un paramètre `--forcer`.
+**Ce qu'on construit** : `generer_brief()` (pour l'instant une phrase d'accueil personnalisée et les notes ; horoscope et météo arrivent aux fiches 7 et 8), les tables `briefs` et `traites`, le point d'entrée `cron_brief.py`, la ligne `crontab`, un paramètre `--forcer`, l'onglet « Brief du jour » et son bouton « Générer le brief maintenant » dans la page web.
 
 ```mermaid
 sequenceDiagram
@@ -644,24 +690,24 @@ sequenceDiagram
     end
 ```
 
-**Ce que fait l'agent** : `brief.py` ; `cron_brief.py` avec `--forcer` ; tables ; la ligne `crontab` avec le **chemin absolu** du Python du venv et un log redirigé vers un fichier ; installation de la ligne dans votre crontab (ou un timer `systemd` en alternative, mentionné, pas construit).
+**Ce que fait l'agent** : `brief.py` ; `cron_brief.py` avec `--forcer` ; tables ; la ligne `crontab` avec le **chemin absolu** du Python du venv et un log redirigé vers un fichier ; installation de la ligne dans votre crontab (ou un timer `systemd` en alternative, mentionné, pas construit) ; onglet « Brief du jour » dans `interface.py`, dont le bouton appelle `generer_brief(forcer=True)` et rafraîchit l'onglet.
 
 **Ce que vous faites** : rien.
 
 **Options attendues** : (une) anti-doublon par une clé date dans la table `traites`, **recommandée** : lisible, survit au redémarrage, réutilisable pour l'image ; (une autre) fichier marqueur sur le disque ; (une troisième) verrou de processus.
 
-**À relire** : `generer_brief()` **ne sait pas** qu'elle est appelée par un cron (elle sera appelée par le bouton web à la fiche 8) ; le journal indique « brief déjà produit » au second lancement ; `--forcer` est réservé aux tests et journalisé comme tel.
+**À relire** : `generer_brief()` **ne sait pas** si elle est appelée par le cron ou par le bouton de la page web ; le journal indique « brief déjà produit » au second lancement ; `--forcer` est réservé aux tests et journalisé comme tel.
 
-**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Pour voir le cron lui-même, l'agent peut poser une entrée à l'heure suivante et vous constatez la ligne le moment venu.
+**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Dans la page web, cliquez « Générer le brief maintenant » et lisez le brief dans l'onglet. Pour voir le cron lui-même, l'agent peut poser une entrée à l'heure suivante et vous constatez la ligne le moment venu.
 
-**Pièges** : `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; variables d'environnement absentes dans l'environnement du cron (charger `.env` explicitement dans `config.py`) ; fuseau horaire du serveur différent du vôtre (à noter pour le VPS).
+**Pièges** : `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; variables d'environnement absentes dans l'environnement du cron (charger `.env` explicitement dans `config.py`) ; fuseau horaire du serveur différent du vôtre (à noter pour le VPS) ; deux processus (Gradio et le cron) qui écrivent en base en même temps sans fermer leurs connexions.
 
-**Où on en est** : GoodVibe parle, retient, et produit un brief chaque matin, une seule fois. Fichiers ajoutés : `brief.py`, `cron_brief.py`.
+**Où on en est** : GoodVibe parle, retient, et produit un brief chaque matin, une seule fois : trois déclencheurs sur quatre sont là (terminal, page web, cron). Fichiers ajoutés : `brief.py`, `cron_brief.py`.
 
 ```mermaid
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
-    WEB["interface.py"]:::todo --> AG
+    WEB["interface.py"] --> AG
     CRON["cron_brief.py"] --> BR["brief.py"] --> AG
     WH["webhook.py"]:::todo --> DB["db.py"]
     AG --> OUT["outils.py"] --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]:::todo
@@ -673,7 +719,7 @@ flowchart TD
 
 ---
 
-### Fiche 6 : météo
+### Fiche 7 : météo
 
 **Ce que vous verrez** : « quel temps à Lyon ? » et GoodVibe répond avec la vraie prévision du jour ; le brief la contient désormais.
 
@@ -711,7 +757,7 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
-    WEB["interface.py"]:::todo --> AG
+    WEB["interface.py"] --> AG
     CRON["cron_brief.py"] --> BR["brief.py"] --> AG
     WH["webhook.py"]:::todo --> DB["db.py"]
     AG --> OUT["outils.py"] --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]
@@ -723,7 +769,7 @@ flowchart TD
 
 ---
 
-### Fiche 7 : horoscope via MCP
+### Fiche 8 : horoscope via MCP
 
 **Ce que vous verrez** : dans le journal, GoodVibe appelle un outil qu'on n'a pas écrit, `fetch`, lit un horoscope en anglais, et le brief contient une version en français écrite pour vous, avec votre prénom et votre ville.
 
@@ -773,55 +819,6 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
-    WEB["interface.py"]:::todo --> AG
-    CRON["cron_brief.py"] --> BR["brief.py"] --> AG
-    WH["webhook.py"]:::todo --> DB["db.py"]
-    AG --> OUT["outils.py"] --> MCP["mcp_client.py"] & MET["outils_meteo.py"]
-    MCP --> HOR["horoscope.py"]
-    BR --> IMG["image.py"]:::todo
-    AG & BR --> JR["journal.py"] --> DB
-    AG --> BUD["budget.py"]:::todo
-    classDef todo fill:#eee,stroke:#bbb,color:#999
-```
-
----
-
-### Fiche 8 : page web
-
-**Ce que vous verrez** : GoodVibe dans votre navigateur, derrière un mot de passe, avec le chat en streaming, l'onglet « Brief du jour », un bouton « Générer le brief maintenant », et une case « Voir la réflexion ».
-
-**Ce qu'on construit** : `interface.py` avec Gradio, quatre onglets (Chat, Brief du jour, et les emplacements Mémoire et Activité remplis à la fiche 9), mot de passe, historique de conversation persistant.
-
-```mermaid
-flowchart TD
-    B["Navigateur<br/>localhost:7860"] -- "mot de passe" --> G["interface.py (Gradio)"]
-    G --> T1["Onglet Chat<br/>ChatInterface en streaming<br/>case Voir la réflexion"]
-    G --> T2["Onglet Brief du jour<br/>texte du brief<br/>bouton Générer maintenant"]
-    G --> T3["Onglet Mémoire<br/>(fiche 9)"]:::todo
-    G --> T4["Onglet Activité<br/>(fiche 9)"]:::todo
-    T1 --> AG["agent.py"]
-    T2 --> BR["brief.py : generer_brief(forcer=True)"]
-    T1 --> DB["conversations"]
-    classDef todo fill:#eee,stroke:#bbb,color:#999
-```
-
-**Ce que fait l'agent** : `interface.py` (`gr.Blocks` avec onglets, `gr.ChatInterface` pour le chat, une fonction génératrice pour le streaming, `gr.Checkbox` pour la réflexion, `auth` lu dans `.env`) ; rechargement de l'historique depuis `conversations` à l'ouverture ; commande de lancement sur le port 7860, figée dans `archi-stack.md`.
-
-**Ce que vous faites** : choisir le mot de passe et le mettre dans `.env` (`WEB_USER`, `WEB_PASSWORD`).
-
-**Options attendues** : (une) `gr.ChatInterface` dans des `gr.Tabs`, **recommandée** : le composant gère saisie, historique et streaming ; (une autre) `gr.Blocks` entièrement à la main ; (une troisième) Chainlit (cité en fin de tuto).
-
-**À relire** : `interface.py` ne contient **aucune logique métier** : il appelle `agent.py` et `brief.py`, comme le terminal et le cron ; l'historique vient de la table `conversations`, pas d'une variable globale ; le bouton appelle `generer_brief(forcer=True)` et rafraîchit l'onglet ; `auth` est présent même en local, pour ne pas l'oublier au déploiement.
-
-**CHECK** : ouvrez http://localhost:7860, connectez-vous, dialoguez en streaming, cochez « Voir la réflexion » et constatez le bloc grisé, cliquez « Générer maintenant » et lisez le brief. Rechargez la page : l'historique est toujours là.
-
-**Pièges** : Gradio exposé sans `auth` ; historique perdu au rechargement (pas persisté) ; deux processus (Gradio et le cron) qui écrivent en base en même temps sans fermer leurs connexions ; le streaming Gradio exige une fonction **génératrice** (`yield`), pas un `return`.
-
-**Où on en est** : trois déclencheurs sur quatre sont là (chat, cron, page web) ; le webhook viendra en dernier, après la mise en ligne. Fichiers ajoutés : `interface.py`.
-
-```mermaid
-flowchart TD
-    CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     WEB["interface.py"] --> AG
     CRON["cron_brief.py"] --> BR["brief.py"] --> AG
     WH["webhook.py"]:::todo --> DB["db.py"]
@@ -856,7 +853,7 @@ flowchart LR
 
 **Options attendues** : (une) `gr.Dataframe` rafraîchi à la demande, **recommandée** : simple, lisible, exact ; (une autre) rafraîchissement automatique toutes les N secondes ; (une troisième) graphiques `gr.Plot`. La première suffit et n'ajoute aucune charge.
 
-**À relire** : les vues sont en **lecture seule** sur la base ; les euros sont affichés comme **estimation** ; le bouton « Oublie-moi » demande confirmation et appelle la même fonction que l'outil de la fiche 4 ; le journal n'affiche aucune donnée personnelle, même en mode « détails techniques ».
+**À relire** : les vues sont en **lecture seule** sur la base ; les euros sont affichés comme **estimation** ; le bouton « Oublie-moi » demande confirmation et appelle la même fonction que l'outil de la fiche 5 ; le journal n'affiche aucune donnée personnelle, même en mode « détails techniques ».
 
 **CHECK** : discutez dans l'onglet Chat, basculez sur Mémoire, cliquez Rafraîchir : la conversation est là. Onglet Activité : la ligne de l'appel, ses tokens, sa latence, le compteur du jour qui a bougé, le coût. Cliquez « Oublie-moi », confirmez : les tableaux se vident. Dans le chat : « explique ce que tu viens de faire » raconte le dernier tour.
 
