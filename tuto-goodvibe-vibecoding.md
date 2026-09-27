@@ -3,7 +3,7 @@
 > Webhook, cron, MCP, mémoire, observabilité, VPS et sous-agents, avec le skill **VibeCoding Copilote** (Le Cinquième Jour).
 > Public : développeurs intermédiaires qui découvrent les agents et le vibe coding. Version 1.0, septembre 2026.
 
-> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les quatre règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO.
+> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les cinq règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO.
 >
 > **Règle 1. Avant tout document : la visite guidée du projet.** Après la carte du voyage et avant `archi-stack.md`, tu présentes GoodVibe au pilote. Tant que cette visite n'est pas finie, tu ne rédiges aucun document et tu ne cites ni fichier ni bibliothèque. Tu t'appuies sur `GoodVibe-presentation.md` (la présentation du projet) et sur ce tuto : tu racontes ces textes avec tes mots, adaptés au profil du pilote, tu ne les colles pas. Dans `GoodVibe-presentation.md`, tu ignores les sections « Démarrage rapide », « Si ça coince » et « Liens », qui concernent le téléchargement du kit. Quatre temps, un message par temps, et tu attends la réponse du pilote entre chacun :
 >
@@ -44,6 +44,15 @@
 > 3. **La recommandation** : un seul modèle, celui qui répond aux critères. Tu dis ce qu'il apporte à GoodVibe et ce qu'il coûte **ramené à l'usage de GoodVibe** (un brief par jour et quelques échanges : combien par mois, en euros), pas seulement le prix par million de tokens. Tu ne cites des alternatives que si le pilote le demande. Puis : « (A) GO pour ce modèle ; (B) j'ai une question ».
 >
 > Le pilote ne fait aucune recherche : il valide. Une fois le modèle validé, tu l'écris dans `config.py` (`MODELE_TEXTE`, `MODELE_IMAGE`) et tu complètes `archi-stack.md` : identifiant, date de la recherche, pages consultées. À chaque reprise après plus d'un mois d'arrêt, tu vérifies que les modèles retenus sont toujours en service.
+>
+> **Règle 5. Au DO, tu montres le code et tu l'expliques.** Dire « le code est en place » ne suffit pas : le pilote est là pour apprendre à lire ce que tu écris. Après avoir codé et avant le CHECK, tu fais la **lecture guidée** de la feature :
+>
+> 1. Pour chaque point « À relire » de la fiche, tu montres l'extrait de code qui y répond : le nom du fichier, puis l'extrait dans un bloc de code, de 5 à 25 lignes. Jamais un fichier entier.
+> 2. Sous chaque extrait, tu expliques ce qu'il fait et pourquoi il est écrit ainsi, en le reliant au concept de la section 2. Pour un pilote de profil (1), tu expliques aussi les mots de Python qui apparaissent pour la première fois : une fonction, une boucle, un import, `yield`.
+> 3. Tu ajoutes l'extrait que tu juges le plus instructif de la feature, même s'il n'est pas dans « À relire ».
+> 4. Tu termines par : « (A) c'est clair, on passe au CHECK ; (B) j'ai une question sur le code ».
+>
+> Si tu corriges du code après un CHECK KO, tu montres la ligne avant et après, et tu expliques la cause.
 
 ---
 
@@ -64,8 +73,8 @@ Nous démarrons le projet GoodVibe dans ce répertoire vierge.
 Étape 2 : lance le vibecoding sur GoodVibe-PRD.md.
 
 Contexte du projet :
-- Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les quatre règles de la note d'en-tête du tuto, qui priment sur lui.
-- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
+- Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les cinq règles de la note d'en-tête du tuto, qui priment sur lui.
+- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi les extraits de code qui comptent et explique-les. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
 - Profil de calibrage : (2) je code déjà, je découvre le vibe coding.
@@ -368,8 +377,8 @@ Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la 
 2. **CHECK** : « Le test humain ne passe pas toujours par un navigateur : selon la feature, il se fait dans le terminal, avec `curl`, dans l'onglet Activité ou dans la page Gradio. Le critère de réussite du `plan-action.md` précise lequel. »
 3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui valide, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
-5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les quatre règles de sa note d'en-tête, il prime sur le skill. »
-6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent présente une seule solution, celle du tuto, et l'explique : il ne propose pas trois options. »
+5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les cinq règles de sa note d'en-tête, il prime sur le skill. »
+6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent présente une seule solution, celle du tuto, et l'explique : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote les extraits de code qui comptent et les explique. »
 
 Si vous utilisez Gemini dans Antigravity plutôt que Claude Code, demandez aussi à l'agent de déposer une copie du fichier sous le nom `AGENTS.md`, que les agents non-Claude lisent. Le contenu du gabarit est volontairement agnostique.
 
@@ -390,7 +399,7 @@ Ce qui doit se passer, dans l'ordre :
 
 Signal d'alerte : s'il ne se présente pas, ne pose pas la question, ou commence à écrire du code, le skill n'est pas chargé. Revenez à la section 1.5.
 
-Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, ou s'il vous demande de choisir entre trois options, rappelez-lui les quatre règles de la note d'en-tête du tuto.
+Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, s'il vous demande de choisir entre trois options, ou s'il passe au CHECK sans vous avoir montré de code, rappelez-lui les cinq règles de la note d'en-tête du tuto.
 
 ### 4.2 La boucle que vous allez vivre quinze fois
 
@@ -399,7 +408,8 @@ flowchart TD
     P["PLAN<br/>l'agent présente et explique<br/>la solution du tuto"] --> G1{"GO #1<br/>(A) GO ou (B) question"}
     G1 -- "B : question" --> P
     G1 -- "A : GO" --> DO["DO<br/>l'agent code, explique au fil de l'eau"]
-    DO --> CK["CHECK<br/>l'agent lance, VOUS testez"]
+    DO --> LG["LECTURE GUIDÉE<br/>l'agent montre le code qui compte<br/>et l'explique"]
+    LG --> CK["CHECK<br/>l'agent lance, VOUS testez"]
     CK -- "KO" --> P
     CK -- "OK" --> G2{"GO #2"}
     G2 -- "oui" --> CM["commit local<br/>plan-action mis à jour"]
@@ -408,7 +418,7 @@ flowchart TD
     N -- "non" --> ML["GO MISE EN LIGNE"]
 ```
 
-Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du code de cette feature, en local ; **GO #2** autorise le commit local ; **GO MISE EN LIGNE**, une seule fois en fin de projet, autorise la publication. Le CHECK est **le vôtre** : l'agent lance ce qu'il faut et vous passe la main. Il ne s'auto-valide jamais.
+Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du code de cette feature, en local ; **GO #2** autorise le commit local ; **GO MISE EN LIGNE**, une seule fois en fin de projet, autorise la publication. Le CHECK est **le vôtre** : l'agent lance ce qu'il faut et vous passe la main. Il ne s'auto-valide jamais. Entre le DO et le CHECK, il vous fait la **lecture guidée** du code : vous ne validez jamais un code que vous n'avez pas vu.
 
 ### 4.3 Les trois documents de cadrage : ce que vous devez y trouver
 
@@ -439,7 +449,7 @@ Chaque feature a sa fiche, toujours construite pareil :
 3. **Ce que fait l'agent** : fichiers créés ou modifiés, commandes lancées.
 4. **Ce que vous faites** : uniquement ce que l'agent ne peut pas faire.
 5. **La solution du tuto**, celle que l'agent vous présente au PLAN, et pourquoi on ne fait pas autrement.
-6. **À relire dans le code au DO** : deux ou trois points à vérifier.
+6. **À relire dans le code au DO** : deux ou trois points à vérifier. L'agent vous montre les extraits qui y répondent et vous les explique : c'est la lecture guidée.
 7. **Le CHECK** : le critère exact, où le constater, le verdict attendu.
 8. **Pièges classiques**.
 9. **Où on en est** : ce que GoodVibe sait faire, et l'architecture qui se remplit.
