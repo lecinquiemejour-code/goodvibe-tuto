@@ -73,7 +73,7 @@
 >
 > Si tu corriges du code après un CHECK KO, tu montres la ligne avant et après, et tu expliques la cause.
 >
-> **Règle 6. Les secrets ne passent jamais par la discussion.** Un secret est tout ce qui ouvre une porte : une clé privée, un mot de passe, un jeton, une clé API. Tu n'en affiches jamais un, ni dans la discussion, ni dans un fichier enregistré dans Git, ni dans un document de reprise. Quand le pilote doit en saisir un, tu le copies dans son presse-papiers sans l'afficher, ou tu lui indiques le fichier où il se trouve. Tu ne lui demandes jamais de te donner un mot de passe. Si un secret a été affiché par erreur, tu le dis aussitôt et tu proposes de le remplacer : un secret vu est un secret à changer. L'adresse du serveur n'est pas un secret, mais elle ne s'écrit pas non plus dans le dépôt.
+> **Règle 6. Les secrets ne passent jamais par la discussion.** Un secret est tout ce qui ouvre une porte : une clé privée, un mot de passe, un jeton, une clé API. Tu n'en affiches jamais un, ni dans la discussion, ni dans un fichier enregistré dans Git, ni dans un document de reprise. Quand le pilote doit en saisir un, tu le copies dans son presse-papiers sans l'afficher, ou tu lui indiques le fichier où il se trouve. Tu ne lui demandes jamais de te donner un mot de passe. Si un secret a été affiché par erreur, tu le dis aussitôt et tu proposes de le remplacer : un secret vu est un secret à changer. L'adresse du serveur n'est pas un secret, mais elle ne s'écrit pas non plus dans le dépôt : elle se range dans le `.env` de l'ordinateur du pilote, aux lignes `PROD_`, avec ses accès à la page en ligne. Tu n'ouvres jamais le `.env` sans l'autorisation explicite du pilote.
 >
 > **Règle 7. Au CHECK, une action à la fois, et la vérité sur les échecs.** Le CHECK appartient au pilote. Tu fais une seule action, tu dis au pilote où regarder et ce qu'il doit voir, et tu t'arrêtes. Tu n'enchaînes pas plusieurs actions dans la même réponse, et tu ne conclus jamais « CHECK validé » à sa place. Tu ne modifies rien pour préparer un CHECK sans l'avoir annoncé. Quand une action échoue, tu le dis tout de suite, avec la cause et ce que tu comptes faire : tu ne répares pas en silence, et tu ne présentes pas comme un succès ce qui a demandé trois tentatives. Un échec expliqué est une leçon ; un échec caché est une boîte noire.
 
@@ -411,7 +411,7 @@ Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la 
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
 5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les sept règles de sa note d'en-tête, il prime sur le skill. »
 6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent fait d'abord la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis annonce ce qu'il va faire, étape par étape, et pourquoi. Il présente une seule solution, celle du tuto : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote le schéma de séquence de la feature, puis les extraits de code qui comptent, et les explique. »
-7. **Secrets et CHECK** : « L'agent n'affiche jamais un secret, ni dans la discussion, ni dans un fichier du dépôt, ni dans un document de reprise : clé privée, mot de passe, jeton, clé API. Il le copie dans le presse-papiers du pilote, ou indique le fichier où il se trouve. Au CHECK, il fait une seule action à la fois, s'arrête pour que le pilote constate, et ne conclut jamais à sa place. Quand une action échoue, il le dit aussitôt, avec la cause. »
+7. **Secrets et CHECK** : « L'agent n'affiche jamais un secret, ni dans la discussion, ni dans un fichier du dépôt, ni dans un document de reprise : clé privée, mot de passe, jeton, clé API. Il le copie dans le presse-papiers du pilote, ou indique le fichier où il se trouve. Il n'ouvre jamais le fichier `.env` sans l'autorisation explicite du pilote. Au CHECK, il fait une seule action à la fois, s'arrête pour que le pilote constate, et ne conclut jamais à sa place. Quand une action échoue, il le dit aussitôt, avec la cause. »
 
 **L'agent corrige aussi les lignes du gabarit que ces règles contredisent.** Le gabarit du skill est écrit pour un projet quelconque : il place la mise en ligne en fin de projet, décrit un PLAN sans leçon, et peut avoir retenu un autre profil que le vôtre. Demandez à l'agent d'aligner ces lignes sur les sept règles, puis de vous montrer le fichier entier. Vérifiez qu'aucune consigne n'en contredit une autre : devant deux consignes contraires, l'agent choisit sans vous le dire.
 
@@ -624,7 +624,7 @@ flowchart TD
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
-**Ce que fait l'agent** : ajoute `gradio` à `requirements.txt` ; `interface.py` (`gr.Blocks` avec `gr.Tabs`, `gr.ChatInterface` pour le chat, une fonction génératrice pour le streaming, `auth` lu dans `.env`) ; commande de lancement sur le port 7860, figée dans `archi-stack.md`. Il choisit un identifiant et un mot de passe de départ, les écrit dans `.env` (`WEB_USER`, `WEB_PASSWORD`) et vous les donne dans la discussion. Il lance la page et vous donne l'adresse.
+**Ce que fait l'agent** : ajoute `gradio` à `requirements.txt` ; `interface.py` (`gr.Blocks` avec `gr.Tabs`, `gr.ChatInterface` pour le chat, une fonction génératrice pour le streaming, `auth` lu dans `.env`) ; commande de lancement sur le port 7860, figée dans `archi-stack.md`. Il choisit un identifiant et un mot de passe de départ, les écrit dans `.env` (`WEB_USER`, `WEB_PASSWORD`) et vous les donne dans la discussion. C'est la seule exception à la règle 6, et elle est voulue : ce mot de passe est jetable, il ne protège que la page de votre ordinateur, et vous saisirez vous-même le mot de passe définitif à la fiche 12. Il lance la page et vous donne l'adresse.
 
 **Ce que vous faites** : vous connecter avec ces identifiants. Vous pouvez les changer à tout moment : ouvrez `.env`, modifiez `WEB_PASSWORD`, relancez la page.
 
@@ -1248,7 +1248,26 @@ Dans les deux cas, votre compte reste ouvert.
 
 **Deux mémoires, deux mondes.** C'est le même principe pour la mémoire. La base de GoodVibe ne part jamais sur GitHub : elle contient vos données. Le serveur démarre donc avec une mémoire vide, et il faut vous y présenter de nouveau. Ce que GoodVibe apprend sur votre ordinateur, il ne le sait pas en ligne, et inversement. Quand vous ouvrez l'onglet Mémoire, regardez l'adresse de la page : elle vous dit laquelle des deux mémoires vous lisez.
 
-**Ce qui ne s'écrit jamais dans le dépôt.** Ni le mot de passe de la page, ni une clé, ni l'adresse du serveur. Le document de reprise que tient l'agent est enregistré dans Git : il dit où trouver ces informations, il ne les contient pas. Rangez-les dans un fichier de votre dossier personnel, hors du projet.
+**Ce qui ne s'écrit jamais dans le dépôt.** Ni le mot de passe de la page, ni une clé, ni l'adresse du serveur. Le document de reprise que tient l'agent est enregistré dans Git : il dit où trouver ces informations, il ne les contient pas. Rangez-les dans le `.env` de votre ordinateur, qui ne part jamais sur GitHub, à la suite des lignes existantes :
+
+| Ligne | Ce qu'elle contient |
+|---|---|
+| `PROD_URL` | L'adresse publique de GoodVibe |
+| `PROD_SERVEUR` | L'adresse IP du serveur |
+| `PROD_SSH_USER` | Le nom d'utilisateur sur le serveur |
+| `PROD_SSH_CLE` | L'emplacement de votre clé sur votre ordinateur, pas la clé elle-même |
+| `PROD_WEB_USER`, `PROD_WEB_PASSWORD` | L'identifiant et le mot de passe de la page en ligne |
+
+**Pourquoi le préfixe `PROD_`.** Le programme lit `WEB_USER` et `WEB_PASSWORD` dans le `.env` pour protéger la page de votre ordinateur. Si vous y écriviez le mot de passe du serveur sous ces noms, la page locale changerait de mot de passe. Les lignes `PROD_` sont un pense-bête : le programme ne les lit pas, et leur nom dit qu'elles parlent du serveur.
+
+**Le verrou sur le `.env`.** `.gitignore` protège de Git, pas de l'agent. Une consigne est une promesse ; le verrou, lui, est un réglage de l'outil :
+
+| Outil | Le verrou |
+|---|---|
+| Antigravity | Dans les réglages, *Agent Gitignore Access* reste sur **Off** : l'agent n'ouvre pas les fichiers listés dans `.gitignore` |
+| Claude Code | Dans `.claude/settings.json`, une règle de refus : `"deny": ["Read(./.env)"]` |
+
+Ce verrou bloque la lecture de fichiers, pas une commande de terminal : c'est une porte fermée à clé, pas un coffre-fort. La règle 7 le complète. Conséquence : quand une commande a besoin de l'adresse du serveur, c'est vous qui la donnez à l'agent, et vous corrigez vous-même le `.env` en suivant ses indications. Et si votre projet vit dans un dossier synchronisé (Dropbox, OneDrive, Google Drive), le `.env` part aussi dans ce service : `.gitignore` n'y change rien. Pour un mot de passe qui compte, préférez un gestionnaire de mots de passe.
 
 **Changer l'identifiant et le mot de passe.** Ils vivent dans le `.env` du serveur, aux lignes `WEB_USER` et `WEB_PASSWORD`. Deux façons de les changer :
 
