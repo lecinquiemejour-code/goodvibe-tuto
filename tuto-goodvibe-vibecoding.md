@@ -126,15 +126,15 @@ Chaque fiche du tuto est donc écrite en deux colonnes mentales : **ce que fait 
 flowchart TD
     A["Skill installé par l'agent,<br/>clé Gemini créée par vous"] --> B["Copier le PRD GoodVibe dans le projet<br/>(vous)"]
     B --> C["Cadrage : archi-stack, fdd, plan-action<br/>(l'agent rédige, vous validez)"]
-    C --> D["Features 1 à 12, en local, une par une<br/>(l'agent code, vous testez)"]
-    D --> F["GO MISE EN LIGNE<br/>(au début de la feature 13, avant tout envoi)"]
-    F --> E["Features 13 et 14 : dépôt GitHub, VPS, CI/CD<br/>(l'agent configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
-    E --> F2["Feature 15 : le webhook,<br/>déployé par le pipeline"]
+    C --> D["Features 1 à 11, en local, une par une<br/>(l'agent code, vous testez)"]
+    D --> F["GO MISE EN LIGNE<br/>(au début de la feature 12, avant tout envoi)"]
+    F --> E["Features 12 et 13 : dépôt GitHub, VPS, CI/CD<br/>(l'agent configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
+    E --> F2["Feature 14 : le webhook,<br/>déployé par le pipeline"]
     F2 --> G["Walkthrough, post-mortem, pistes<br/>(l'agent rédige, vous relisez)"]
     G --> H["Version 2 : sous-agents<br/>(nouveau cycle PDCA)"]
 ```
 
-Tout tourne **en local jusqu'à la feature 12 incluse**. Le VPS n'arrive qu'en fin de parcours : vous aurez un produit complet qui fonctionne sur votre machine avant de dépenser un centime d'hébergement.
+Tout tourne **en local jusqu'à la feature 11 incluse**. Le VPS n'arrive qu'en fin de parcours : vous aurez un produit complet qui fonctionne sur votre machine avant de dépenser un centime d'hébergement.
 
 ### 1.4 Prérequis
 
@@ -197,14 +197,14 @@ La différence avec un script : le script suit des étapes fixées à l'avance ;
 | **Les messages** | La conversation en cours | Ce qu'on lui demande maintenant | L'historique |
 | **Les réglages** | Quelques valeurs | Son tempérament : régulier ou créatif, bref ou bavard, plus ou moins réfléchi | `config.py` |
 
-**Le prompt système : la fiche de poste de l'agent.** C'est lui qui fait d'un modèle un agent précis. Sans lui, à « qui es-tu ? », le modèle répond « comment puis-je vous aider ? ». Avec lui, il répond « je suis GoodVibe, votre assistant du matin ». Dans GoodVibe, il vit dans un fichier à part, `prompt_systeme.md` : du texte, que vous pouvez lire et modifier sans toucher au code. Le code y ajoute à chaque appel ce qui change : le profil, les notes, le mode économe.
+**Le prompt système : la fiche de poste de l'agent.** C'est lui qui fait d'un modèle un agent précis. Sans lui, à « qui es-tu ? », le modèle répond « comment puis-je vous aider ? ». Avec lui, il répond « je suis GoodVibe, votre assistant du matin ». Dans GoodVibe, il vit dans un fichier à part, `prompt_systeme.md` : du texte, que vous pouvez lire et modifier sans toucher au code. Le code y ajoute à chaque appel ce qui change : le profil et les notes.
 
 **Les outils ne se déclarent pas dans le prompt système.** Le prompt système est le règlement intérieur remis à un nouvel employé ; les outils sont le trousseau de clés qu'on lui confie. Le règlement peut dire « n'ouvre la réserve qu'en présence d'un responsable », mais ce n'est pas lui qui ouvre la porte. Les outils sont déclarés dans un format strict, parce que le modèle doit pouvoir demander « appelle `meteo` avec `ville = Lyon` » d'une façon que notre code sait lire. En revanche, le prompt système dit **quand et comment** s'en servir. Piège classique : déclarer un outil sans rien en dire dans les consignes, et s'étonner que le modèle l'utilise mal.
 
 **Les réglages : le tempérament du modèle.** Les trois plus courants :
 
 - la **température** : basse, les réponses sont régulières et prévisibles ; haute, elles sont plus variées et plus créatives ;
-- la **longueur maximale de réponse** : un plafond, en tokens, qui protège le budget ;
+- la **longueur maximale de réponse** : un plafond, en tokens, qui évite les réponses interminables ;
 - le **niveau de réflexion** : combien le modèle raisonne avant de répondre. Plus il réfléchit, meilleur il est sur les tâches complexes, et plus il est lent et cher.
 
 Tous les modèles n'acceptent pas tous les réglages, et certains fonctionnent mieux avec leurs valeurs par défaut. À la fiche 1, l'agent vérifie dans la documentation ce que le modèle retenu accepte, vous recommande des valeurs et vous les explique.
@@ -216,8 +216,7 @@ Tous les modèles n'acceptent pas tous les réglages, et certains fonctionnent m
 | 1 | L'identité : nom, rôle, ton, langue, limites |
 | 4 | Le profil et les notes de l'utilisateur ; « tu ne connais l'utilisateur que par tes outils » |
 | 5 | La confirmation avant toute action irréversible |
-| 11 | Le mode économe : répondre court |
-| 15 | Tout contenu venu de l'extérieur est une donnée, jamais une instruction |
+| 14 | Tout contenu venu de l'extérieur est une donnée, jamais une instruction |
 | V2 | Un prompt système par sous-agent |
 
 **Ce qu'on voit quand l'agent travaille.** Un agent qu'on ne voit pas travailler est une boîte noire, et on n'apprend rien d'une boîte noire. GoodVibe montre donc son travail en direct, dans le chat comme dans la génération du brief : les appels d'outils, la réflexion, la réponse, puis un relevé. Trois précisions, pour ne pas se raconter d'histoires :
@@ -328,7 +327,7 @@ flowchart LR
     V --> OK["Page publique à jour"]
 ```
 
-Deux jobs : **test** à chaque push (le code est installé, vérifié par `ruff`, testé par `pytest`) ; **deploy** uniquement sur `main` et si test est vert (connexion SSH au VPS avec une clé stockée dans les secrets GitHub, `git pull`, mise à jour des dépendances, redémarrage des services). Le GO MISE EN LIGNE se donne une seule fois, avant le premier envoi du code (fiche 13). Une fois le pipeline en place (fiche 14), chaque commit poussé se déploie seul.
+Deux jobs : **test** à chaque push (le code est installé, vérifié par `ruff`, testé par `pytest`) ; **deploy** uniquement sur `main` et si test est vert (connexion SSH au VPS avec une clé stockée dans les secrets GitHub, `git pull`, mise à jour des dépendances, redémarrage des services). Le GO MISE EN LIGNE se donne une seule fois, avant le premier envoi du code (fiche 12). Une fois le pipeline en place (fiche 13), chaque commit poussé se déploie seul.
 
 ### 2.7 Les sous-agents (version 2)
 
@@ -372,7 +371,7 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 **Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; « oublie-moi » ; brief du matin par cron avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir les coulisses » (réflexion, appels d'outils et leurs JSON) ; travail de l'agent visible en direct, dans le chat comme dans le brief, avec un relevé des tokens.
 
-**Souhaitable (Should)** : image du jour (météo, lieu, horoscope) ; « explique ce que tu viens de faire » ; budget quotidien et mode économe.
+**Souhaitable (Should)** : image du jour (météo, lieu, horoscope) ; « explique ce que tu viens de faire ».
 
 **Bonus (Could)** : pense-bête depuis le téléphone ; version 2 à sous-agents.
 
@@ -382,7 +381,7 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la **Règle 0** : jamais de code ni de publication sans GO. Il ne l'écrase jamais s'il existe. Pour GoodVibe, **l'agent y ajoute six lignes** (demandez-lui, et vérifiez qu'il vous montre le résultat) :
 
-1. **Mise en ligne** : « La publication se fait sur un VPS, pas sur Netlify. Le GO MISE EN LIGNE se demande au début de la feature 13, avant tout envoi : il autorise le premier push vers le dépôt GitHub privé, puis la mise en ligne de la page. Avant lui, rien ne quitte la machine du pilote. À partir de la feature 14, GitHub Actions déploie chaque push sur `main`. »
+1. **Mise en ligne** : « La publication se fait sur un VPS, pas sur Netlify. Le GO MISE EN LIGNE se demande au début de la feature 12, avant tout envoi : il autorise le premier push vers le dépôt GitHub privé, puis la mise en ligne de la page. Avant lui, rien ne quitte la machine du pilote. À partir de la feature 13, GitHub Actions déploie chaque push sur `main`. »
 2. **CHECK** : « Le test humain ne passe pas toujours par un navigateur : selon la feature, il se fait dans le terminal, avec `curl`, dans l'onglet Activité ou dans la page Gradio. Le critère de réussite du `plan-action.md` précise lequel. »
 3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui valide, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
@@ -410,7 +409,7 @@ Signal d'alerte : s'il ne se présente pas, ne pose pas la question, ou commence
 
 Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, s'il vous demande de choisir entre trois options, ou s'il passe au CHECK sans vous avoir montré de code, rappelez-lui les cinq règles de la note d'en-tête du tuto.
 
-### 4.2 La boucle que vous allez vivre quinze fois
+### 4.2 La boucle que vous allez vivre quatorze fois
 
 ```mermaid
 flowchart TD
@@ -427,7 +426,7 @@ flowchart TD
     N -- "non" --> ML["Clôture"]
 ```
 
-Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du code de cette feature, en local ; **GO #2** autorise le commit local ; **GO MISE EN LIGNE**, une seule fois, au début de la feature 13, autorise l'envoi du code sur GitHub puis la mise en ligne de la page. Le CHECK est **le vôtre** : l'agent lance ce qu'il faut et vous passe la main. Il ne s'auto-valide jamais. Entre le DO et le CHECK, il vous fait la **lecture guidée** du code : vous ne validez jamais un code que vous n'avez pas vu.
+Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du code de cette feature, en local ; **GO #2** autorise le commit local ; **GO MISE EN LIGNE**, une seule fois, au début de la feature 12, autorise l'envoi du code sur GitHub puis la mise en ligne de la page. Le CHECK est **le vôtre** : l'agent lance ce qu'il faut et vous passe la main. Il ne s'auto-valide jamais. Entre le DO et le CHECK, il vous fait la **lecture guidée** du code : vous ne validez jamais un code que vous n'avez pas vu.
 
 ### 4.3 Les trois documents de cadrage : ce que vous devez y trouver
 
@@ -437,10 +436,10 @@ Le skill rédige chaque document, l'écrit réellement sur le disque, vous le mo
 La stack est imposée par le PRD, et l'organisation du code par ce tuto : **un fichier par responsabilité**, parce que c'est ce qui rend chaque feature lisible et testable seule. L'agent vous l'explique ; il ne vous fait pas choisir entre des variantes. Chaque ligne de la stack doit avoir une colonne « En clair », qui dit en une phrase à quoi sert la technologie dans GoodVibe. Le document fige aussi la commande de lancement local (le chat terminal et Gradio sur le port 7860 dès les premières features, le webhook sur le port 8000 à la fin). Vérifiez que la ligne « Hébergement / déploiement » dit VPS + GitHub Actions, pas Netlify. **Les modèles ne se choisissent pas au cadrage** : `archi-stack.md` doit dire « modèle texte : choisi à la fiche 1 ; modèle image : choisi à la fiche 10 ». Si l'agent vous propose des modèles dès maintenant, dites-lui d'attendre : on choisit un modèle quand on s'apprête à s'en servir (section 2.8).
 
 **`fdd.md`**
-La liste des features, formulées « action, résultat, objet » (« afficher le brief du jour »). Vérifiez qu'elles correspondent à la liste de la section 5 (quinze features) et que le **tableau de couverture** relie chaque fonction du PRD à une feature. Si une manque, réclamez-la : le skill vous demande explicitement de confirmer le découpage, ne validez pas à l'aveugle.
+La liste des features, formulées « action, résultat, objet » (« afficher le brief du jour »). Vérifiez qu'elles correspondent à la liste de la section 5 (quatorze features) et que le **tableau de couverture** relie chaque fonction du PRD à une feature. Si une manque, réclamez-la : le skill vous demande explicitement de confirmer le découpage, ne validez pas à l'aveugle.
 
 **`plan-action.md`**
-L'ordre des features et leur **critère de réussite**. L'ordre attendu est celui de la section 5 : la page web dès la feature 2, pour que chaque feature suivante soit visible dans le navigateur ; le journal d'activité juste après (feature 3) pour que tout le reste soit observable ; la base et le profil avant le brief ; les tests avant le VPS ; le GO MISE EN LIGNE et le dépôt GitHub au début de la feature 13 ; le cron avec le serveur (feature 13) ; le CI/CD après le VPS ; le webhook en dernier, après la mise en ligne, pour être la première feature déployée par le pipeline. Ce document est **vivant** : il sera mis à jour à chaque tour, et c'est lui que vous relirez pour reprendre une session interrompue.
+L'ordre des features et leur **critère de réussite**. L'ordre attendu est celui de la section 5 : la page web dès la feature 2, pour que chaque feature suivante soit visible dans le navigateur ; le journal d'activité juste après (feature 3) pour que tout le reste soit observable ; la base et le profil avant le brief ; les tests avant le VPS ; le GO MISE EN LIGNE et le dépôt GitHub au début de la feature 12 ; le cron avec le serveur (feature 12) ; le CI/CD après le VPS ; le webhook en dernier, après la mise en ligne, pour être la première feature déployée par le pipeline. Ce document est **vivant** : il sera mis à jour à chaque tour, et c'est lui que vous relirez pour reprendre une session interrompue.
 
 **Le sas**
 Avant d'entrer en construction, le skill vous demandera de **citer le critère de réussite de la première feature**, en ouvrant `plan-action.md`. Ce n'est pas un piège : c'est pour garantir que vous avez réellement lu un document de cadrage. Puis il fait un **commit de cadrage** (les quatre documents et le `CLAUDE.md`) : c'est le point de reprise propre du projet.
@@ -463,7 +462,7 @@ Chaque feature a sa fiche, toujours construite pareil :
 8. **Pièges classiques**.
 9. **Où on en est** : ce que GoodVibe sait faire, et l'architecture qui se remplit.
 
-L'ordre des quinze features est celui du `plan-action.md` :
+L'ordre des quatorze features est celui du `plan-action.md` :
 
 | # | Feature | Onglet ou canal du CHECK |
 |---|---------|--------------------------|
@@ -477,13 +476,12 @@ L'ordre des quinze features est celui du `plan-action.md` :
 | 8 | [Horoscope via MCP](#fiche-8--horoscope-via-mcp) | Terminal + journal |
 | 9 | [Onglets Mémoire et Activité](#fiche-9--onglets-mémoire-et-activité) | Navigateur |
 | 10 | [Image du jour](#fiche-10--image-du-jour) | Navigateur |
-| 11 | [Budget et mode économe](#fiche-11--budget-et-mode-économe) | Navigateur, onglet Activité |
-| 12 | [Tests automatisés](#fiche-12--tests-automatisés) | Terminal |
-| 13 | [Mise en ligne sur le VPS](#fiche-13--mise-en-ligne-sur-le-vps) | GitHub + navigateur (URL publique) + `journalctl` |
-| 14 | [CI/CD GitHub Actions](#fiche-14--cicd-github-actions) | GitHub + navigateur |
-| 15 | [Webhook pense-bête](#fiche-15--webhook-pense-bête) | Hoppscotch + onglet Mémoire |
+| 11 | [Tests automatisés](#fiche-11--tests-automatisés) | Terminal |
+| 12 | [Mise en ligne sur le VPS](#fiche-12--mise-en-ligne-sur-le-vps) | GitHub + navigateur (URL publique) + `journalctl` |
+| 13 | [CI/CD GitHub Actions](#fiche-13--cicd-github-actions) | GitHub + navigateur |
+| 14 | [Webhook pense-bête](#fiche-14--webhook-pense-bête) | Hoppscotch + onglet Mémoire |
 
-Tout tourne en local jusqu'à la feature 12. Le webhook (feature 15) est construit après la mise en ligne et déployé par le pipeline. DB Browser for SQLite (https://sqlitebrowser.org) est utile pour les premiers CHECK, avant que l'onglet Mémoire existe : demandez à l'agent de l'installer à la fiche 3.
+Tout tourne en local jusqu'à la feature 11. Le webhook (feature 14) est construit après la mise en ligne et déployé par le pipeline. DB Browser for SQLite (https://sqlitebrowser.org) est utile pour les premiers CHECK, avant que l'onglet Mémoire existe : demandez à l'agent de l'installer à la fiche 3.
 
 Le schéma ci-dessous est **l'architecture cible de la V1**. Il réapparaît en fin de chaque fiche, les briques construites en couleur, les autres en gris.
 
@@ -502,7 +500,6 @@ flowchart TD
     BR --> IMG["image.py<br/>modèle image du jour J"]
     AG & BR & WH --> DB["db.py<br/>SQLite"]
     AG & BR --> JR["journal.py"] --> DB
-    AG & IMG --> BUD["budget.py"]
 ```
 
 ---
@@ -566,7 +563,6 @@ flowchart TD
     AG --> OUT["outils.py"]:::todo --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]:::todo
     BR --> IMG["image.py"]:::todo
     AG --> JR["journal.py"]:::todo --> DB
-    AG --> BUD["budget.py"]:::todo
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
@@ -613,7 +609,6 @@ flowchart TD
     AG --> OUT["outils.py"]:::todo --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]:::todo
     BR --> IMG["image.py"]:::todo
     AG --> JR["journal.py"]:::todo --> DB
-    AG --> BUD["budget.py"]:::todo
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
@@ -664,7 +659,6 @@ flowchart TD
     AG --> OUT["outils.py"]:::todo --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]:::todo
     BR --> IMG["image.py"]:::todo
     AG --> JR["journal.py"] --> DB
-    AG --> BUD["budget.py"]:::todo
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
@@ -746,7 +740,6 @@ flowchart TD
     AG --> OUT["outils.py"] --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]:::todo
     BR --> IMG["image.py"]:::todo
     AG --> JR["journal.py"] --> DB
-    AG --> BUD["budget.py"]:::todo
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
@@ -789,13 +782,13 @@ sequenceDiagram
 
 ### Fiche 6 : brief du matin
 
-**Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » quand vous cliquez « Générer le brief maintenant » ou lancez `cron_brief.py`, et si vous relancez, il refuse poliment d'en faire un second. Vous le voyez se fabriquer en direct : les étapes défilent, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche. L'heure fixe (7 h) viendra avec le serveur, à la fiche 13 : un cron n'a de sens que sur une machine allumée en permanence.
+**Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » quand vous cliquez « Générer le brief maintenant » ou lancez `cron_brief.py`, et si vous relancez, il refuse poliment d'en faire un second. Vous le voyez se fabriquer en direct : les étapes défilent, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche. L'heure fixe (7 h) viendra avec le serveur, à la fiche 12 : un cron n'a de sens que sur une machine allumée en permanence.
 
-**Ce qu'on construit** : `generer_brief()` (pour l'instant une phrase d'accueil personnalisée et les notes ; horoscope et météo arrivent aux fiches 7 et 8), les tables `briefs` et `traites`, le point d'entrée `cron_brief.py` (celui que le cron du serveur appellera à la fiche 13), un paramètre `--forcer`, l'onglet « Brief du jour » et son bouton « Générer le brief maintenant » dans la page web.
+**Ce qu'on construit** : `generer_brief()` (pour l'instant une phrase d'accueil personnalisée et les notes ; horoscope et météo arrivent aux fiches 7 et 8), les tables `briefs` et `traites`, le point d'entrée `cron_brief.py` (celui que le cron du serveur appellera à la fiche 12), un paramètre `--forcer`, l'onglet « Brief du jour » et son bouton « Générer le brief maintenant » dans la page web.
 
 ```mermaid
 sequenceDiagram
-    participant C as lancement à la main<br/>(cron du serveur à la fiche 13)
+    participant C as lancement à la main<br/>(cron du serveur à la fiche 12)
     participant S as cron_brief.py
     participant B as brief.py
     participant D as SQLite
@@ -838,7 +831,6 @@ flowchart TD
     AG --> OUT["outils.py"] --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]:::todo
     BR --> IMG["image.py"]:::todo
     AG & BR --> JR["journal.py"] --> DB
-    AG --> BUD["budget.py"]:::todo
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
@@ -889,7 +881,6 @@ flowchart TD
     AG --> OUT["outils.py"] --> MCP["mcp_client.py"]:::todo & MET["outils_meteo.py"]
     BR --> IMG["image.py"]:::todo
     AG & BR --> JR["journal.py"] --> DB
-    AG --> BUD["budget.py"]:::todo
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
@@ -953,7 +944,6 @@ flowchart TD
     MCP --> HOR["horoscope.py"]
     BR --> IMG["image.py"]:::todo
     AG & BR --> JR["journal.py"] --> DB
-    AG --> BUD["budget.py"]:::todo
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
@@ -1027,7 +1017,7 @@ sequenceDiagram
 
 **Pièges** : quota du plan gratuit atteint (le repli doit jouer) ; images dans Git ; image « cassée » dans Gradio parce que `allowed_paths` n'inclut pas le dossier ; format ou taille inadaptés.
 
-**Où on en est** : le brief est complet, texte et image. Fichiers ajoutés : `image.py`.
+**Où on en est** : le brief est complet, texte et image. Fichiers ajoutés : `image.py`. GoodVibe est complet fonctionnellement : l'architecture cible de la V1 est entièrement en couleur, à l'exception du webhook, construit après la mise en ligne (fiche 14).
 
 ```mermaid
 flowchart TD
@@ -1040,45 +1030,12 @@ flowchart TD
     MCP --> HOR["horoscope.py"]
     BR --> IMG["image.py"]
     AG & BR --> JR["journal.py"] --> DB
-    AG --> BUD["budget.py"]:::todo
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
 ---
 
-### Fiche 11 : budget et mode économe
-
-**Ce que vous verrez** : avec un budget ridicule fixé pour l'essai, GoodVibe produit son brief sans image, en réponses courtes, et vous dit qu'il est en mode économe.
-
-**Ce qu'on construit** : `budget.py` lit le cumul de tokens du jour dans `journal` ; si `BUDGET_TOKENS_JOUR` est dépassé, `agent.py` réduit la réflexion (`thinking_level: "low"`) et ajoute au prompt système la consigne de répondre court, `image.py` ne génère plus ; le journal note la bascule ; l'onglet Activité affiche le budget restant.
-
-```mermaid
-flowchart TD
-    A["avant chaque appel au modèle"] --> B["budget.py : cumul du jour"]
-    B --> C{"cumul > BUDGET_TOKENS_JOUR ?"}
-    C -- non --> N["mode normal"]
-    C -- oui --> E["mode économe :<br/>thinking_level low,<br/>réponses courtes,<br/>pas d'image"]
-    E --> J["journal : bascule en mode économe"]
-    N & E --> M["appel au modèle"]
-```
-
-**Ce que fait l'agent** : `budget.py` ; variable `BUDGET_TOKENS_JOUR` dans `config.py` ; bascule dans `agent.py` et `image.py` ; affichage du restant dans `vue_activite.py`.
-
-**Ce que vous faites** : fixer le budget dans `.env`.
-
-**La solution du tuto** : une vérification avant chaque appel : réactive, une requête SQL. **Pourquoi pas autrement** : vérifier une seule fois par exécution laisse passer un dépassement ; tout couper au dépassement est contraire au PRD, le brief doit sortir.
-
-**À relire** : le mode économe **ne bloque jamais le brief** ; le cumul est calculé sur le jour en cours dans le bon fuseau ; le budget est relu à chaque appel, pas une fois au démarrage.
-
-**CHECK** : fixez un budget minuscule, forcez un brief : pas d'image, mention « mode économe » dans le journal et dans l'onglet Activité, budget restant négatif affiché. Remettez un budget normal.
-
-**Pièges** : cumul calculé sur le mauvais jour (fuseau UTC du serveur) ; budget lu une fois et jamais rafraîchi.
-
-**Où on en est** : GoodVibe est complet fonctionnellement et se protège de lui-même. Fichiers ajoutés : `budget.py`. L'architecture cible de la V1 est entièrement en couleur, à l'exception du webhook, construit après la mise en ligne (fiche 15).
-
----
-
-### Fiche 12 : tests automatisés
+### Fiche 11 : tests automatisés
 
 **Ce que vous verrez** : `pytest` vert, `ruff` silencieux ; vous cassez volontairement une fonction, un test rougit et vous dit lequel.
 
@@ -1091,7 +1048,6 @@ flowchart LR
     T --> F3["fixture : fausses API<br/>météo, horoscope"]
     T --> X["test_agent : max_tours, outils appelés"]
     T --> Y["test_brief : anti-doublon, repli"]
-    T --> W["test_budget : bascule"]
     R["ruff"] --> OK["zéro erreur"]
 ```
 
@@ -1111,7 +1067,7 @@ flowchart LR
 
 ---
 
-### Fiche 13 : mise en ligne sur le VPS
+### Fiche 12 : mise en ligne sur le VPS
 
 **Ce que vous verrez** : vous donnez le GO MISE EN LIGNE, le code part sur votre dépôt GitHub privé, puis GoodVibe répond sur `https://goodvibe.votre-domaine.fr` avec le cadenas, depuis n'importe où, et son brief tombe à 7 h sans que votre ordinateur soit allumé.
 
@@ -1145,11 +1101,11 @@ flowchart TD
 
 ---
 
-### Fiche 14 : CI/CD GitHub Actions
+### Fiche 13 : CI/CD GitHub Actions
 
 **Ce que vous verrez** : vous poussez un changement, une coche verte apparaît sur GitHub, et trente secondes plus tard la page publique a changé, sans que personne ait touché au serveur.
 
-**Ce qu'on construit** : le workflow à deux jobs, et la clé de déploiement qui permet à GitHub Actions d'entrer sur le serveur. Le dépôt et la page en ligne existent depuis la fiche 13 : on automatise.
+**Ce qu'on construit** : le workflow à deux jobs, et la clé de déploiement qui permet à GitHub Actions d'entrer sur le serveur. Le dépôt et la page en ligne existent depuis la fiche 12 : on automatise.
 
 ```mermaid
 sequenceDiagram
@@ -1177,8 +1133,8 @@ sequenceDiagram
 
 | Clé | Elle permet | Où va la partie publique | Créée à la fiche |
 |---|---|---|---|
-| Clé de lecture du dépôt | Au serveur de lire le code sur GitHub | Dans le dépôt GitHub (« Deploy keys ») | 13 |
-| Clé de déploiement | À GitHub Actions d'entrer sur le serveur | Sur le VPS ; la partie privée va dans le secret `VPS_SSH_KEY` | 14 |
+| Clé de lecture du dépôt | Au serveur de lire le code sur GitHub | Dans le dépôt GitHub (« Deploy keys ») | 12 |
+| Clé de déploiement | À GitHub Actions d'entrer sur le serveur | Sur le VPS ; la partie privée va dans le secret `VPS_SSH_KEY` | 13 |
 
 **La solution du tuto** : une connexion SSH directe depuis le job, avec un script sur le VPS : trente lignes de YAML, tout est visible. **Pourquoi pas autrement** : construire une image Docker poussée sur un registre, ou passer par un outil tiers de déploiement, cache les étapes qu'on veut comprendre.
 
@@ -1186,13 +1142,13 @@ sequenceDiagram
 
 **CHECK** : un changement visible (un mot dans le titre de la page Gradio) poussé sur `main` : coche verte sur GitHub, page publique mise à jour sans toucher au VPS. Puis cassez volontairement un test et poussez : coche rouge, rien n'est déployé. Réparez, poussez : tout revient au vert.
 
-**Pièges** : confondre les deux clés ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 13 manque) ; workflow déclenché sur toutes les branches.
+**Pièges** : confondre les deux clés ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 12 manque) ; workflow déclenché sur toutes les branches.
 
-**Où on en est** : GoodVibe V1 est en production, mis à jour par un pipeline. Fichiers ajoutés : `.github/workflows/deploy.yml`, `deploy/deployer.sh`. Quatorze features sur quinze sont « fait » dans `plan-action.md`. La dernière, le webhook, sera la première feature déployée par ce pipeline, sans connexion SSH.
+**Où on en est** : GoodVibe V1 est en production, mis à jour par un pipeline. Fichiers ajoutés : `.github/workflows/deploy.yml`, `deploy/deployer.sh`. Treize features sur quatorze sont « fait » dans `plan-action.md`. La dernière, le webhook, sera la première feature déployée par ce pipeline, sans connexion SSH.
 
 ---
 
-### Fiche 15 : webhook pense-bête
+### Fiche 14 : webhook pense-bête
 
 **Ce que vous verrez** : depuis votre téléphone, vous envoyez « Dentiste à 10 h » à GoodVibe en production ; il répond « reçu » en une fraction de seconde, et le brief du lendemain vous le rappelle. C'est aussi la première feature que le pipeline déploie pour vous : un push, une coche verte, et la route existe sur le serveur.
 
@@ -1244,24 +1200,23 @@ flowchart TD
     MCP --> HOR["horoscope.py"]
     BR --> IMG["image.py"]
     AG & BR --> JR["journal.py"] --> DB
-    AG --> BUD["budget.py"]
 ```
 
 ---
 
 ## 6. Clôture : mise en ligne, walkthrough, post-mortem
 
-Une fois la page publique vérifiée et le webhook déployé par le pipeline (fiche 15), le skill enchaîne quatre étapes. Il ne dira « terminé » qu'après la dernière. Voici ce que vous devez obtenir de chacune.
+Une fois la page publique vérifiée et le webhook déployé par le pipeline (fiche 14), le skill enchaîne quatre étapes. Il ne dira « terminé » qu'après la dernière. Voici ce que vous devez obtenir de chacune.
 
 ```mermaid
 flowchart LR
-    A["1. V1 en ligne<br/>les 15 features sont faites"] --> B["2. walkthrough.md<br/>visite du code"]
+    A["1. V1 en ligne<br/>les 14 features sont faites"] --> B["2. walkthrough.md<br/>visite du code"]
     B --> C["3. post-mortem.md<br/>prévu / réalisé, leçons"]
     C --> D["4. Trois pistes d'évolution<br/>dont les sous-agents"]
     D --> E["5. Checklist à cinq cases<br/>toutes cochées"]
 ```
 
-**`walkthrough.md`**, la visite guidée du code, fichier par fichier, écrite pour quelqu'un qui découvre le projet. Vérifiez que chacun des fichiers de GoodVibe y a son paragraphe (rôle, ce qu'il expose, ce qu'il ne fait pas) : `config.py`, `prompt_systeme.md`, `agent.py`, `outils.py`, `outils_meteo.py`, `mcp_client.py`, `horoscope.py`, `image.py`, `brief.py`, `cron_brief.py`, `webhook.py`, `interface.py`, `vue_memoire.py`, `vue_activite.py`, `tarifs.py`, `budget.py`, `journal.py`, `db.py`, `deploy/`, `.github/workflows/`. Il est commité et poussé : le pipeline le déploie comme le reste.
+**`walkthrough.md`**, la visite guidée du code, fichier par fichier, écrite pour quelqu'un qui découvre le projet. Vérifiez que chacun des fichiers de GoodVibe y a son paragraphe (rôle, ce qu'il expose, ce qu'il ne fait pas) : `config.py`, `prompt_systeme.md`, `agent.py`, `outils.py`, `outils_meteo.py`, `mcp_client.py`, `horoscope.py`, `image.py`, `brief.py`, `cron_brief.py`, `webhook.py`, `interface.py`, `vue_memoire.py`, `vue_activite.py`, `tarifs.py`, `journal.py`, `db.py`, `deploy/`, `.github/workflows/`. Il est commité et poussé : le pipeline le déploie comme le reste.
 
 **`post-mortem.md`** : prévu contre réalisé, ce qui a bien marché, les frictions (déploiement compris), les décisions revues en route, les leçons pour le prochain projet. Ajoutez-y **vos propres chiffres** lus dans l'onglet Activité : tokens du premier jour, latence moyenne, coût estimé. Ils serviront de référence pour la comparaison V1 / V2.
 
@@ -1379,7 +1334,7 @@ flowchart LR
     S2 --> S3["Mot de passe sur la page web,<br/>jeton sur le webhook"]
     S3 --> S4["Contenu externe = donnée,<br/>jamais instruction"]
     S4 --> S5["Aucune donnée personnelle<br/>dans logs, journal, tests, Git"]
-    S5 --> S6["Nombre max de tours,<br/>budget de tokens"]
+    S5 --> S6["Nombre max de tours,<br/>plafond de dépense chez Google"]
     S6 --> S7["Sauvegarde nocturne<br/>de la base"]
     S7 --> S8["Clés dédiées et révocables :<br/>Gemini, Hetzner, déploiement"]
 ```
@@ -1401,7 +1356,8 @@ Chaque piste est un nouveau tour de roue PDCA, avec le skill, à partir du `plan
 - **PostgreSQL** : quand plusieurs processus écrivent ou que la base grossit. Seul `db.py` change.
 - **File de messages et agents distribués** : la V3 des sous-agents, chacun dans son processus.
 - **Frameworks d'orchestration** (LangGraph, Pydantic AI) : utiles quand les workflows deviennent des graphes. Vous saurez ce qu'ils automatisent, puisque vous l'avez écrit à la main.
-- **Bac à sable d'exécution de code** : donner à GoodVibe un outil « exécute ce script Python », pour qu'il calcule au lieu de deviner : des statistiques sur son journal, une courbe de sa consommation de tokens. À faire en deux temps. D'abord l'outil d'exécution de code fourni par Gemini : il s'ajoute à la liste des outils, le script tourne chez Google, et les coulisses montrent le script écrit par le modèle puis sa sortie. Ce bac à sable n'a accès ni à votre base ni à vos fichiers : on lui passe les données dont il a besoin, par exemple un extrait du journal, jamais le profil. Au PLAN, l'agent vérifie dans la documentation de Google les limites du jour : durée d'exécution, bibliothèques disponibles, formats de fichiers, modèles compatibles. Ensuite, pour comprendre l'isolation, un conteneur Docker sur le VPS, sans réseau ni accès aux fichiers. Jamais de `subprocess` ni d'`exec` directement sur le VPS : GoodVibe lit du contenu venu de l'extérieur, et une injection de prompt deviendrait un programme qui tourne chez vous, avec accès à vos clés. Le mode économe doit couper cet outil : le script et sa sortie comptent en tokens.
+- **Bac à sable d'exécution de code** : donner à GoodVibe un outil « exécute ce script Python », pour qu'il calcule au lieu de deviner : des statistiques sur son journal, une courbe de sa consommation de tokens. À faire en deux temps. D'abord l'outil d'exécution de code fourni par Gemini : il s'ajoute à la liste des outils, le script tourne chez Google, et les coulisses montrent le script écrit par le modèle puis sa sortie. Ce bac à sable n'a accès ni à votre base ni à vos fichiers : on lui passe les données dont il a besoin, par exemple un extrait du journal, jamais le profil. Au PLAN, l'agent vérifie dans la documentation de Google les limites du jour : durée d'exécution, bibliothèques disponibles, formats de fichiers, modèles compatibles. Ensuite, pour comprendre l'isolation, un conteneur Docker sur le VPS, sans réseau ni accès aux fichiers. Jamais de `subprocess` ni d'`exec` directement sur le VPS : GoodVibe lit du contenu venu de l'extérieur, et une injection de prompt deviendrait un programme qui tourne chez vous, avec accès à vos clés. Le script et sa sortie comptent en tokens : surveillez le relevé.
+- **Budget quotidien et mode économe** : fixer un plafond de tokens par jour ; au-delà, GoodVibe réduit sa réflexion, répond court et ne génère plus d'image, sans jamais empêcher le brief de sortir. Le journal contient déjà ce qu'il faut pour calculer le cumul du jour. En attendant, trois garde-fous protègent la facture : le nombre maximal de tours, une seule image par jour, et le plafond de dépense que vous fixez chez Google.
 - **Claude Code comme sous-agent** : `claude -p "tâche"` en sous-processus, pour déléguer une tâche de code.
 - **Claude en remplacement de Gemini** : la boucle est la même ; seul le SDK change (`anthropic`), et un fichier `llm.py` d'abstraction rend le bascule indolore.
 

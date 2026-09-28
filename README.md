@@ -85,7 +85,7 @@ Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils
 ## Ce qui est gratuit, ce qui coûte
 
 - **Gratuit** : Antigravity, la clé Gemini en plan gratuit (avec des quotas : c'est pour cela que Claude Code est recommandé en relais), Open-Meteo et l'API horoscope (sans clé), GitHub et son pipeline GitHub Actions (le quota gratuit suffit largement).
-- **Payant, à partir de la fiche 13 seulement** : le VPS (quelques euros par mois chez Hetzner, résiliable à tout moment) et un nom de domaine ou sous-domaine si vous n'en avez pas. Jusque-là, tout tourne sur votre machine sans dépenser un centime.
+- **Payant, à partir de la fiche 12 seulement** : le VPS (quelques euros par mois chez Hetzner, résiliable à tout moment) et un nom de domaine ou sous-domaine si vous n'en avez pas. Jusque-là, tout tourne sur votre machine sans dépenser un centime.
 - **À surveiller** : la génération d'images (fiche 10) dépend du quota de votre plan Google AI ; le tuto prévoit un repli si le quota est atteint.
 
 ---
@@ -169,19 +169,19 @@ reprends le vibecoding sur GoodVibe
 flowchart TD
     A["Skill installé par l'agent,<br/>clé Gemini créée par vous"] --> B["PRD et tuto déposés dans le projet<br/>(vous)"]
     B --> C["Cadrage : architecture et stack, FDD, plan d'action<br/>(l'agent rédige, vous validez)"]
-    C --> D["Features 1 à 12, en local, une par une<br/>(l'agent code, vous testez)"]
-    D --> F["GO MISE EN LIGNE<br/>(au début de la feature 13, avant tout envoi)"]
-    F --> E["Features 13 et 14 : dépôt GitHub, VPS, CI/CD<br/>(l'agent configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
-    E --> F2["Feature 15 : le webhook,<br/>déployé par le pipeline"]
+    C --> D["Features 1 à 11, en local, une par une<br/>(l'agent code, vous testez)"]
+    D --> F["GO MISE EN LIGNE<br/>(au début de la feature 12, avant tout envoi)"]
+    F --> E["Features 12 et 13 : dépôt GitHub, VPS, CI/CD<br/>(l'agent configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
+    E --> F2["Feature 14 : le webhook,<br/>déployé par le pipeline"]
     F2 --> G["Walkthrough, post-mortem, pistes<br/>(l'agent rédige, vous relisez)"]
     G --> H["Version 2 : sous-agents<br/>(nouveau cycle PDCA)"]
 ```
 
 Chaque feature suit la même boucle **PDCA** : l'agent présente son **PLAN** (la solution du tuto, expliquée) → vous donnez le **GO #1** → l'agent **code**, puis vous montre et vous explique les extraits qui comptent → vous faites le **CHECK** → **GO #2** → commit.
 
-Tout tourne **en local jusqu'à la feature 12 incluse** : vous avez un produit complet sur votre machine avant de dépenser un centime d'hébergement. Les deux déclencheurs autonomes, le cron et le webhook, n'arrivent qu'avec le serveur : c'est là qu'ils ont un sens.
+Tout tourne **en local jusqu'à la feature 11 incluse** : vous avez un produit complet sur votre machine avant de dépenser un centime d'hébergement. Les deux déclencheurs autonomes, le cron et le webhook, n'arrivent qu'avec le serveur : c'est là qu'ils ont un sens.
 
-**Les 15 fiches de la version 1** (détaillées dans le tuto, section 5) :
+**Les 14 fiches de la version 1** (détaillées dans le tuto, section 5) :
 
 1. Squelette et chat terminal
 2. Page web
@@ -193,11 +193,10 @@ Tout tourne **en local jusqu'à la feature 12 incluse** : vous avez un produit c
 8. Horoscope via MCP
 9. Onglets Mémoire et Activité
 10. Image du jour
-11. Budget et mode économe
-12. Tests automatisés
-13. GO MISE EN LIGNE : dépôt GitHub privé, installation du VPS, cron du matin
-14. CI/CD GitHub Actions
-15. Webhook pense-bête, déployé par le pipeline
+11. Tests automatisés
+12. GO MISE EN LIGNE : dépôt GitHub privé, installation du VPS, cron du matin
+13. CI/CD GitHub Actions
+14. Webhook pense-bête, déployé par le pipeline
 
 ## Stack technique
 

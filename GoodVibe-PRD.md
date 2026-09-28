@@ -48,12 +48,11 @@ Ce que ce produit ne cherche **pas** à être :
 - **Should have** :
   - Générer une image du jour inspirée de trois éléments : la météo du jour, le lieu de résidence et la prévision d'horoscope ; l'afficher au-dessus du brief et sur demande dans le chat.
   - Expliquer dans le chat ce que l'agent vient de faire, outil par outil, à partir de son journal.
-  - Respecter un budget quotidien de tokens ; au-delà, passer en mode économe (pas d'image, réponses courtes, réflexion réduite) sans jamais empêcher le brief de sortir.
 - **Could have** :
   - Envoyer le pense-bête depuis le téléphone via un raccourci (Raccourcis iOS, HTTP Shortcuts Android).
   - Version 2 : déléguer l'horoscope et la météo à des sous-agents spécialisés, avec comparaison mesurée V1 / V2 (tokens, latence, comportement en panne).
 - **Won't have (pour l'instant)** :
-  - Plusieurs utilisateurs, notifications sortantes, recherche sémantique dans la mémoire, chiffrement de la base au repos, authentification à deux facteurs.
+  - Budget quotidien de tokens et mode économe, plusieurs utilisateurs, notifications sortantes, recherche sémantique dans la mémoire, chiffrement de la base au repos, authentification à deux facteurs.
 
 ## 5. Interactions
 
@@ -79,7 +78,7 @@ Ce que ce produit ne cherche **pas** à être :
 - **Déploiement :** VPS Ubuntu LTS, services `systemd`, Caddy en reverse proxy HTTPS, déploiement automatique par GitHub Actions à chaque push sur `main`. **La mise en ligne se fait sur ce VPS, pas sur Netlify.**
 - **Données :** un seul utilisateur, profil fictif recommandé pour la démo. Jamais de donnée personnelle dans les logs, le journal, les tests ni le dépôt Git. Minimisation : le signe suffit, la date de naissance complète n'est pas conservée après calcul. Effacement complet sur demande.
 - **Observabilité :** chaque appel au modèle ou à un outil enregistre tokens (entrée, sortie, réflexion), latence et durée, sans donnée personnelle.
-- **Qualité :** au moins un test automatisé par fonctionnalité, exécuté par la CI, sans appel réseau réel. Nombre maximal de tours par exécution de l'agent. Texte de repli si une API externe échoue. Budget quotidien de tokens.
+- **Qualité :** au moins un test automatisé par fonctionnalité, exécuté par la CI, sans appel réseau réel. Nombre maximal de tours par exécution de l'agent. Texte de repli si une API externe échoue.
 - **Performance :** premier mot affiché en moins de 3 secondes en conversation dans les conditions normales de l'API ; brief généré en moins de 60 secondes.
 - **Compatibilité :** page web utilisable sur un navigateur de bureau récent ; lisible sur mobile sans être optimisée.
 - **Accessibilité :** contrastes suffisants, aucune information portée par la couleur seule.
