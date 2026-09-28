@@ -159,7 +159,7 @@ Tout tourne **en local jusqu'à la feature 11 incluse**. Le VPS n'arrive qu'en f
 - **Antigravity** installé, avec Gemini intégré.
 - Un compte **Google AI Studio**. La clé API Gemini se crée **le moment venu**, à la fiche 1, quand l'agent prépare le `.env` : inutile de l'anticiper.
 - Un compte **GitHub**. Python 3.12 et Git ne sont pas des prérequis : **l'agent de codage les installe** s'ils manquent, puis gère l'environnement virtuel et les dépendances. « Intermédiaire » signifie ici savoir **lire** le code généré pour le juger au CHECK.
-- Pour la section déploiement uniquement : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH) et un nom de domaine ou sous-domaine.
+- Pour la section déploiement uniquement : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
 - Recommandé : **Claude Code dans Antigravity** pour ceux qui ont un abonnement Claude. Antigravity est un fork de VS Code : Claude Code s'y installe comme l'**extension VS Code « Claude Code »**, depuis la marketplace de l'éditeur (l'agent Gemini peut lancer cette installation, vous n'aurez qu'à vous connecter à votre compte Claude). Avec un plan Google AI gratuit, les quotas limitent l'agent de vibe coding ; Claude Code prend alors le relais et l'atelier ne s'arrête pas.
 
 ### 1.5 Installer le skill VibeCoding Copilote
@@ -1157,11 +1157,25 @@ flowchart LR
 
 - *Le problème.* GoodVibe vit sur votre ordinateur : il s'éteint avec lui. Il ne peut donc ni préparer le brief à 7 h, ni vous répondre sur votre téléphone.
 - *L'idée.* On l'installe sur un ordinateur loué, allumé en permanence et relié à Internet. C'est déménager l'atelier de votre garage vers un local sur la rue : il lui faut une adresse, une serrure, et quelqu'un qui ouvre le matin.
-- *Les mots nouveaux.* **Serveur** ou **VPS** : cet ordinateur loué. **SSH** : la façon de s'y connecter à distance, avec une clé au lieu d'un mot de passe. **Dépôt GitHub** : la copie en ligne du code, où le serveur vient le chercher. **Nom de domaine** : l'adresse de la page. **HTTPS** : la serrure, qui chiffre les échanges. **Cron** : l'horloge du serveur, qui lance le brief à 7 h. **Service** : un programme que le serveur relance tout seul s'il s'arrête. **Pare-feu** : ce qui ferme toutes les portes sauf celles qu'on a choisies.
+- *Les mots nouveaux.* **Serveur** ou **VPS** : cet ordinateur loué. **SSH** : la façon de s'y connecter à distance, avec une clé au lieu d'un mot de passe. **Dépôt GitHub** : la copie en ligne du code, où le serveur vient le chercher. **Adresse IP** : le numéro du serveur sur Internet. **Nom de domaine** : l'adresse en toutes lettres qui mène à ce numéro. **HTTPS** : la serrure, qui chiffre les échanges. **Cron** : l'horloge du serveur, qui lance le brief à 7 h. **Service** : un programme que le serveur relance tout seul s'il s'arrête. **Pare-feu** : ce qui ferme toutes les portes sauf celles qu'on a choisies.
 
-**Ce que vous verrez** : vous donnez le GO MISE EN LIGNE, le code part sur votre dépôt GitHub privé, puis GoodVibe répond sur `https://goodvibe.votre-domaine.fr` avec le cadenas, depuis n'importe où, et son brief tombe à 7 h sans que votre ordinateur soit allumé.
+**Ce que vous verrez** : vous donnez le GO MISE EN LIGNE, le code part sur votre dépôt GitHub privé, puis GoodVibe répond sur son adresse publique, en `https://` avec le cadenas, depuis n'importe où, et son brief tombe à 7 h sans que votre ordinateur soit allumé.
 
 **Le GO MISE EN LIGNE** : il se demande au PLAN de cette fiche, avant tout envoi, et c'est la seule fois du projet. Il autorise deux choses : envoyer le code sur GitHub, puis rendre la page accessible depuis Internet. Jusqu'ici, rien n'a quitté votre machine. Avant le premier push, l'agent vérifie que ni secret ni donnée personnelle ne figure dans l'historique Git : `.env`, `data/` et les images sont ignorés depuis la fiche 1.
+
+**Le déroulé guidé** : cette fiche est la plus longue du parcours, et la première qui coûte de l'argent. L'agent la déroule en neuf étapes. Après chacune, il dit ce qu'il vient de faire, ce que ça change pour la facture, et il attend votre « suivant ».
+
+| Étape | Ce qui se passe | Ce que vous en retenez |
+|---|---|---|
+| 1. Ce que ça coûte | Avant toute dépense : le prix à l'heure, le plafond mensuel, et comment arrêter | Vous savez ce que vous engagez |
+| 2. Le GO MISE EN LIGNE | Vérification de l'historique Git, dépôt GitHub privé, premier envoi du code | Rien n'est parti avant votre accord |
+| 3. Le serveur | Compte Hetzner, jeton, création du plus petit serveur | Le compteur démarre ici |
+| 4. La connexion | La clé SSH, le pare-feu | Comment on entre, et qui peut entrer |
+| 5. L'adresse | Une adresse gratuite par défaut ; votre nom de domaine si vous en avez un | Aucun achat obligatoire |
+| 6. L'installation | Le code, le `.env` du serveur, le service, le HTTPS | Le `.env` du serveur n'est pas celui de votre ordinateur |
+| 7. L'identifiant et le mot de passe | Où ils sont, comment les changer | Vous posez vous-même le mot de passe définitif |
+| 8. L'horloge | Le brief à 7 h, le fuseau horaire | Pourquoi 7 h peut devenir 9 h |
+| 9. Le CHECK | La page publique répond | C'est vous qui le constatez |
 
 **Ce qu'on construit** : le dépôt GitHub privé et le premier push ; puis le serveur prêt à recevoir GoodVibe : utilisateur dédié non root, code cloné depuis GitHub avec une clé en lecture seule, venv, un service `systemd` (interface), Caddy en HTTPS, le cron du brief à 7 h (premier déclencheur autonome), pare-feu, sauvegarde nocturne de la base.
 
@@ -1175,17 +1189,53 @@ flowchart TD
     SSH["SSH par clé uniquement<br/>utilisateur goodvibe, sudo limité"] -.-> GR
 ```
 
-**Ce que fait l'agent** : vérifie l'historique Git avant le premier push ; relie le projet à votre dépôt GitHub et y pousse les commits locaux ; installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, création d'une clé de lecture du dépôt (« deploy key », en lecture seule), clone du dépôt avec cette clé, venv, installation de `uvx` pour le serveur MCP, fichiers `deploy/goodvibe-web.service`, `deploy/Caddyfile` versionnés dans le dépôt, règle `sudoers` limitée au `systemctl restart` du service, la ligne `crontab` de l'utilisateur `goodvibe` (7 h, **chemin absolu** du Python du venv, log redirigé vers un fichier), script de sauvegarde.
+**Ce que fait l'agent** : vérifie l'historique Git avant le premier push ; relie le projet à votre dépôt GitHub et y pousse les commits locaux ; installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, création d'une clé de lecture du dépôt (« deploy key », en lecture seule), clone du dépôt avec cette clé, venv, installation de `uvx` pour le serveur MCP, fichiers `deploy/goodvibe-web.service`, `deploy/Caddyfile` versionnés dans le dépôt, règle `sudoers` limitée au `systemctl restart` du service, la ligne `crontab` de l'utilisateur `goodvibe` (7 h, **chemin absolu** du Python du venv, log redirigé vers un fichier), script de sauvegarde ; adresse publique construite à partir de l'adresse IP du serveur, ou votre nom de domaine si vous en avez un ; `.env` du serveur créé avec un identifiant et un mot de passe de départ.
 
-**Ce que vous faites** : donner le GO MISE EN LIGNE ; créer le dépôt **privé** sur GitHub (guidé) et y ajouter la clé de lecture du serveur ; créer le compte Hetzner et un jeton API dédié (révocable) ; pointer un sous-domaine vers l'IP du serveur (enregistrement A chez votre registrar) ; copier les secrets dans le `.env` du serveur (l'agent vous indique lesquels et vous guide, il ne doit jamais les voir passer dans le chat si vous préférez les saisir vous-même en SSH). Avant la mise en ligne, remplacez le mot de passe de départ par un mot de passe à vous, long, que vous n'avez donné à personne, dans le `.env` du serveur : celui de départ a été affiché dans la discussion, il ne doit pas protéger une page publique.
+**Ce que vous faites** : donner le GO MISE EN LIGNE ; créer le dépôt **privé** sur GitHub (guidé) et y ajouter la clé de lecture du serveur ; créer le compte Hetzner et un jeton API dédié (révocable) ; si vous avez un nom de domaine, pointer un sous-domaine vers l'adresse IP du serveur (facultatif) ; saisir vous-même, dans le `.env` du serveur, la clé Gemini et votre mot de passe définitif : long, à vous, que vous n'avez donné à personne. L'agent vous guide, mais ces deux secrets ne passent pas par la discussion.
+
+**Ce que ça coûte, et comment arrêter.** Ces règles viennent de la documentation de Hetzner, consultée en septembre 2026. L'agent les revérifie au PLAN et vous donne le prix du jour avant de créer le serveur.
+
+- On paie à l'heure, avec un plafond mensuel : le serveur ne coûte jamais plus que son prix au mois. Toute heure commencée est due.
+- Vous payez les ressources qui existent dans votre compte : le serveur, et son adresse IPv4, facturée à part.
+- **Un serveur éteint continue d'être facturé.** Seule sa suppression arrête les frais.
+- Les sauvegardes automatiques que propose Hetzner sont une option payante. Ne les activez pas : le tuto fait sa propre sauvegarde de la base.
+- La facture arrive après la fin du mois.
+
+**Arrêter les frais à la fin du tuto**, dans cet ordre :
+
+1. Récupérez sur votre ordinateur le dossier des données et celui des sauvegardes.
+2. Supprimez le serveur dans la console Hetzner (bouton « Delete »), ou demandez à l'agent de le faire.
+3. Vérifiez que la liste des serveurs est vide, et qu'il ne reste aucune adresse dans « Primary IPs ».
+
+Votre compte reste ouvert, et votre code reste sur votre ordinateur et sur GitHub : vous pourrez tout réinstaller.
+
+**L'adresse de GoodVibe.** Vous n'avez pas besoin d'acheter un nom de domaine. Le service gratuit sslip.io fabrique une adresse à partir de l'adresse IP du serveur : si elle vaut `1.2.3.4`, GoodVibe répond sur `https://goodvibe.1-2-3-4.sslip.io`. C'est un service tiers, sans compte et sans garantie : parfait pour apprendre. Pour un usage durable, prenez un nom de domaine et pointez-le vers le serveur.
+
+**Deux fichiers `.env`, deux mondes.**
+
+| | Le `.env` de votre ordinateur | Le `.env` du serveur |
+|---|---|---|
+| Il sert quand | GoodVibe tourne chez vous | GoodVibe tourne en ligne |
+| Il se trouve | Dans le dossier du projet | Sur le serveur, dans le dossier de l'application |
+| Il part sur GitHub | Jamais | Jamais |
+| Le modifier change l'autre | Non | Non |
+
+**Changer l'identifiant et le mot de passe.** Ils vivent dans le `.env` du serveur, aux lignes `WEB_USER` et `WEB_PASSWORD`. Deux façons de les changer :
+
+- **vous-même** : ouvrez le `.env` du serveur, modifiez la ligne, enregistrez. C'est la façon à retenir pour le mot de passe définitif, puisqu'il ne passe par aucune discussion ;
+- **en le demandant à l'agent** : pratique pour un mot de passe d'essai, mais il transite alors par la discussion.
+
+Dans les deux cas, le service doit être relancé pour que le changement prenne effet : demandez-le à l'agent. Votre navigateur vous proposera d'enregistrer le nouveau mot de passe.
+
+**Voir les fichiers du serveur.** FileZilla est un logiciel gratuit qui affiche les dossiers du serveur comme l'explorateur de votre ordinateur. Il se connecte avec votre clé SSH ; l'agent l'installe et vous guide pour la première connexion. Il vous sert à ouvrir le `.env` du serveur et à récupérer vos données.
 
 **La solution du tuto** : une installation directe avec `systemd` et Caddy : tout est lisible, aucun conteneur à expliquer. **Pourquoi pas autrement** : Docker Compose et Coolify (une interface web qui déploie depuis GitHub) ajoutent une couche à apprendre ; ils sont présentés en fin de tuto.
 
-**À relire** : le dépôt GitHub est privé, et rien de sensible ne figure dans son historique ; la clé de lecture du serveur est en lecture seule et n'ouvre que ce dépôt ; aucun service ne tourne en root ; `.env` en `chmod 600` ; Caddy est le seul exposé sur 80 et 443, Gradio écoute sur `127.0.0.1` ; la base est hors du dossier synchronisé par Git ; les fichiers de service ont `Restart=always` ; le cron charge `.env` via `config.py`, pas l'environnement du shell.
+**À relire** : le dépôt GitHub est privé, et rien de sensible ne figure dans son historique ; la clé de lecture du serveur est en lecture seule et n'ouvre que ce dépôt ; aucun service ne tourne en root ; `.env` en `chmod 600` ; Caddy est le seul exposé sur 80 et 443, Gradio écoute sur `127.0.0.1` ; la base est hors du dossier synchronisé par Git ; les fichiers de service ont `Restart=always` ; le cron charge `.env` via `config.py`, pas l'environnement du shell ; ni l'identifiant, ni le mot de passe, ni l'adresse IP du serveur ne figurent dans un fichier du dépôt.
 
-**CHECK** : sur GitHub, le dépôt contient vos commits, et ni `.env` ni `data/` ; `https://goodvibe.votre-domaine.fr` répond avec le cadenas, connexion, brief généré via le bouton ; `journalctl -u goodvibe-web -f` montre le service vivant ; le lendemain, un brief en base à 7 h (heure du serveur : vérifiez le fuseau).
+**CHECK** : sur GitHub, le dépôt contient vos commits, et ni `.env` ni `data/` ; l'adresse publique de GoodVibe répond avec le cadenas, connexion, brief généré via le bouton ; vous changez le mot de passe dans le `.env` du serveur, l'agent relance le service : l'ancien est refusé, le nouveau est accepté ; `journalctl -u goodvibe-web -f` montre le service vivant ; le lendemain, un brief en base à 7 h (heure du serveur : vérifiez le fuseau).
 
-**Pièges** : secret déjà commité dans l'historique (le retirer du dernier commit ne suffit pas : il faut changer le secret) ; clé de lecture ajoutée à votre compte GitHub au lieu du dépôt (elle ouvrirait tous vos dépôts) ; DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; crontab posé pour le mauvais utilisateur ; `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
+**Pièges** : éteindre le serveur en croyant arrêter la facture (il faut le supprimer) ; adresse IP restée dans le compte après la suppression du serveur ; modifier le `.env` de son ordinateur en croyant changer celui du serveur ; mot de passe changé sans relancer le service ; secret déjà commité dans l'historique (le retirer du dernier commit ne suffit pas : il faut changer le secret) ; clé de lecture ajoutée à votre compte GitHub au lieu du dépôt (elle ouvrirait tous vos dépôts) ; DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; crontab posé pour le mauvais utilisateur ; `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
 
 **Où on en est** : GoodVibe est en production, mais toute mise à jour demande encore une connexion SSH. Fichiers ajoutés : `deploy/`.
 

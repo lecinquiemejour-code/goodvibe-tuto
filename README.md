@@ -77,7 +77,7 @@ Le principe : **l'agent de codage fait, vous pilotez.** L'agent écrit le code, 
 - **Antigravity IDE** installé, avec Gemini intégré.
 - Un compte **Google AI Studio**. La clé API Gemini se crée plus tard, à la fiche 1 : inutile de l'anticiper.
 - Un compte **GitHub**.
-- *Pour la mise en ligne uniquement (fin de parcours)* : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH) et un nom de domaine ou sous-domaine.
+- *Pour la mise en ligne uniquement (fin de parcours)* : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
 - *Recommandé* : l'extension **Claude Code** dans Antigravity, si vous avez un abonnement Claude. Elle prend le relais quand les quotas gratuits de Gemini sont atteints.
 
 Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils manquent.
@@ -85,7 +85,7 @@ Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils
 ## Ce qui est gratuit, ce qui coûte
 
 - **Gratuit** : Antigravity, la clé Gemini en plan gratuit (avec des quotas : c'est pour cela que Claude Code est recommandé en relais), Open-Meteo et l'API horoscope (sans clé), GitHub et son pipeline GitHub Actions (le quota gratuit suffit largement).
-- **Payant, à partir de la fiche 12 seulement** : le VPS (quelques euros par mois chez Hetzner, résiliable à tout moment) et un nom de domaine ou sous-domaine si vous n'en avez pas. Jusque-là, tout tourne sur votre machine sans dépenser un centime.
+- **Payant, à partir de la fiche 12 seulement** : le VPS, facturé à l'heure chez Hetzner, avec un plafond de quelques euros par mois. Attention : un serveur éteint reste facturé, il faut le supprimer pour arrêter les frais. Aucun nom de domaine à acheter : le tuto utilise une adresse gratuite. Jusque-là, tout tourne sur votre machine sans dépenser un centime.
 - **À surveiller** : la génération d'images (fiche 10) dépend du quota de votre plan Google AI ; le tuto prévoit un repli si le quota est atteint.
 
 ---
