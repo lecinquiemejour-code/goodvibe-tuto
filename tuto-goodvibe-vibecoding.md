@@ -1163,7 +1163,7 @@ flowchart LR
 
 **Le GO MISE EN LIGNE** : il se demande au PLAN de cette fiche, avant tout envoi, et c'est la seule fois du projet. Il autorise deux choses : envoyer le code sur GitHub, puis rendre la page accessible depuis Internet. Jusqu'ici, rien n'a quitté votre machine. Avant le premier push, l'agent vérifie que ni secret ni donnée personnelle ne figure dans l'historique Git : `.env`, `data/` et les images sont ignorés depuis la fiche 1.
 
-**Le déroulé guidé** : cette fiche est la plus longue du parcours, et la première qui coûte de l'argent. L'agent la déroule en neuf étapes. Après chacune, il dit ce qu'il vient de faire, ce que ça change pour la facture, et il attend votre « suivant ».
+**Le déroulé guidé** : cette fiche est la plus longue du parcours, et la première qui coûte de l'argent. L'agent la déroule en dix étapes. Après chacune, il dit ce qu'il vient de faire, ce que ça change pour la facture, et il attend votre « suivant ».
 
 | Étape | Ce qui se passe | Ce que vous en retenez |
 |---|---|---|
@@ -1176,6 +1176,7 @@ flowchart LR
 | 7. L'identifiant et le mot de passe | Où ils sont, comment les changer | Vous posez vous-même le mot de passe définitif |
 | 8. L'horloge | Le brief à 7 h, le fuseau horaire | Pourquoi 7 h peut devenir 9 h |
 | 9. Le CHECK | La page publique répond | C'est vous qui le constatez |
+| 10. La suite | Garder le serveur, ou le supprimer : l'agent vous pose la question, et la reposera à la clôture du projet | C'est votre décision, et elle se change à tout moment |
 
 **Ce qu'on construit** : le dépôt GitHub privé et le premier push ; puis le serveur prêt à recevoir GoodVibe : utilisateur dédié non root, code cloné depuis GitHub avec une clé en lecture seule, venv, un service `systemd` (interface), Caddy en HTTPS, le cron du brief à 7 h (premier déclencheur autonome), pare-feu, sauvegarde nocturne de la base.
 
@@ -1201,13 +1202,28 @@ flowchart TD
 - Les sauvegardes automatiques que propose Hetzner sont une option payante. Ne les activez pas : le tuto fait sa propre sauvegarde de la base.
 - La facture arrive après la fin du mois.
 
-**Arrêter les frais à la fin du tuto**, dans cet ordre :
+**À la fin du tuto : garder le serveur, ou le supprimer.** Les deux choix sont bons. C'est à vous de décider.
+
+| | Garder le serveur | Supprimer le serveur |
+|---|---|---|
+| Ce que vous avez | GoodVibe prépare votre brief chaque matin et vous répond depuis votre téléphone | Votre code, sur votre ordinateur et sur GitHub, prêt à être réinstallé |
+| Ce que ça coûte | Le prix mensuel du serveur et de son adresse IPv4, et l'usage quotidien de Gemini | Plus rien |
+| Pour revenir en arrière | Vous pouvez supprimer le serveur à tout moment | Il faut refaire l'installation de cette fiche |
+
+Si vous le gardez, quatre précautions :
+
+1. Vérifiez que le mot de passe est bien le vôtre, et non celui de départ.
+2. Prenez un nom de domaine : l'adresse gratuite est un service tiers, sans garantie dans la durée.
+3. Laissez activées les mises à jour de sécurité automatiques, que l'agent a installées à l'étape de la connexion.
+4. Regardez votre facture Hetzner et votre consommation Gemini une fois par mois. Un brief et une image par jour coûtent peu, mais ce sont des dépenses qui courent sans vous.
+
+Si vous le supprimez, dans cet ordre :
 
 1. Récupérez sur votre ordinateur le dossier des données et celui des sauvegardes.
 2. Supprimez le serveur dans la console Hetzner (bouton « Delete »), ou demandez à l'agent de le faire.
 3. Vérifiez que la liste des serveurs est vide, et qu'il ne reste aucune adresse dans « Primary IPs ».
 
-Votre compte reste ouvert, et votre code reste sur votre ordinateur et sur GitHub : vous pourrez tout réinstaller.
+Dans les deux cas, votre compte reste ouvert.
 
 **L'adresse de GoodVibe.** Vous n'avez pas besoin d'acheter un nom de domaine. Le service gratuit sslip.io fabrique une adresse à partir de l'adresse IP du serveur : si elle vaut `1.2.3.4`, GoodVibe répond sur `https://goodvibe.1-2-3-4.sslip.io`. C'est un service tiers, sans compte et sans garantie : parfait pour apprendre. Pour un usage durable, prenez un nom de domaine et pointez-le vers le serveur.
 
@@ -1375,6 +1391,8 @@ flowchart LR
 **Trois pistes d'évolution.** Le skill en propose trois, avec valeur et effort. **Le passage aux sous-agents doit en faire partie** : c'est la V2. S'il ne la propose pas, demandez-la. Les pistes retenues sont consignées dans la section « Pour aller plus loin » du `plan-action.md`.
 
 **La checklist de fin de chantier** : toutes les features « fait » ; site déployé et URL vérifiée par vous ; `walkthrough.md` dans le dépôt ; `post-mortem.md` dans le dépôt ; nouvelles features consignées. Cinq cases, puis le skill affiche l'URL publique et rappelle que le plan d'action reste vivant.
+
+**Garder le serveur, ou le supprimer.** Avant le bilan, l'agent vous repose la question de la fiche 12. Si vous gardez le serveur, il vérifie avec vous les quatre précautions. Si vous le supprimez, il vous guide pour récupérer vos données d'abord.
 
 **Une pause explicite.** Vous avez un produit complet en production. La version 2 est un nouveau tour de roue, qu'on peut faire un autre jour. Prenez le temps de relire le journal d'activité d'une journée entière : c'est là que vous verrez si GoodVibe se comporte comme prévu quand personne ne le regarde.
 
