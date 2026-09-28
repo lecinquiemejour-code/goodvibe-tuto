@@ -82,7 +82,7 @@
 
    > Pour lire ce tuto **dans Antigravity** avec ses schémas : ils sont en Mermaid, que l'aperçu Markdown ne dessine pas seul. Ouvrez les extensions (**Ctrl + Maj + X**), tapez **`bierner.markdown-mermaid`** (la marketplace d'Antigravity est Open VSX, et la recherche en clair classe mal cette extension), installez **Markdown Preview Mermaid Support**, puis ouvrez l'aperçu avec **Ctrl + Maj + V**. Sinon, lisez le tuto sur GitHub, qui dessine les schémas nativement.
 
-3. Collez ce prompt dans l'agent d'Antigravity :
+3. Complétez la ligne « Profil de calibrage », à la fin du prompt ci-dessous : c'est elle qui règle le niveau des explications. Puis collez le prompt dans l'agent d'Antigravity :
 
 ```
 Nous démarrons le projet GoodVibe dans ce répertoire vierge.
@@ -96,7 +96,7 @@ Contexte du projet :
 - Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, commence par la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis dis-moi ce que tu vas faire, étape par étape, et pourquoi. Ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
-- Profil de calibrage : (2) je code déjà, je découvre le vibe coding.
+- Profil de calibrage : [écrivez ici « (1) je débute » ou « (2) je code déjà, je découvre le vibe coding »]. Inscris ce profil dans le fichier de règles du projet, et calibre toutes tes explications dessus.
 
 Commence par l'étape 1.
 ```
@@ -406,6 +406,8 @@ Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la 
 5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les cinq règles de sa note d'en-tête, il prime sur le skill. »
 6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent fait d'abord la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis annonce ce qu'il va faire, étape par étape, et pourquoi. Il présente une seule solution, celle du tuto : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote le schéma de séquence de la feature, puis les extraits de code qui comptent, et les explique. »
 
+**L'agent corrige aussi les lignes du gabarit que ces règles contredisent.** Le gabarit du skill est écrit pour un projet quelconque : il place la mise en ligne en fin de projet, décrit un PLAN sans leçon, et peut avoir retenu un autre profil que le vôtre. Demandez à l'agent d'aligner ces lignes sur les six règles, puis de vous montrer le fichier entier. Vérifiez qu'aucune consigne n'en contredit une autre : devant deux consignes contraires, l'agent choisit sans vous le dire.
+
 Si vous utilisez Gemini dans Antigravity plutôt que Claude Code, demandez aussi à l'agent de déposer une copie du fichier sous le nom `AGENTS.md`, que les agents non-Claude lisent. Le contenu du gabarit est volontairement agnostique.
 
 ---
@@ -419,7 +421,7 @@ Le répertoire ouvert dans Antigravity contient `GoodVibe-PRD.md`, `tuto-goodvib
 Ce qui doit se passer, dans l'ordre :
 
 1. L'agent **se présente** et résume la méthode en une phrase : PDCA, une feature à la fois, je propose, tu valides, je code, tu testes.
-2. Il pose **une seule question** : « plutôt débutant, ou tu codes déjà ? ». Répondez **(2) je code déjà**. Il n'expliquera pas Git ni le déploiement ; il accompagnera ce qui est neuf pour vous : laisser l'agent proposer, valider par des GO, piloter en PDCA.
+2. Il pose **une seule question** : « plutôt débutant, ou tu codes déjà ? ». Répondez selon votre cas. Avec **(1) je débute**, il explique chaque mot technique et ne suppose aucune connaissance préalable. Avec **(2) je code déjà**, il n'explique ni Git ni le déploiement, et accompagne ce qui est neuf pour vous : laisser l'agent proposer, valider par des GO, piloter en PDCA. Vérifiez ensuite que le fichier de règles a bien retenu le profil que vous avez donné.
 3. Il donne la « carte du voyage » (pourquoi la méthode, puis les trois temps : cadrage, construction, mise en ligne) et demande un **premier GO** pour vérifier le `CLAUDE.md` et attaquer le cadrage.
 4. Il vous fait la **visite guidée du projet**, en quatre messages : ce qu'on construit et pour quoi faire, ce qu'est un agent, les capacités de GoodVibe, la vue d'architecture. Aucun document n'est rédigé avant la fin de cette visite. La vue d'architecture arrive en schéma texte, car la fenêtre de discussion ne dessine pas les diagrammes ; le diagramme complet est en section 5.0.
 
