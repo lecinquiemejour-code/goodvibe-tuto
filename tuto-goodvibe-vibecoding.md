@@ -215,6 +215,8 @@ La différence avec un script : le script suit des étapes fixées à l'avance ;
 | **Les messages** | La conversation en cours | Ce qu'on lui demande maintenant | L'historique |
 | **Les réglages** | Quelques valeurs | Son tempérament : régulier ou créatif, bref ou bavard, plus ou moins réfléchi | `config.py` |
 
+« À chaque appel » vaut aussi après un outil. Quand le modèle a demandé la météo et que notre code lui rend le résultat, c'est un nouvel appel : il faut lui renvoyer le prompt système, les outils et les réglages. L'API ne garde d'un appel à l'autre que la conversation. Si on l'oublie, le modèle rédige sa réponse sans savoir qui il est ni à qui il parle : il change de ton, et il invente ce qui lui manque.
+
 **Le prompt système : la fiche de poste de l'agent.** C'est lui qui fait d'un modèle un agent précis. Sans lui, à « qui es-tu ? », le modèle répond « comment puis-je vous aider ? ». Avec lui, il répond « je suis GoodVibe, votre assistant du matin ». Dans GoodVibe, il vit dans un fichier à part, `prompt_systeme.md` : du texte, que vous pouvez lire et modifier sans toucher au code. Le code y ajoute à chaque appel ce qui change : le profil et les notes.
 
 **Les outils ne se déclarent pas dans le prompt système.** Le prompt système est le règlement intérieur remis à un nouvel employé ; les outils sont le trousseau de clés qu'on lui confie. Le règlement peut dire « n'ouvre la réserve qu'en présence d'un responsable », mais ce n'est pas lui qui ouvre la porte. Les outils sont déclarés dans un format strict, parce que le modèle doit pouvoir demander « appelle `meteo` avec `ville = Lyon` » d'une façon que notre code sait lire. En revanche, le prompt système dit **quand et comment** s'en servir. Piège classique : déclarer un outil sans rien en dire dans les consignes, et s'étonner que le modèle l'utilise mal.
@@ -568,7 +570,7 @@ sequenceDiagram
 - `MAX_TOURS` est défini dans `config.py` et vérifié dans la boucle.
 - La clé vient de `config.py`, jamais en dur, et `.env` est dans `.gitignore`.
 - Le nom du modèle vit dans `config.py` (`MODELE_TEXTE`), jamais dans le code : le jour où Google le retire, on change une ligne.
-- Le prompt système vit dans `prompt_systeme.md`, pas dans le code. Il est relu et envoyé à chaque appel. Il ne contient ni secret ni donnée personnelle.
+- Le prompt système vit dans `prompt_systeme.md`, pas dans le code. Il est relu et envoyé à chaque appel. Il ne contient ni secret ni donnée personnelle, pas même un prénom dans un exemple : ce fichier part sur GitHub.
 - Les réglages vivent dans `config.py`, jamais en dur dans l'appel. Seuls ceux que le modèle accepte sont envoyés.
 - L'appel utilise l'**API Interactions** du SDK (`client.interactions.create`) avec `stream=True`, et distingue les fragments de texte des autres événements (préparation de la feature 4, où arriveront les appels d'outils).
 - Un log au début et à la fin de chaque tour.
@@ -766,11 +768,12 @@ erDiagram
 - La date de naissance complète **n'est pas conservée** une fois le signe connu : minimisation.
 - Chaque outil journalise son appel (nom, durée), sans ses arguments : les JSON des coulisses s'affichent à l'écran et ne sont jamais enregistrés dans le journal.
 - L'affichage des coulisses est écrit une seule fois, dans la boucle : il vaut pour toutes les fonctions Python et pour les outils MCP à venir.
-- Le profil n'est injecté qu'**une fois** dans le prompt système, pas à chaque tour en plus.
+- Le prompt système, avec le profil et les notes, et la liste des outils sont renvoyés à **chaque** appel au modèle, y compris quand on lui rend le résultat d'un outil. L'API ne les garde pas d'un appel à l'autre : elle ne garde que la conversation.
+- Le profil figure à un seul endroit, le prompt système : on ne le recopie pas en plus dans les messages.
 
-**CHECK** : cochez « Voir les coulisses ». Dites « Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo » : l'appel à `enregistrer_profil` apparaît, avec le JSON de ses arguments et le JSON de son résultat. Fermez le chat, relancez, demandez « qu'est-ce que tu sais de moi ? » : prénom, signe Poissons, ville, intérêts, et cette fois **aucun appel d'outil**. Le profil est déjà dans ses consignes : il n'a pas besoin d'agir pour répondre. Dites « en fait, j'habite Marseille » : l'outil repart. Vérifiez la ligne dans DB Browser, table `profil`, et l'absence de la date complète ; dans la table `journal`, le nom de l'outil figure sans ses arguments. Rechargez la page web : l'historique de la conversation est toujours là.
+**CHECK** : cochez « Voir les coulisses ». Dites « Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo » : l'appel à `enregistrer_profil` apparaît, avec le JSON de ses arguments et le JSON de son résultat. Fermez le chat, relancez, demandez « qu'est-ce que tu sais de moi ? » : prénom, signe Poissons, ville, intérêts, et cette fois **aucun appel d'outil**. Le profil est déjà dans ses consignes : il n'a pas besoin d'agir pour répondre. Dites « en fait, j'habite Marseille » : l'outil repart. Vérifiez la ligne dans DB Browser, table `profil`, et l'absence de la date complète ; dans la table `journal`, le nom de l'outil figure sans ses arguments. Rechargez la page web : l'historique de la conversation est toujours là. Dernière épreuve : posez une question qui oblige GoodVibe à appeler un outil puis à rédiger. Sa réponse garde votre prénom et le ton de son prompt système.
 
-**Pièges** : le modèle « invente » le profil au lieu d'appeler l'outil (renforcer le prompt système : « tu ne connais l'utilisateur que par l'outil `lire_profil` ») ; signe faux aux dates limites (tester le 20 et le 21 mars) ; appels d'outils non exécutés parce que la boucle ne lit pas les `steps` de type `function_call` ; historique de la page web perdu au rechargement (gardé dans une variable, pas en base).
+**Pièges** : GoodVibe change de ton, ou invente un prénom, juste après avoir appelé un outil (le prompt système n'a pas été renvoyé avec le résultat de l'outil : il rédige sans savoir qui il est) ; le modèle « invente » le profil au lieu d'appeler l'outil (renforcer le prompt système : « tu ne connais l'utilisateur que par l'outil `lire_profil` ») ; signe faux aux dates limites (tester le 20 et le 21 mars) ; appels d'outils non exécutés parce que la boucle ne lit pas les `steps` de type `function_call` ; historique de la page web perdu au rechargement (gardé dans une variable, pas en base).
 
 **Où on en est** : GoodVibe parle, raconte, et retient. Fichiers ajoutés : `outils.py`.
 
@@ -1132,7 +1135,7 @@ flowchart LR
     T["tests/"] --> F1["fixture : base SQLite en mémoire"]
     T --> F2["fixture : faux client Gemini<br/>réponses préenregistrées"]
     T --> F3["fixture : fausses API<br/>météo, horoscope"]
-    T --> X["test_agent : max_tours, outils appelés"]
+    T --> X["test_agent : max_tours, outils appelés,<br/>prompt système renvoyé à chaque appel"]
     T --> Y["test_brief : anti-doublon, repli"]
     R["ruff"] --> OK["zéro erreur"]
 ```
@@ -1143,7 +1146,7 @@ flowchart LR
 
 **La solution du tuto** : `pytest` avec des simulations (mocks) du modèle et des API : rapide, gratuit, reproductible. **Pourquoi pas autrement** : des tests contre les vraies API sont lents, coûteux, et cassent quand une API bouge ; se passer de tests est exclu par le PRD, la CI en a besoin.
 
-**À relire** : **aucun test ne fait un vrai appel réseau** ; le test du brief couvre l'anti-doublon ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
+**À relire** : **aucun test ne fait un vrai appel réseau** ; un test vérifie que le prompt système et les outils sont renvoyés à chaque appel, y compris après un outil ; le test du brief couvre l'anti-doublon ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
 
 **CHECK** : `pytest` vert, `ruff` sans erreur. Demandez à l'agent de casser volontairement `signe_depuis_date()` : un test rougit. Il répare, tout revient au vert.
 
