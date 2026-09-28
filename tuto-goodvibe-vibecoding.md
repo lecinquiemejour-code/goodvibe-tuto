@@ -271,7 +271,7 @@ flowchart LR
     end
 ```
 
-Commencez toujours par le cron. Passez au webhook quand la réactivité le justifie.
+Commencez toujours par le cron. Passez au webhook quand la réactivité le justifie. La fiche 12 explique où l'horaire du cron est écrit, comment lire une ligne, et comment vérifier qu'il a travaillé.
 
 ### 2.3 Le MCP
 
@@ -1162,7 +1162,7 @@ flowchart LR
 
 - *Le problème.* GoodVibe vit sur votre ordinateur : il s'éteint avec lui. Il ne peut donc ni préparer le brief à 7 h, ni vous répondre sur votre téléphone.
 - *L'idée.* On l'installe sur un ordinateur loué, allumé en permanence et relié à Internet. C'est déménager l'atelier de votre garage vers un local sur la rue : il lui faut une adresse, une serrure, et quelqu'un qui ouvre le matin.
-- *Les mots nouveaux.* **Serveur** ou **VPS** : cet ordinateur loué. **SSH** : la façon de s'y connecter à distance, avec une clé au lieu d'un mot de passe. **Dépôt GitHub** : la copie en ligne du code, où le serveur vient le chercher. **Adresse IP** : le numéro du serveur sur Internet. **Nom de domaine** : l'adresse en toutes lettres qui mène à ce numéro. **HTTPS** : la serrure, qui chiffre les échanges. **Cron** : l'horloge du serveur, qui lance le brief à 7 h. **Service** : un programme que le serveur relance tout seul s'il s'arrête. **Pare-feu** : ce qui ferme toutes les portes sauf celles qu'on a choisies.
+- *Les mots nouveaux.* **Serveur** ou **VPS** : cet ordinateur loué. **SSH** : la façon de s'y connecter à distance, avec une clé au lieu d'un mot de passe. **Dépôt GitHub** : la copie en ligne du code, où le serveur vient le chercher. **Adresse IP** : le numéro du serveur sur Internet. **Nom de domaine** : l'adresse en toutes lettres qui mène à ce numéro. **HTTPS** : la serrure, qui chiffre les échanges. **Cron** : l'horloge du serveur, qui lance le brief à 7 h. **Crontab** : la liste des tâches du cron, avec leurs horaires. **Compte rendu** (« log ») : le fichier où un programme note ce qu'il a fait. **Service** : un programme que le serveur relance tout seul s'il s'arrête. **Pare-feu** : ce qui ferme toutes les portes sauf celles qu'on a choisies.
 
 **Ce que vous verrez** : vous donnez le GO MISE EN LIGNE, le code part sur votre dépôt GitHub privé, puis GoodVibe répond sur son adresse publique, en `https://` avec le cadenas, depuis n'importe où, et son brief tombe à 7 h sans que votre ordinateur soit allumé.
 
@@ -1179,7 +1179,7 @@ flowchart LR
 | 5. L'adresse | Une adresse gratuite par défaut ; votre nom de domaine si vous en avez un | Aucun achat obligatoire |
 | 6. L'installation | Le code, le `.env` du serveur, le service, le HTTPS | Le `.env` du serveur n'est pas celui de votre ordinateur |
 | 7. L'identifiant et le mot de passe | Où ils sont, comment les changer | Vous posez vous-même le mot de passe définitif |
-| 8. L'horloge | Le brief à 7 h, le fuseau horaire | Pourquoi 7 h peut devenir 9 h |
+| 8. L'horloge | Le fichier `deploy/crontab`, la lecture d'une ligne, le fuseau horaire, le test des cinq minutes | Où l'horaire est écrit, comment le lire, et comment vérifier qu'il a travaillé |
 | 9. Le CHECK | La page publique répond | C'est vous qui le constatez |
 | 10. La suite | Garder le serveur, ou le supprimer : l'agent vous pose la question, et la reposera à la clôture du projet | C'est votre décision, et elle se change à tout moment |
 
@@ -1195,7 +1195,7 @@ flowchart TD
     SSH["SSH par clé uniquement<br/>utilisateur goodvibe, sudo limité"] -.-> GR
 ```
 
-**Ce que fait l'agent** : vérifie l'historique Git avant le premier push ; relie le projet à votre dépôt GitHub et y pousse les commits locaux ; installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, création d'une clé de lecture du dépôt (« deploy key », en lecture seule), clone du dépôt avec cette clé, venv, installation de `uvx` pour le serveur MCP, fichiers `deploy/goodvibe-web.service`, `deploy/Caddyfile` versionnés dans le dépôt, règle `sudoers` limitée au `systemctl restart` du service, la ligne `crontab` de l'utilisateur `goodvibe` (7 h, **chemin absolu** du Python du venv, log redirigé vers un fichier), script de sauvegarde ; adresse publique construite à partir de l'adresse IP du serveur, ou votre nom de domaine si vous en avez un ; `.env` du serveur créé avec un identifiant et un mot de passe de départ.
+**Ce que fait l'agent** : vérifie l'historique Git avant le premier push ; relie le projet à votre dépôt GitHub et y pousse les commits locaux ; installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, création d'une clé de lecture du dépôt (« deploy key », en lecture seule), clone du dépôt avec cette clé, venv, installation de `uvx` pour le serveur MCP, fichiers `deploy/goodvibe-web.service`, `deploy/Caddyfile` versionnés dans le dépôt, règle `sudoers` limitée au `systemctl restart` du service, le fichier `deploy/crontab` (7 h pour le brief, 3 h pour la sauvegarde, **chemin absolu** du Python du venv, compte rendu redirigé vers un fichier), que le script d'installation recopie dans la table du cron de l'utilisateur `goodvibe` ; réglage du fuseau horaire du serveur ; script de sauvegarde ; adresse publique construite à partir de l'adresse IP du serveur, ou votre nom de domaine si vous en avez un ; `.env` du serveur créé avec un identifiant et un mot de passe de départ.
 
 **Ce que vous faites** : donner le GO MISE EN LIGNE ; créer le dépôt **privé** sur GitHub (guidé) et y ajouter la clé de lecture du serveur ; créer le compte Hetzner et un jeton API dédié (révocable) ; si vous avez un nom de domaine, pointer un sous-domaine vers l'adresse IP du serveur (facultatif) ; saisir vous-même, dans le `.env` du serveur, la clé Gemini et votre mot de passe définitif : long, à vous, que vous n'avez donné à personne. L'agent vous guide, mais ces deux secrets ne passent pas par la discussion.
 
@@ -1257,13 +1257,113 @@ Dans les deux cas, le service doit être relancé pour que le changement prenne 
 - tout ce qu'il installe sur le serveur figure dans un script du dossier `deploy/`, enregistré dans le dépôt. Une commande tapée à la main et notée nulle part est une installation qu'on ne saura pas refaire ;
 - avant de lancer un script sur le serveur, il vous le montre et vous l'explique partie par partie : c'est la lecture guidée, appliquée au serveur.
 
+**L'horloge du serveur : le cron.** C'est l'étape 8 du déroulé. Le cron est l'horloge du serveur : une liste de tâches, chacune avec son horaire. C'est lui qui fait de GoodVibe un agent autonome : à 7 h, personne n'appuie sur un bouton.
+
+*1. Du fichier au brief : la chaîne complète.*
+
+```mermaid
+flowchart TD
+    F["deploy/crontab<br/>le fichier du projet :<br/>la seule source"] -- "le script d'installation<br/>le recopie" --> C["La table du cron,<br/>dans le serveur"]
+    C -- "chaque jour à 7 h" --> P["cron_brief.py"]
+    P --> Q{"Un brief existe déjà<br/>aujourd'hui ?"}
+    Q -- "oui" --> J1["Journal :<br/>brief déjà produit"]
+    Q -- "non" --> B["brief.py<br/>fabrique le brief"]
+    B --> M["Mémoire :<br/>le brief est enregistré"]
+    B --> J2["Journal :<br/>tokens, durée"]
+    P -- "tout ce qu'il affiche" --> L["cron_brief.log<br/>le compte rendu"]
+    M --> O["Onglet Brief du jour"]
+    J2 --> A["Onglet Activité"]
+```
+
+*2. Où c'est écrit.* Dans un fichier du projet, `deploy/crontab`. Le script d'installation le recopie sur le serveur. Il n'y a qu'une source : le fichier. Pour changer l'heure du brief, on modifie le fichier, puis l'agent le réinstalle. On ne modifie jamais l'horaire directement sur le serveur : le changement serait perdu à la prochaine installation, et personne ne saurait qu'il a existé.
+
+*3. Comment lire une ligne.* Une ligne du cron dit quatre choses : quand, avec quoi, quoi, et où noter ce qui s'est passé.
+
+```text
+0 7 * * *                              QUAND : tous les jours, à 7 h 00
+/home/goodvibe/app/venv/bin/python     AVEC QUOI : le Python du projet, par son chemin complet
+/home/goodvibe/app/cron_brief.py       QUOI : le programme à lancer
+>> /home/goodvibe/cron_brief.log       OÙ NOTER : le compte rendu, ajouté à la fin du fichier
+2>&1                                   ET LES ERREURS : notées au même endroit
+```
+
+Dans le fichier, ces cinq morceaux sont écrits à la suite, sur une seule ligne. Le « quand » se lit de gauche à droite, en cinq champs :
+
+| Position | Champ | Dans `0 7 * * *` | Se lit |
+|---|---|---|---|
+| 1 | Minute | `0` | à la minute 0 |
+| 2 | Heure | `7` | à 7 h |
+| 3 | Jour du mois | `*` | tous les jours du mois |
+| 4 | Mois | `*` | tous les mois |
+| 5 | Jour de la semaine | `*` | tous les jours de la semaine |
+
+L'étoile veut dire « tous ». Quelques exemples :
+
+| Ligne | Se lit |
+|---|---|
+| `0 7 * * *` | tous les jours à 7 h 00 : le brief |
+| `0 3 * * *` | toutes les nuits à 3 h 00 : la sauvegarde de la base |
+| `30 8 * * 1` | chaque lundi à 8 h 30 |
+| `*/15 * * * *` | toutes les quinze minutes |
+
+Les chemins sont écrits en entier parce que le cron ne sait pas où se trouve le projet : il ne connaît ni son dossier, ni son environnement virtuel. C'est la première cause de panne.
+
+*4. Comment le voir.* Trois façons, qui ne montrent pas la même chose :
+
+| Où | Comment | Ce que vous lisez |
+|---|---|---|
+| Dans l'éditeur | Ouvrir `deploy/crontab` | Ce qui est prévu |
+| Dans la discussion | Demander à l'agent : « montre-moi le cron du serveur » | Ce qui est installé |
+| Dans votre terminal | Interroger vous-même le serveur, avec la commande ci-dessous | Ce qui est installé |
+
+```text
+ssh                           ouvre la télécommande vers le serveur
+-i <chemin de votre clé>      avec cette clé
+goodvibe@<adresse>            en tant qu'utilisateur goodvibe, sur ce serveur
+"crontab -l"                  et exécute là-bas : « liste les tâches du cron »
+```
+
+L'agent vous donne la commande complète, avec votre clé et votre adresse. Ce que répond le serveur doit être identique au fichier du projet.
+
+*5. Comment savoir s'il a travaillé.* Voici ce qui se passe un matin, sans vous :
+
+```mermaid
+sequenceDiagram
+    participant H as Horloge du serveur
+    participant C as cron_brief.py
+    participant B as brief.py
+    participant D as Mémoire et journal
+    participant L as cron_brief.log
+    H->>C: 7 h 00 : lance le programme
+    C->>D: un brief existe déjà aujourd'hui ?
+    D-->>C: non
+    C->>B: fabrique le brief
+    B->>D: enregistre le brief, note l'activité
+    C->>L: écrit le compte rendu
+    Note over H,L: Personne n'a rien fait. Vous lisez le brief au réveil.
+```
+
+Il en reste trois preuves :
+
+| Preuve | Où la lire | Ce qu'elle dit |
+|---|---|---|
+| Le compte rendu | Le fichier `cron_brief.log` du serveur, avec FileZilla ou en le demandant à l'agent | Le cron s'est déclenché, et ce que le programme a affiché |
+| Le journal | L'onglet Activité | Une ligne à 7 h, avec ses tokens et sa durée |
+| Le brief | L'onglet Brief du jour | Le résultat |
+
+Si le compte rendu est absent, le cron ne s'est pas déclenché. S'il contient une erreur, le cron s'est déclenché mais le programme a échoué.
+
+*6. Le tester sans attendre demain.* L'agent ajoute au fichier une ligne provisoire, qui se déclenche dans cinq minutes, et l'installe. Vous attendez, puis vous lisez les trois preuves. Il retire ensuite la ligne provisoire, et vous vérifiez que le serveur est revenu au fichier d'origine.
+
+*7. L'heure du serveur.* Le cron suit l'heure du serveur, pas celle de votre montre. Beaucoup de serveurs sont réglés sur l'heure universelle (UTC) : en été, 7 h sur le serveur font 9 h à Paris. L'agent lit l'heure du serveur, règle son fuseau sur le vôtre, et vous montre le résultat. Une fois le fuseau réglé, le passage à l'heure d'été se fait tout seul.
+
 **La solution du tuto** : une installation directe avec `systemd` et Caddy : tout est lisible, aucun conteneur à expliquer. **Pourquoi pas autrement** : Docker Compose et Coolify (une interface web qui déploie depuis GitHub) ajoutent une couche à apprendre ; ils sont présentés en fin de tuto.
 
-**À relire** : le dépôt GitHub est privé, et rien de sensible ne figure dans son historique ; la clé de lecture du serveur est en lecture seule et n'ouvre que ce dépôt ; la connexion SSH par mot de passe est désactivée, et l'agent vous montre la ligne de configuration qui le prouve ; tout ce qui a été installé sur le serveur figure dans un script du dossier `deploy/` ; aucun service ne tourne en root ; `.env` en `chmod 600` ; Caddy est le seul exposé sur 80 et 443, Gradio écoute sur `127.0.0.1` ; la base est hors du dossier synchronisé par Git ; les fichiers de service ont `Restart=always` ; le cron charge `.env` via `config.py`, pas l'environnement du shell ; ni l'identifiant, ni le mot de passe, ni l'adresse IP du serveur ne figurent dans un fichier du dépôt.
+**À relire** : le dépôt GitHub est privé, et rien de sensible ne figure dans son historique ; la clé de lecture du serveur est en lecture seule et n'ouvre que ce dépôt ; la connexion SSH par mot de passe est désactivée, et l'agent vous montre la ligne de configuration qui le prouve ; tout ce qui a été installé sur le serveur figure dans un script du dossier `deploy/` ; aucun service ne tourne en root ; `.env` en `chmod 600` ; Caddy est le seul exposé sur 80 et 443, Gradio écoute sur `127.0.0.1` ; la base est hors du dossier synchronisé par Git ; les fichiers de service ont `Restart=always` ; le cron charge `.env` via `config.py`, pas l'environnement du shell ; la table du cron du serveur est identique au fichier `deploy/crontab`, et l'horaire ne se modifie que dans ce fichier ; l'heure du serveur est celle de votre montre ; ni l'identifiant, ni le mot de passe, ni l'adresse IP du serveur ne figurent dans un fichier du dépôt.
 
-**CHECK** : sur GitHub, le dépôt contient vos commits, et ni `.env` ni `data/` ; l'adresse publique de GoodVibe répond avec le cadenas, connexion, brief généré via le bouton ; vous changez le mot de passe dans le `.env` du serveur, l'agent relance le service : l'ancien est refusé, le nouveau est accepté ; `journalctl -u goodvibe-web -f` montre le service vivant ; le lendemain, un brief en base à 7 h (heure du serveur : vérifiez le fuseau).
+**CHECK** : sur GitHub, le dépôt contient vos commits, et ni `.env` ni `data/` ; l'adresse publique de GoodVibe répond avec le cadenas, connexion, brief généré via le bouton ; vous changez le mot de passe dans le `.env` du serveur, l'agent relance le service : l'ancien est refusé, le nouveau est accepté ; `journalctl -u goodvibe-web -f` montre le service vivant. Pour le cron : vous interrogez vous-même le serveur depuis votre terminal, et sa réponse est identique à `deploy/crontab` ; l'agent fait le test des cinq minutes, et vous lisez les trois preuves : le compte rendu, la ligne dans l'onglet Activité, le brief ; le lendemain, un brief vous attend, daté de 7 h à votre montre.
 
-**Pièges** : éteindre le serveur en croyant arrêter la facture (il faut le supprimer) ; adresse IP restée dans le compte après la suppression du serveur ; modifier le `.env` de son ordinateur en croyant changer celui du serveur ; s'étonner que GoodVibe en ligne ne vous connaisse pas (sa mémoire est une autre que celle de votre ordinateur) ; mot de passe changé sans relancer le service ; connexion SSH par mot de passe restée active ; commande tapée à la main sur le serveur et absente des scripts ; secret déjà commité dans l'historique (le retirer du dernier commit ne suffit pas : il faut changer le secret) ; clé de lecture ajoutée à votre compte GitHub au lieu du dépôt (elle ouvrirait tous vos dépôts) ; DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; crontab posé pour le mauvais utilisateur ; `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
+**Pièges** : éteindre le serveur en croyant arrêter la facture (il faut le supprimer) ; adresse IP restée dans le compte après la suppression du serveur ; modifier le `.env` de son ordinateur en croyant changer celui du serveur ; s'étonner que GoodVibe en ligne ne vous connaisse pas (sa mémoire est une autre que celle de votre ordinateur) ; mot de passe changé sans relancer le service ; connexion SSH par mot de passe restée active ; commande tapée à la main sur le serveur et absente des scripts ; secret déjà commité dans l'historique (le retirer du dernier commit ne suffit pas : il faut changer le secret) ; clé de lecture ajoutée à votre compte GitHub au lieu du dépôt (elle ouvrirait tous vos dépôts) ; DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; horaire modifié directement sur le serveur, et perdu à la réinstallation ; compte rendu du cron jamais consulté ; ligne provisoire du test des cinq minutes oubliée dans le fichier ; crontab posé pour le mauvais utilisateur ; `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
 
 **Où on en est** : GoodVibe est en production, mais toute mise à jour demande encore une connexion SSH. Fichiers ajoutés : `deploy/`.
 
@@ -1292,14 +1392,14 @@ sequenceDiagram
         GH-->>D: coche rouge, rien déployé
     else test vert
         GH->>V: ssh (clé de déploiement)
-        V->>V: deploy/deployer.sh : git pull, pip install, systemctl restart
+        V->>V: deploy/deployer.sh : git pull, pip install, crontab, systemctl restart
         V-->>GH: sortie des commandes
         GH-->>D: coche verte
         D->>V: ouvre la page publique : smoke test
     end
 ```
 
-**Ce que fait l'agent** : `.github/workflows/deploy.yml` (job `test` sur tout push ; job `deploy` sur `main` seulement, `needs: test`, action SSH qui exécute `deploy/deployer.sh`) ; `deploy/deployer.sh` idempotent ; création d'une paire de clés SSH dédiée au déploiement (clé publique installée sur le VPS, clé privée remise à vous) ; documentation des trois secrets attendus (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`) ; puis `push` du workflow.
+**Ce que fait l'agent** : `.github/workflows/deploy.yml` (job `test` sur tout push ; job `deploy` sur `main` seulement, `needs: test`, action SSH qui exécute `deploy/deployer.sh`) ; `deploy/deployer.sh` idempotent, qui réinstalle aussi `deploy/crontab` : un horaire modifié dans le fichier arrive sur le serveur au prochain envoi ; création d'une paire de clés SSH dédiée au déploiement (clé publique installée sur le VPS, clé privée remise à vous) ; documentation des trois secrets attendus (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`) ; puis `push` du workflow.
 
 **Ce que vous faites** : coller les trois secrets dans Settings, Secrets and variables, Actions ; puis **vérifier l'URL publique** après le déploiement automatique : c'est le smoke test de production, et il est à vous.
 
@@ -1559,6 +1659,8 @@ Chaque piste est un nouveau tour de roue PDCA, avec le skill, à partir du `plan
 - **MCP** : Model Context Protocol, standard qui décrit des outils une fois pour tous les agents. Un serveur les expose, un client (notre agent) les consomme.
 - **Webhook** : une URL que l'on appelle en HTTP pour prévenir l'agent qu'un événement s'est produit (push).
 - **Cron** : planificateur du système qui lance une commande à heure fixe (polling).
+- **Crontab** : la liste des tâches du cron, avec leurs horaires. Dans GoodVibe : le fichier `deploy/crontab`, recopié sur le serveur.
+- **Compte rendu (log)** : le fichier où un programme note ce qu'il a fait. Celui du cron : `cron_brief.log`.
 - **Streaming** : recevoir la réponse du modèle fragment par fragment, au lieu d'attendre la fin.
 - **Token** : l'unité de texte facturée par l'API. Entrée (ce qu'on envoie), sortie (ce que le modèle écrit), réflexion (ce qu'il « pense » avant de répondre, facturé même si on ne le voit pas).
 - **Résumé de réflexion (thought summary)** : le compte rendu que le modèle donne de son raisonnement, quand on l'active. Ce n'est pas le raisonnement brut.
