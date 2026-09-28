@@ -3,7 +3,7 @@
 > Webhook, cron, MCP, mémoire, observabilité, VPS et sous-agents, avec le skill **VibeCoding Copilote** (Le Cinquième Jour).
 > Public : développeurs intermédiaires qui découvrent les agents et le vibe coding. Version 1.0, septembre 2026.
 
-> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les cinq règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO.
+> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les sept règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO.
 >
 > **Règle 1. Avant tout document : la visite guidée du projet.** Après la carte du voyage et avant `archi-stack.md`, tu présentes GoodVibe au pilote. Tant que cette visite n'est pas finie, tu ne rédiges aucun document et tu ne cites ni fichier ni bibliothèque. Tu t'appuies sur `GoodVibe-presentation.md` (la présentation du projet) et sur ce tuto : tu racontes ces textes avec tes mots, adaptés au profil du pilote, tu ne les colles pas. Dans `GoodVibe-presentation.md`, tu ignores les sections « Démarrage rapide », « Si ça coince » et « Liens », qui concernent le téléchargement du kit. Quatre temps, un message par temps, et tu attends la réponse du pilote entre chacun :
 >
@@ -72,6 +72,10 @@
 > 5. Tu termines par : « (A) c'est clair, on passe au CHECK ; (B) j'ai une question sur le code ».
 >
 > Si tu corriges du code après un CHECK KO, tu montres la ligne avant et après, et tu expliques la cause.
+>
+> **Règle 6. Les secrets ne passent jamais par la discussion.** Un secret est tout ce qui ouvre une porte : une clé privée, un mot de passe, un jeton, une clé API. Tu n'en affiches jamais un, ni dans la discussion, ni dans un fichier enregistré dans Git, ni dans un document de reprise. Quand le pilote doit en saisir un, tu le copies dans son presse-papiers sans l'afficher, ou tu lui indiques le fichier où il se trouve. Tu ne lui demandes jamais de te donner un mot de passe. Si un secret a été affiché par erreur, tu le dis aussitôt et tu proposes de le remplacer : un secret vu est un secret à changer. L'adresse du serveur n'est pas un secret, mais elle ne s'écrit pas non plus dans le dépôt.
+>
+> **Règle 7. Au CHECK, une action à la fois, et la vérité sur les échecs.** Le CHECK appartient au pilote. Tu fais une seule action, tu dis au pilote où regarder et ce qu'il doit voir, et tu t'arrêtes. Tu n'enchaînes pas plusieurs actions dans la même réponse, et tu ne conclus jamais « CHECK validé » à sa place. Tu ne modifies rien pour préparer un CHECK sans l'avoir annoncé. Quand une action échoue, tu le dis tout de suite, avec la cause et ce que tu comptes faire : tu ne répares pas en silence, et tu ne présentes pas comme un succès ce qui a demandé trois tentatives. Un échec expliqué est une leçon ; un échec caché est une boîte noire.
 
 ---
 
@@ -92,8 +96,8 @@ Nous démarrons le projet GoodVibe dans ce répertoire vierge.
 Étape 2 : lance le vibecoding sur GoodVibe-PRD.md.
 
 Contexte du projet :
-- Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les cinq règles de la note d'en-tête du tuto, qui priment sur lui.
-- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, commence par la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis dis-moi ce que tu vas faire, étape par étape, et pourquoi. Ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
+- Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les sept règles de la note d'en-tête du tuto, qui priment sur lui.
+- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, commence par la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis dis-moi ce que tu vas faire, étape par étape, et pourquoi. Ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. N'affiche jamais un secret dans la discussion : ni clé, ni mot de passe, ni jeton. Au CHECK, fais une seule action à la fois et arrête-toi pour que je constate. Dis-moi toujours quand quelque chose échoue, et pourquoi. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
 - Profil de calibrage : [écrivez ici « (1) je débute » ou « (2) je code déjà, je découvre le vibe coding »]. Inscris ce profil dans le fichier de règles du projet, et calibre toutes tes explications dessus.
@@ -103,7 +107,7 @@ Commence par l'étape 1.
 
 > Si vous utilisez **Claude Code** plutôt que l'agent Gemini d'Antigravity, remplacez dans l'étape 1 `.agent/skills/vibecoding-copilote/` par `~/.claude/skills/vibecoding-copilote/` : c'est là que Claude Code cherche ses skills.
 
-Si l'agent demande un redémarrage après l'installation du skill, redémarrez la session et collez simplement : **« lance le vibecoding sur GoodVibe-PRD.md, en suivant le contexte du prompt précédent »**. Ce prompt reprend les six lignes du `CLAUDE.md` pour couvrir le premier lancement, avant que le skill dépose le fichier de règles. Pour les sessions suivantes, **« reprends le vibecoding sur GoodVibe »** suffit. Tout le reste du document explique ce qui va se passer et ce que vous devez vérifier à chaque étape.
+Si l'agent demande un redémarrage après l'installation du skill, redémarrez la session et collez simplement : **« lance le vibecoding sur GoodVibe-PRD.md, en suivant le contexte du prompt précédent »**. Ce prompt reprend les sept lignes du `CLAUDE.md` pour couvrir le premier lancement, avant que le skill dépose le fichier de règles. Pour les sessions suivantes, **« reprends le vibecoding sur GoodVibe »** suffit. Tout le reste du document explique ce qui va se passer et ce que vous devez vérifier à chaque étape.
 
 ---
 
@@ -397,18 +401,19 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 **Hors périmètre (Won't)** : multi-utilisateurs, notifications, recherche sémantique, chiffrement au repos, 2FA.
 
-### 3.4 Les six lignes à ajouter au CLAUDE.md
+### 3.4 Les sept lignes à ajouter au CLAUDE.md
 
-Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la **Règle 0** : jamais de code ni de publication sans GO. Il ne l'écrase jamais s'il existe. Pour GoodVibe, **l'agent y ajoute six lignes** (demandez-lui, et vérifiez qu'il vous montre le résultat) :
+Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la **Règle 0** : jamais de code ni de publication sans GO. Il ne l'écrase jamais s'il existe. Pour GoodVibe, **l'agent y ajoute sept lignes** (demandez-lui, et vérifiez qu'il vous montre le résultat) :
 
 1. **Mise en ligne** : « La publication se fait sur un VPS, pas sur Netlify. Le GO MISE EN LIGNE se demande au début de la feature 12, avant tout envoi : il autorise le premier push vers le dépôt GitHub privé, puis la mise en ligne de la page. Avant lui, rien ne quitte la machine du pilote. À partir de la feature 13, GitHub Actions déploie chaque push sur `main`. »
 2. **CHECK** : « Le test humain ne passe pas toujours par un navigateur : selon la feature, il se fait dans le terminal, avec `curl`, dans l'onglet Activité ou dans la page Gradio. Le critère de réussite du `plan-action.md` précise lequel. »
 3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui valide, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
-5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les cinq règles de sa note d'en-tête, il prime sur le skill. »
+5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les sept règles de sa note d'en-tête, il prime sur le skill. »
 6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent fait d'abord la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis annonce ce qu'il va faire, étape par étape, et pourquoi. Il présente une seule solution, celle du tuto : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote le schéma de séquence de la feature, puis les extraits de code qui comptent, et les explique. »
+7. **Secrets et CHECK** : « L'agent n'affiche jamais un secret, ni dans la discussion, ni dans un fichier du dépôt, ni dans un document de reprise : clé privée, mot de passe, jeton, clé API. Il le copie dans le presse-papiers du pilote, ou indique le fichier où il se trouve. Au CHECK, il fait une seule action à la fois, s'arrête pour que le pilote constate, et ne conclut jamais à sa place. Quand une action échoue, il le dit aussitôt, avec la cause. »
 
-**L'agent corrige aussi les lignes du gabarit que ces règles contredisent.** Le gabarit du skill est écrit pour un projet quelconque : il place la mise en ligne en fin de projet, décrit un PLAN sans leçon, et peut avoir retenu un autre profil que le vôtre. Demandez à l'agent d'aligner ces lignes sur les six règles, puis de vous montrer le fichier entier. Vérifiez qu'aucune consigne n'en contredit une autre : devant deux consignes contraires, l'agent choisit sans vous le dire.
+**L'agent corrige aussi les lignes du gabarit que ces règles contredisent.** Le gabarit du skill est écrit pour un projet quelconque : il place la mise en ligne en fin de projet, décrit un PLAN sans leçon, et peut avoir retenu un autre profil que le vôtre. Demandez à l'agent d'aligner ces lignes sur les sept règles, puis de vous montrer le fichier entier. Vérifiez qu'aucune consigne n'en contredit une autre : devant deux consignes contraires, l'agent choisit sans vous le dire.
 
 Si vous utilisez Gemini dans Antigravity plutôt que Claude Code, demandez aussi à l'agent de déposer une copie du fichier sous le nom `AGENTS.md`, que les agents non-Claude lisent. Le contenu du gabarit est volontairement agnostique.
 
@@ -429,7 +434,7 @@ Ce qui doit se passer, dans l'ordre :
 
 Signal d'alerte : s'il ne se présente pas, ne pose pas la question, ou commence à écrire du code, le skill n'est pas chargé. Revenez à la section 1.5.
 
-Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, s'il vous demande de choisir entre trois options, s'il vous présente un plan sans vous avoir d'abord expliqué le problème et l'idée, ou s'il passe au CHECK sans vous avoir montré de code, rappelez-lui les cinq règles de la note d'en-tête du tuto.
+Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, s'il vous demande de choisir entre trois options, s'il vous présente un plan sans vous avoir d'abord expliqué le problème et l'idée, ou s'il passe au CHECK sans vous avoir montré de code, rappelez-lui les sept règles de la note d'en-tête du tuto.
 
 ### 4.2 La boucle que vous allez vivre quatorze fois
 
@@ -1243,6 +1248,8 @@ Dans les deux cas, votre compte reste ouvert.
 
 **Deux mémoires, deux mondes.** C'est le même principe pour la mémoire. La base de GoodVibe ne part jamais sur GitHub : elle contient vos données. Le serveur démarre donc avec une mémoire vide, et il faut vous y présenter de nouveau. Ce que GoodVibe apprend sur votre ordinateur, il ne le sait pas en ligne, et inversement. Quand vous ouvrez l'onglet Mémoire, regardez l'adresse de la page : elle vous dit laquelle des deux mémoires vous lisez.
 
+**Ce qui ne s'écrit jamais dans le dépôt.** Ni le mot de passe de la page, ni une clé, ni l'adresse du serveur. Le document de reprise que tient l'agent est enregistré dans Git : il dit où trouver ces informations, il ne les contient pas. Rangez-les dans un fichier de votre dossier personnel, hors du projet.
+
 **Changer l'identifiant et le mot de passe.** Ils vivent dans le `.env` du serveur, aux lignes `WEB_USER` et `WEB_PASSWORD`. Deux façons de les changer :
 
 - **vous-même** : ouvrez le `.env` du serveur, modifiez la ligne, enregistrez. C'est la façon à retenir pour le mot de passe définitif, puisqu'il ne passe par aucune discussion ;
@@ -1379,6 +1386,18 @@ Si le compte rendu est absent, le cron ne s'est pas déclenché. S'il contient u
 
 **Ce que vous verrez** : vous poussez un changement, une coche verte apparaît sur GitHub, et trente secondes plus tard la page publique a changé, sans que personne ait touché au serveur.
 
+**Le déroulé guidé** : l'agent déroule cette fiche en sept étapes. Après chacune, il s'arrête, vous dit où regarder et ce que vous devez voir, et il attend votre « suivant ». Il ne fait jamais deux étapes dans la même réponse.
+
+| Étape | Ce qui se passe | Ce que vous voyez et faites |
+|---|---|---|
+| 1. La clé de déploiement | L'agent crée une paire de clés et installe la partie publique sur le serveur | Vous savez d'où vient la clé, où elle est rangée, et à quoi elle sert |
+| 2. Les trois secrets | L'agent copie chaque valeur dans votre presse-papiers, sans l'afficher | Vous les collez vous-même sur GitHub. L'agent vérifie ensuite que les trois existent |
+| 3. Le premier envoi | L'agent envoie le pipeline sur GitHub | Vous ouvrez l'onglet Actions et regardez le robot travailler : orange, puis vert |
+| 4. Le test heureux | L'agent annonce un changement visible, puis l'envoie | Vous constatez le changement sur la page publique |
+| 5. Le test protecteur : casser | L'agent vous montre la ligne qu'il casse, l'envoie, et s'arrête | Vous voyez la croix rouge, puis vous vérifiez que la page publique n'a pas changé |
+| 6. Le test protecteur : réparer | L'agent vous montre la ligne réparée, l'envoie, et s'arrête | Vous voyez le vert revenir |
+| 7. Le ménage | L'agent retire le changement visible du test heureux | La page publique est revenue à son état normal |
+
 **Ce qu'on construit** : le workflow à deux jobs, et la clé de déploiement qui permet à GitHub Actions d'entrer sur le serveur. Le dépôt et la page en ligne existent depuis la fiche 12 : on automatise.
 
 ```mermaid
@@ -1399,9 +1418,45 @@ sequenceDiagram
     end
 ```
 
-**Ce que fait l'agent** : `.github/workflows/deploy.yml` (job `test` sur tout push ; job `deploy` sur `main` seulement, `needs: test`, action SSH qui exécute `deploy/deployer.sh`) ; `deploy/deployer.sh` idempotent, qui réinstalle aussi `deploy/crontab` : un horaire modifié dans le fichier arrive sur le serveur au prochain envoi ; création d'une paire de clés SSH dédiée au déploiement (clé publique installée sur le VPS, clé privée remise à vous) ; documentation des trois secrets attendus (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`) ; puis `push` du workflow.
+**Ce que fait l'agent** : `.github/workflows/deploy.yml` (job `test` sur tout push ; job `deploy` sur `main` seulement, `needs: test`, action SSH qui exécute `deploy/deployer.sh`) ; `deploy/deployer.sh` idempotent, qui réinstalle aussi `deploy/crontab` : un horaire modifié dans le fichier arrive sur le serveur au prochain envoi ; création d'une paire de clés SSH dédiée au déploiement (clé publique installée sur le VPS, clé privée rangée dans le dossier `.ssh` de votre ordinateur, **jamais affichée dans la discussion**) ; copie de chacun des trois secrets (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`) dans votre presse-papiers ; vérification que les trois secrets existent sur GitHub **avant** le premier envoi ; puis `push` du workflow.
 
-**Ce que vous faites** : coller les trois secrets dans Settings, Secrets and variables, Actions ; puis **vérifier l'URL publique** après le déploiement automatique : c'est le smoke test de production, et il est à vous.
+**Ce que vous faites** : coller vous-même les trois secrets dans Settings, Secrets and variables, Actions ; regarder l'onglet Actions pendant chaque envoi ; puis **vérifier l'URL publique** après le déploiement automatique : c'est le smoke test de production, et il est à vous.
+
+**Ce que montre l'onglet Actions.** C'est votre fenêtre sur le robot. Chaque envoi de code y ajoute une ligne, et chaque ligne contient deux travaux, dans l'ordre :
+
+```mermaid
+flowchart LR
+    P["Votre envoi<br/>sur main"] --> T{"Travail 1 :<br/>les tests"}
+    T -- "vert" --> D{"Travail 2 :<br/>le déploiement"}
+    T -- "rouge" --> X1["Croix rouge.<br/>Le déploiement est annulé.<br/>Le serveur n'a pas bougé."]
+    D -- "vert" --> OK["Coche verte.<br/>Le serveur est à jour."]
+    D -- "rouge" --> X2["Croix rouge.<br/>Les tests sont bons,<br/>mais le robot n'a pas pu<br/>mettre le serveur à jour."]
+```
+
+| Ce que vous voyez | Ce que ça veut dire |
+|---|---|
+| Un rond orange | Le robot travaille |
+| Une coche verte | Les tests sont bons et le serveur est à jour |
+| Une croix rouge sur les tests | Le code a un défaut. Le serveur est intact : c'est la protection qui joue |
+| Une croix rouge sur le déploiement | Le code est bon, mais le robot n'a pas pu entrer ou travailler sur le serveur |
+
+Pour lire une panne : cliquez sur la ligne rouge, puis sur le travail rouge, et lisez les **dernières lignes** du compte rendu. La cause y est presque toujours écrite en clair.
+
+**Le trajet des deux clés.**
+
+```mermaid
+flowchart LR
+    subgraph GitHub
+        R["Votre dépôt"]
+        S["Secret VPS_SSH_KEY :<br/>partie privée de la clé de déploiement"]
+    end
+    subgraph Serveur
+        A["Liste des clés autorisées :<br/>partie publique de la clé de déploiement"]
+        L["Partie privée de la clé de lecture"]
+    end
+    S -- "fiche 13 : le robot entre sur le serveur" --> A
+    L -- "fiche 12 : le serveur lit le code" --> R
+```
 
 **Deux clés, deux directions**, à ne pas confondre :
 
@@ -1410,13 +1465,28 @@ sequenceDiagram
 | Clé de lecture du dépôt | Au serveur de lire le code sur GitHub | Dans le dépôt GitHub (« Deploy keys ») | 12 |
 | Clé de déploiement | À GitHub Actions d'entrer sur le serveur | Sur le VPS ; la partie privée va dans le secret `VPS_SSH_KEY` | 13 |
 
+**Les trois pannes du premier envoi.** Elles sont classiques, et les deux premières sont arrivées pendant la mise au point de ce tuto.
+
+| Ce que dit le compte rendu | La cause | Le remède |
+|---|---|---|
+| « missing server host » | Le code a été envoyé avant que les secrets existent sur GitHub | Créer les secrets, puis relancer le travail depuis l'onglet Actions |
+| « untracked working tree files would be overwritten » | Un fichier a été posé à la main sur le serveur, sans passer par Git. Le serveur refuse de l'écraser | Retirer ce fichier du serveur. Tout ce qui arrive sur le serveur passe par Git |
+| « Permission denied » | La clé est mal collée dans le secret, ou sa partie publique n'est pas sur le serveur | Recopier la clé par le presse-papiers, sans retouche |
+
+Quand un envoi échoue, l'agent vous le dit aussitôt, vous montre la ligne du compte rendu qui donne la cause, et vous propose le remède. Il ne répare pas en silence.
+
 **La solution du tuto** : une connexion SSH directe depuis le job, avec un script sur le VPS : trente lignes de YAML, tout est visible. **Pourquoi pas autrement** : construire une image Docker poussée sur un registre, ou passer par un outil tiers de déploiement, cache les étapes qu'on veut comprendre.
 
-**À relire** : le job deploy ne tourne que sur `main` et après un job test vert ; la clé privée n'apparaît **jamais** dans les logs (secret masqué) ; `deployer.sh` est relançable sans dégât ; le workflow ne déploie pas depuis les branches de travail.
+**À relire** : le job deploy ne tourne que sur `main` et après un job test vert ; la clé privée n'apparaît **jamais**, ni dans les logs (secret masqué), ni dans la discussion, ni dans un fichier du dépôt ; les trois secrets existent sur GitHub avant le premier envoi ; aucun fichier n'a été posé à la main sur le serveur ; `deployer.sh` est relançable sans dégât ; le workflow ne déploie pas depuis les branches de travail.
 
-**CHECK** : un changement visible (un mot dans le titre de la page Gradio) poussé sur `main` : coche verte sur GitHub, page publique mise à jour sans toucher au VPS. Puis cassez volontairement un test et poussez : coche rouge, rien n'est déployé. Réparez, poussez : tout revient au vert.
+**CHECK**, en quatre temps, avec un arrêt après chacun : c'est vous qui regardez l'onglet Actions et la page publique.
 
-**Pièges** : confondre les deux clés ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 12 manque) ; workflow déclenché sur toutes les branches.
+1. Le test heureux : l'agent annonce un changement visible (un mot dans le titre de la page), puis l'envoie. Vous voyez la coche verte, puis le changement sur la page publique.
+2. Le test protecteur, casser : l'agent vous montre la ligne d'un test avant et après l'avoir cassée, puis l'envoie. Vous voyez la croix rouge sur les tests et le déploiement annulé. Vous rechargez la page publique : elle n'a pas changé.
+3. Le test protecteur, réparer : l'agent vous montre la ligne réparée, puis l'envoie. Vous voyez le vert revenir.
+4. Le ménage : l'agent retire le changement visible et l'envoie. La page publique est revenue à son état normal.
+
+**Pièges** : envoyer le code avant d'avoir créé les secrets ; poser un fichier à la main sur le serveur ; enchaîner casser et réparer sans laisser le pilote voir la croix rouge ; oublier de retirer le changement visible du test heureux ; afficher la clé privée pour la faire copier ; confondre les deux clés ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 12 manque) ; workflow déclenché sur toutes les branches.
 
 **Où on en est** : GoodVibe V1 est en production, mis à jour par un pipeline. Fichiers ajoutés : `.github/workflows/deploy.yml`, `deploy/deployer.sh`. Treize features sur quatorze sont « fait » dans `plan-action.md`. La dernière, le webhook, sera la première feature déployée par ce pipeline, sans connexion SSH.
 
