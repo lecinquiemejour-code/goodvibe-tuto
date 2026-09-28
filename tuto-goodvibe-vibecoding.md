@@ -874,9 +874,9 @@ sequenceDiagram
 
 **À relire** : `generer_brief()` **ne sait pas** si elle est appelée par `cron_brief.py` ou par le bouton de la page web : c'est une seule fonction, qui émet un flux ; la page l'affiche, le cron le consomme sans rien afficher ; le journal indique « brief déjà produit » au second lancement ; `--forcer` est réservé aux tests et journalisé comme tel.
 
-**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Dans la page web, cliquez « Générer le brief maintenant » : les étapes défilent en direct, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche.
+**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Dans la page web, cliquez « Générer le brief maintenant » : les étapes défilent en direct, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche. Ouvrez l'onglet Mémoire à côté : le prénom du brief est exactement celui de la table `profil`. Effacez votre profil, générez un brief : il ne salue personne par son nom, et il n'en invente aucun.
 
-**Pièges** : `cron_brief.py` lancé sans le Python du venv (modules introuvables) ; `.env` non chargé quand le script est lancé hors du terminal (le charger explicitement dans `config.py`, le cron du serveur en aura besoin) ; deux processus (Gradio et `cron_brief.py`) qui écrivent en base en même temps sans fermer leurs connexions.
+**Pièges** : brief qui salue par un prénom inventé (le profil n'est pas arrivé jusqu'au modèle au moment où il rédige : voir la fiche 4) ; `cron_brief.py` lancé sans le Python du venv (modules introuvables) ; `.env` non chargé quand le script est lancé hors du terminal (le charger explicitement dans `config.py`, le cron du serveur en aura besoin) ; deux processus (Gradio et `cron_brief.py`) qui écrivent en base en même temps sans fermer leurs connexions.
 
 **Où on en est** : GoodVibe parle, retient, et produit un brief à la demande, une seule fois par jour : deux déclencheurs sur quatre (terminal, page web) ; le cron et le webhook arriveront avec le serveur. Fichiers ajoutés : `brief.py`, `cron_brief.py`.
 
@@ -1146,7 +1146,7 @@ flowchart LR
 
 **La solution du tuto** : `pytest` avec des simulations (mocks) du modèle et des API : rapide, gratuit, reproductible. **Pourquoi pas autrement** : des tests contre les vraies API sont lents, coûteux, et cassent quand une API bouge ; se passer de tests est exclu par le PRD, la CI en a besoin.
 
-**À relire** : **aucun test ne fait un vrai appel réseau** ; un test vérifie que le prompt système et les outils sont renvoyés à chaque appel, y compris après un outil ; le test du brief couvre l'anti-doublon ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
+**À relire** : **aucun test ne fait un vrai appel réseau** ; un test vérifie que le prompt système et les outils sont renvoyés à chaque appel, y compris après un outil ; un test vérifie que le profil de la mémoire part bien vers le modèle, et qu'aucun prénom ne part quand la mémoire est vide ; le test du brief couvre l'anti-doublon ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
 
 **CHECK** : `pytest` vert, `ruff` sans erreur. Demandez à l'agent de casser volontairement `signe_depuis_date()` : un test rougit. Il répare, tout revient au vert.
 
@@ -1241,6 +1241,8 @@ Dans les deux cas, votre compte reste ouvert.
 | Il part sur GitHub | Jamais | Jamais |
 | Le modifier change l'autre | Non | Non |
 
+**Deux mémoires, deux mondes.** C'est le même principe pour la mémoire. La base de GoodVibe ne part jamais sur GitHub : elle contient vos données. Le serveur démarre donc avec une mémoire vide, et il faut vous y présenter de nouveau. Ce que GoodVibe apprend sur votre ordinateur, il ne le sait pas en ligne, et inversement. Quand vous ouvrez l'onglet Mémoire, regardez l'adresse de la page : elle vous dit laquelle des deux mémoires vous lisez.
+
 **Changer l'identifiant et le mot de passe.** Ils vivent dans le `.env` du serveur, aux lignes `WEB_USER` et `WEB_PASSWORD`. Deux façons de les changer :
 
 - **vous-même** : ouvrez le `.env` du serveur, modifiez la ligne, enregistrez. C'est la façon à retenir pour le mot de passe définitif, puisqu'il ne passe par aucune discussion ;
@@ -1261,7 +1263,7 @@ Dans les deux cas, le service doit être relancé pour que le changement prenne 
 
 **CHECK** : sur GitHub, le dépôt contient vos commits, et ni `.env` ni `data/` ; l'adresse publique de GoodVibe répond avec le cadenas, connexion, brief généré via le bouton ; vous changez le mot de passe dans le `.env` du serveur, l'agent relance le service : l'ancien est refusé, le nouveau est accepté ; `journalctl -u goodvibe-web -f` montre le service vivant ; le lendemain, un brief en base à 7 h (heure du serveur : vérifiez le fuseau).
 
-**Pièges** : éteindre le serveur en croyant arrêter la facture (il faut le supprimer) ; adresse IP restée dans le compte après la suppression du serveur ; modifier le `.env` de son ordinateur en croyant changer celui du serveur ; mot de passe changé sans relancer le service ; connexion SSH par mot de passe restée active ; commande tapée à la main sur le serveur et absente des scripts ; secret déjà commité dans l'historique (le retirer du dernier commit ne suffit pas : il faut changer le secret) ; clé de lecture ajoutée à votre compte GitHub au lieu du dépôt (elle ouvrirait tous vos dépôts) ; DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; crontab posé pour le mauvais utilisateur ; `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
+**Pièges** : éteindre le serveur en croyant arrêter la facture (il faut le supprimer) ; adresse IP restée dans le compte après la suppression du serveur ; modifier le `.env` de son ordinateur en croyant changer celui du serveur ; s'étonner que GoodVibe en ligne ne vous connaisse pas (sa mémoire est une autre que celle de votre ordinateur) ; mot de passe changé sans relancer le service ; connexion SSH par mot de passe restée active ; commande tapée à la main sur le serveur et absente des scripts ; secret déjà commité dans l'historique (le retirer du dernier commit ne suffit pas : il faut changer le secret) ; clé de lecture ajoutée à votre compte GitHub au lieu du dépôt (elle ouvrirait tous vos dépôts) ; DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; crontab posé pour le mauvais utilisateur ; `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
 
 **Où on en est** : GoodVibe est en production, mais toute mise à jour demande encore une connexion SSH. Fichiers ajoutés : `deploy/`.
 

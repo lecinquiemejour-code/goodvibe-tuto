@@ -36,6 +36,7 @@ Ce que ce produit ne cherche **pas** à être :
   - Restituer ce que l'agent sait de l'utilisateur sur demande (« qu'est-ce que tu sais de moi ? »).
   - Oublier complètement l'utilisateur sur demande (profil, notes, conversations), avec confirmation.
   - Produire chaque matin à 7 h un brief : horoscope du jour personnalisé (réécrit pour l'utilisateur à partir d'une source externe) et météo de sa ville.
+  - S'adresser à l'utilisateur, dans le brief comme dans le chat, avec le prénom, la ville et le signe lus dans la mémoire au moment de répondre. L'agent n'invente jamais une information de profil : si le prénom manque, il ne salue personne par son nom et invite l'utilisateur à se présenter.
   - Ne produire qu'un brief par jour, même si le déclencheur s'exécute plusieurs fois.
   - Déclencher la génération du brief à la main depuis la page web (bouton « Générer le brief maintenant »), pour tester sans attendre le cron.
   - Recevoir un pense-bête par webhook sécurisé (jeton secret) et l'intégrer au brief suivant.
