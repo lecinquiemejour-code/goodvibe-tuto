@@ -170,9 +170,9 @@ flowchart TD
     A["Skill installé par l'agent,<br/>clé Gemini créée par vous"] --> B["PRD et tuto déposés dans le projet<br/>(vous)"]
     B --> C["Cadrage : architecture et stack, FDD, plan d'action<br/>(l'agent rédige, vous validez)"]
     C --> D["Features 1 à 12, en local, une par une<br/>(l'agent code, vous testez)"]
-    D --> E["Features 13 et 14 : VPS et CI/CD<br/>(l'agent configure, vous fournissez les secrets)"]
-    E --> F["GO MISE EN LIGNE<br/>(vous vérifiez l'URL publique)"]
-    F --> F2["Feature 15 : le webhook,<br/>déployé par le pipeline"]
+    D --> F["GO MISE EN LIGNE<br/>(au début de la feature 13, avant tout envoi)"]
+    F --> E["Features 13 et 14 : dépôt GitHub, VPS, CI/CD<br/>(l'agent configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
+    E --> F2["Feature 15 : le webhook,<br/>déployé par le pipeline"]
     F2 --> G["Walkthrough, post-mortem, pistes<br/>(l'agent rédige, vous relisez)"]
     G --> H["Version 2 : sous-agents<br/>(nouveau cycle PDCA)"]
 ```
@@ -195,8 +195,8 @@ Tout tourne **en local jusqu'à la feature 12 incluse** : vous avez un produit c
 10. Image du jour
 11. Budget et mode économe
 12. Tests automatisés
-13. Installation du VPS, et le cron du matin
-14. CI/CD GitHub Actions, puis GO MISE EN LIGNE
+13. GO MISE EN LIGNE : dépôt GitHub privé, installation du VPS, cron du matin
+14. CI/CD GitHub Actions
 15. Webhook pense-bête, déployé par le pipeline
 
 ## Stack technique

@@ -127,9 +127,9 @@ flowchart TD
     A["Skill installé par l'agent,<br/>clé Gemini créée par vous"] --> B["Copier le PRD GoodVibe dans le projet<br/>(vous)"]
     B --> C["Cadrage : archi-stack, fdd, plan-action<br/>(l'agent rédige, vous validez)"]
     C --> D["Features 1 à 12, en local, une par une<br/>(l'agent code, vous testez)"]
-    D --> E["Features 13 et 14 : VPS et CI/CD<br/>(l'agent configure, vous fournissez les secrets)"]
-    E --> F["GO MISE EN LIGNE<br/>(vous vérifiez l'URL publique)"]
-    F --> F2["Feature 15 : le webhook,<br/>déployé par le pipeline"]
+    D --> F["GO MISE EN LIGNE<br/>(au début de la feature 13, avant tout envoi)"]
+    F --> E["Features 13 et 14 : dépôt GitHub, VPS, CI/CD<br/>(l'agent configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
+    E --> F2["Feature 15 : le webhook,<br/>déployé par le pipeline"]
     F2 --> G["Walkthrough, post-mortem, pistes<br/>(l'agent rédige, vous relisez)"]
     G --> H["Version 2 : sous-agents<br/>(nouveau cycle PDCA)"]
 ```
@@ -328,7 +328,7 @@ flowchart LR
     V --> OK["Page publique à jour"]
 ```
 
-Deux jobs : **test** à chaque push (le code est installé, vérifié par `ruff`, testé par `pytest`) ; **deploy** uniquement sur `main` et si test est vert (connexion SSH au VPS avec une clé stockée dans les secrets GitHub, `git pull`, mise à jour des dépendances, redémarrage des services). Le GO MISE EN LIGNE du skill devient un push ; chaque commit ultérieur se déploie seul.
+Deux jobs : **test** à chaque push (le code est installé, vérifié par `ruff`, testé par `pytest`) ; **deploy** uniquement sur `main` et si test est vert (connexion SSH au VPS avec une clé stockée dans les secrets GitHub, `git pull`, mise à jour des dépendances, redémarrage des services). Le GO MISE EN LIGNE se donne une seule fois, avant le premier envoi du code (fiche 13). Une fois le pipeline en place (fiche 14), chaque commit poussé se déploie seul.
 
 ### 2.7 Les sous-agents (version 2)
 
@@ -382,7 +382,7 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la **Règle 0** : jamais de code ni de publication sans GO. Il ne l'écrase jamais s'il existe. Pour GoodVibe, **l'agent y ajoute six lignes** (demandez-lui, et vérifiez qu'il vous montre le résultat) :
 
-1. **Mise en ligne** : « La publication se fait sur le VPS via GitHub Actions, pas sur Netlify. Le GO MISE EN LIGNE déclenche le push sur `main` et le pipeline. »
+1. **Mise en ligne** : « La publication se fait sur un VPS, pas sur Netlify. Le GO MISE EN LIGNE se demande au début de la feature 13, avant tout envoi : il autorise le premier push vers le dépôt GitHub privé, puis la mise en ligne de la page. Avant lui, rien ne quitte la machine du pilote. À partir de la feature 14, GitHub Actions déploie chaque push sur `main`. »
 2. **CHECK** : « Le test humain ne passe pas toujours par un navigateur : selon la feature, il se fait dans le terminal, avec `curl`, dans l'onglet Activité ou dans la page Gradio. Le critère de réussite du `plan-action.md` précise lequel. »
 3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui valide, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
@@ -424,10 +424,10 @@ flowchart TD
     G2 -- "oui" --> CM["commit local<br/>plan-action mis à jour"]
     CM --> N{"Reste des features ?"}
     N -- "oui" --> P
-    N -- "non" --> ML["GO MISE EN LIGNE"]
+    N -- "non" --> ML["Clôture"]
 ```
 
-Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du code de cette feature, en local ; **GO #2** autorise le commit local ; **GO MISE EN LIGNE**, une seule fois en fin de projet, autorise la publication. Le CHECK est **le vôtre** : l'agent lance ce qu'il faut et vous passe la main. Il ne s'auto-valide jamais. Entre le DO et le CHECK, il vous fait la **lecture guidée** du code : vous ne validez jamais un code que vous n'avez pas vu.
+Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du code de cette feature, en local ; **GO #2** autorise le commit local ; **GO MISE EN LIGNE**, une seule fois, au début de la feature 13, autorise l'envoi du code sur GitHub puis la mise en ligne de la page. Le CHECK est **le vôtre** : l'agent lance ce qu'il faut et vous passe la main. Il ne s'auto-valide jamais. Entre le DO et le CHECK, il vous fait la **lecture guidée** du code : vous ne validez jamais un code que vous n'avez pas vu.
 
 ### 4.3 Les trois documents de cadrage : ce que vous devez y trouver
 
@@ -440,7 +440,7 @@ La stack est imposée par le PRD, et l'organisation du code par ce tuto : **un f
 La liste des features, formulées « action, résultat, objet » (« afficher le brief du jour »). Vérifiez qu'elles correspondent à la liste de la section 5 (quinze features) et que le **tableau de couverture** relie chaque fonction du PRD à une feature. Si une manque, réclamez-la : le skill vous demande explicitement de confirmer le découpage, ne validez pas à l'aveugle.
 
 **`plan-action.md`**
-L'ordre des features et leur **critère de réussite**. L'ordre attendu est celui de la section 5 : la page web dès la feature 2, pour que chaque feature suivante soit visible dans le navigateur ; le journal d'activité juste après (feature 3) pour que tout le reste soit observable ; la base et le profil avant le brief ; les tests avant le VPS ; le cron avec le serveur (feature 13) ; le CI/CD après le VPS ; le webhook en dernier, après la mise en ligne, pour être la première feature déployée par le pipeline. Ce document est **vivant** : il sera mis à jour à chaque tour, et c'est lui que vous relirez pour reprendre une session interrompue.
+L'ordre des features et leur **critère de réussite**. L'ordre attendu est celui de la section 5 : la page web dès la feature 2, pour que chaque feature suivante soit visible dans le navigateur ; le journal d'activité juste après (feature 3) pour que tout le reste soit observable ; la base et le profil avant le brief ; les tests avant le VPS ; le GO MISE EN LIGNE et le dépôt GitHub au début de la feature 13 ; le cron avec le serveur (feature 13) ; le CI/CD après le VPS ; le webhook en dernier, après la mise en ligne, pour être la première feature déployée par le pipeline. Ce document est **vivant** : il sera mis à jour à chaque tour, et c'est lui que vous relirez pour reprendre une session interrompue.
 
 **Le sas**
 Avant d'entrer en construction, le skill vous demandera de **citer le critère de réussite de la première feature**, en ouvrant `plan-action.md`. Ce n'est pas un piège : c'est pour garantir que vous avez réellement lu un document de cadrage. Puis il fait un **commit de cadrage** (les quatre documents et le `CLAUDE.md`) : c'est le point de reprise propre du projet.
@@ -479,8 +479,8 @@ L'ordre des quinze features est celui du `plan-action.md` :
 | 10 | [Image du jour](#fiche-10--image-du-jour) | Navigateur |
 | 11 | [Budget et mode économe](#fiche-11--budget-et-mode-économe) | Navigateur, onglet Activité |
 | 12 | [Tests automatisés](#fiche-12--tests-automatisés) | Terminal |
-| 13 | [Installation du VPS](#fiche-13--installation-du-vps) | Navigateur (URL publique) + `journalctl` |
-| 14 | [CI/CD GitHub Actions](#fiche-14--cicd-github-actions-puis-go-mise-en-ligne) | GitHub + navigateur |
+| 13 | [Mise en ligne sur le VPS](#fiche-13--mise-en-ligne-sur-le-vps) | GitHub + navigateur (URL publique) + `journalctl` |
+| 14 | [CI/CD GitHub Actions](#fiche-14--cicd-github-actions) | GitHub + navigateur |
 | 15 | [Webhook pense-bête](#fiche-15--webhook-pense-bête) | Hoppscotch + onglet Mémoire |
 
 Tout tourne en local jusqu'à la feature 12. Le webhook (feature 15) est construit après la mise en ligne et déployé par le pipeline. DB Browser for SQLite (https://sqlitebrowser.org) est utile pour les premiers CHECK, avant que l'onglet Mémoire existe : demandez à l'agent de l'installer à la fiche 3.
@@ -1111,11 +1111,13 @@ flowchart LR
 
 ---
 
-### Fiche 13 : installation du VPS
+### Fiche 13 : mise en ligne sur le VPS
 
-**Ce que vous verrez** : GoodVibe répond sur `https://goodvibe.votre-domaine.fr` avec le cadenas, depuis n'importe où, et son brief tombe à 7 h sans que votre ordinateur soit allumé.
+**Ce que vous verrez** : vous donnez le GO MISE EN LIGNE, le code part sur votre dépôt GitHub privé, puis GoodVibe répond sur `https://goodvibe.votre-domaine.fr` avec le cadenas, depuis n'importe où, et son brief tombe à 7 h sans que votre ordinateur soit allumé.
 
-**Ce qu'on construit** : le serveur prêt à recevoir GoodVibe : utilisateur dédié non root, code déployé, venv, un service `systemd` (interface), Caddy en HTTPS, le cron du brief à 7 h (premier déclencheur autonome), pare-feu, sauvegarde nocturne de la base, clé SSH de déploiement pour la fiche 14.
+**Le GO MISE EN LIGNE** : il se demande au PLAN de cette fiche, avant tout envoi, et c'est la seule fois du projet. Il autorise deux choses : envoyer le code sur GitHub, puis rendre la page accessible depuis Internet. Jusqu'ici, rien n'a quitté votre machine. Avant le premier push, l'agent vérifie que ni secret ni donnée personnelle ne figure dans l'historique Git : `.env`, `data/` et les images sont ignorés depuis la fiche 1.
+
+**Ce qu'on construit** : le dépôt GitHub privé et le premier push ; puis le serveur prêt à recevoir GoodVibe : utilisateur dédié non root, code cloné depuis GitHub avec une clé en lecture seule, venv, un service `systemd` (interface), Caddy en HTTPS, le cron du brief à 7 h (premier déclencheur autonome), pare-feu, sauvegarde nocturne de la base.
 
 ```mermaid
 flowchart TD
@@ -1127,27 +1129,27 @@ flowchart TD
     SSH["SSH par clé uniquement<br/>utilisateur goodvibe, sudo limité"] -.-> GR
 ```
 
-**Ce que fait l'agent** : installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, clone du dépôt, venv, installation de `uvx` pour le serveur MCP, fichiers `deploy/goodvibe-web.service`, `deploy/Caddyfile` versionnés dans le dépôt, règle `sudoers` limitée au `systemctl restart` du service, la ligne `crontab` de l'utilisateur `goodvibe` (7 h, **chemin absolu** du Python du venv, log redirigé vers un fichier), script de sauvegarde, création d'une paire de clés SSH dédiée au déploiement (clé publique installée, clé privée remise à vous pour la fiche 14).
+**Ce que fait l'agent** : vérifie l'historique Git avant le premier push ; relie le projet à votre dépôt GitHub et y pousse les commits locaux ; installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, création d'une clé de lecture du dépôt (« deploy key », en lecture seule), clone du dépôt avec cette clé, venv, installation de `uvx` pour le serveur MCP, fichiers `deploy/goodvibe-web.service`, `deploy/Caddyfile` versionnés dans le dépôt, règle `sudoers` limitée au `systemctl restart` du service, la ligne `crontab` de l'utilisateur `goodvibe` (7 h, **chemin absolu** du Python du venv, log redirigé vers un fichier), script de sauvegarde.
 
-**Ce que vous faites** : créer le compte Hetzner et un jeton API dédié (révocable) ; pointer un sous-domaine vers l'IP du serveur (enregistrement A chez votre registrar) ; copier les secrets dans le `.env` du serveur (l'agent vous indique lesquels et vous guide, il ne doit jamais les voir passer dans le chat si vous préférez les saisir vous-même en SSH). Avant la mise en ligne, remplacez le mot de passe de départ par un mot de passe à vous, long, que vous n'avez donné à personne, dans le `.env` du serveur : celui de départ a été affiché dans la discussion, il ne doit pas protéger une page publique.
+**Ce que vous faites** : donner le GO MISE EN LIGNE ; créer le dépôt **privé** sur GitHub (guidé) et y ajouter la clé de lecture du serveur ; créer le compte Hetzner et un jeton API dédié (révocable) ; pointer un sous-domaine vers l'IP du serveur (enregistrement A chez votre registrar) ; copier les secrets dans le `.env` du serveur (l'agent vous indique lesquels et vous guide, il ne doit jamais les voir passer dans le chat si vous préférez les saisir vous-même en SSH). Avant la mise en ligne, remplacez le mot de passe de départ par un mot de passe à vous, long, que vous n'avez donné à personne, dans le `.env` du serveur : celui de départ a été affiché dans la discussion, il ne doit pas protéger une page publique.
 
 **La solution du tuto** : une installation directe avec `systemd` et Caddy : tout est lisible, aucun conteneur à expliquer. **Pourquoi pas autrement** : Docker Compose et Coolify (une interface web qui déploie depuis GitHub) ajoutent une couche à apprendre ; ils sont présentés en fin de tuto.
 
-**À relire** : aucun service ne tourne en root ; `.env` en `chmod 600` ; Caddy est le seul exposé sur 80 et 443, Gradio écoute sur `127.0.0.1` ; la base est hors du dossier synchronisé par Git ; les fichiers de service ont `Restart=always` ; le cron charge `.env` via `config.py`, pas l'environnement du shell.
+**À relire** : le dépôt GitHub est privé, et rien de sensible ne figure dans son historique ; la clé de lecture du serveur est en lecture seule et n'ouvre que ce dépôt ; aucun service ne tourne en root ; `.env` en `chmod 600` ; Caddy est le seul exposé sur 80 et 443, Gradio écoute sur `127.0.0.1` ; la base est hors du dossier synchronisé par Git ; les fichiers de service ont `Restart=always` ; le cron charge `.env` via `config.py`, pas l'environnement du shell.
 
-**CHECK** : `https://goodvibe.votre-domaine.fr` répond avec le cadenas, connexion, brief généré via le bouton ; `journalctl -u goodvibe-web -f` montre le service vivant ; le lendemain, un brief en base à 7 h (heure du serveur : vérifiez le fuseau).
+**CHECK** : sur GitHub, le dépôt contient vos commits, et ni `.env` ni `data/` ; `https://goodvibe.votre-domaine.fr` répond avec le cadenas, connexion, brief généré via le bouton ; `journalctl -u goodvibe-web -f` montre le service vivant ; le lendemain, un brief en base à 7 h (heure du serveur : vérifiez le fuseau).
 
-**Pièges** : DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; crontab posé pour le mauvais utilisateur ; `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
+**Pièges** : secret déjà commité dans l'historique (le retirer du dernier commit ne suffit pas : il faut changer le secret) ; clé de lecture ajoutée à votre compte GitHub au lieu du dépôt (elle ouvrirait tous vos dépôts) ; DNS non propagé (Caddy ne peut pas obtenir le certificat : attendre, puis relancer) ; port fermé par `ufw` ; crontab posé pour le mauvais utilisateur ; `crontab` sans le chemin absolu du venv (Python ou modules introuvables) ; `.env` absent sur le serveur ; fuseau UTC du serveur (le brief tombe à 9 h heure de Paris en été : fixer le fuseau ou ajuster la ligne cron).
 
 **Où on en est** : GoodVibe est en production, mais toute mise à jour demande encore une connexion SSH. Fichiers ajoutés : `deploy/`.
 
 ---
 
-### Fiche 14 : CI/CD GitHub Actions, puis GO MISE EN LIGNE
+### Fiche 14 : CI/CD GitHub Actions
 
 **Ce que vous verrez** : vous poussez un changement, une coche verte apparaît sur GitHub, et trente secondes plus tard la page publique a changé, sans que personne ait touché au serveur.
 
-**Ce qu'on construit** : le workflow à deux jobs et la première mise en ligne officielle.
+**Ce qu'on construit** : le workflow à deux jobs, et la clé de déploiement qui permet à GitHub Actions d'entrer sur le serveur. Le dépôt et la page en ligne existent depuis la fiche 13 : on automatise.
 
 ```mermaid
 sequenceDiagram
@@ -1167,17 +1169,24 @@ sequenceDiagram
     end
 ```
 
-**Ce que fait l'agent** : `.github/workflows/deploy.yml` (job `test` sur tout push ; job `deploy` sur `main` seulement, `needs: test`, action SSH qui exécute `deploy/deployer.sh`) ; `deploy/deployer.sh` idempotent ; documentation des trois secrets attendus (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`) ; puis, au GO MISE EN LIGNE : création ou vérification du dépôt distant (il vous guide pour le créer sur GitHub), `push` de tous les commits locaux.
+**Ce que fait l'agent** : `.github/workflows/deploy.yml` (job `test` sur tout push ; job `deploy` sur `main` seulement, `needs: test`, action SSH qui exécute `deploy/deployer.sh`) ; `deploy/deployer.sh` idempotent ; création d'une paire de clés SSH dédiée au déploiement (clé publique installée sur le VPS, clé privée remise à vous) ; documentation des trois secrets attendus (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`) ; puis `push` du workflow.
 
-**Ce que vous faites** : créer le dépôt GitHub (guidé) ; coller les trois secrets dans Settings, Secrets and variables, Actions ; puis **vérifier l'URL publique** : c'est le smoke test de production, et il est à vous.
+**Ce que vous faites** : coller les trois secrets dans Settings, Secrets and variables, Actions ; puis **vérifier l'URL publique** après le déploiement automatique : c'est le smoke test de production, et il est à vous.
+
+**Deux clés, deux directions**, à ne pas confondre :
+
+| Clé | Elle permet | Où va la partie publique | Créée à la fiche |
+|---|---|---|---|
+| Clé de lecture du dépôt | Au serveur de lire le code sur GitHub | Dans le dépôt GitHub (« Deploy keys ») | 13 |
+| Clé de déploiement | À GitHub Actions d'entrer sur le serveur | Sur le VPS ; la partie privée va dans le secret `VPS_SSH_KEY` | 14 |
 
 **La solution du tuto** : une connexion SSH directe depuis le job, avec un script sur le VPS : trente lignes de YAML, tout est visible. **Pourquoi pas autrement** : construire une image Docker poussée sur un registre, ou passer par un outil tiers de déploiement, cache les étapes qu'on veut comprendre.
 
 **À relire** : le job deploy ne tourne que sur `main` et après un job test vert ; la clé privée n'apparaît **jamais** dans les logs (secret masqué) ; `deployer.sh` est relançable sans dégât ; le workflow ne déploie pas depuis les branches de travail.
 
-**CHECK** : c'est le **GO MISE EN LIGNE** du skill. Push, coche verte, page publique vérifiée par vous. Puis un changement visible (un mot dans le titre de la page Gradio) poussé sur `main` : coche verte, page mise à jour sans toucher au VPS.
+**CHECK** : un changement visible (un mot dans le titre de la page Gradio) poussé sur `main` : coche verte sur GitHub, page publique mise à jour sans toucher au VPS. Puis cassez volontairement un test et poussez : coche rouge, rien n'est déployé. Réparez, poussez : tout revient au vert.
 
-**Pièges** : « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 13 manque) ; workflow déclenché sur toutes les branches.
+**Pièges** : confondre les deux clés ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 13 manque) ; workflow déclenché sur toutes les branches.
 
 **Où on en est** : GoodVibe V1 est en production, mis à jour par un pipeline. Fichiers ajoutés : `.github/workflows/deploy.yml`, `deploy/deployer.sh`. Quatorze features sur quinze sont « fait » dans `plan-action.md`. La dernière, le webhook, sera la première feature déployée par ce pipeline, sans connexion SSH.
 
@@ -1246,7 +1255,7 @@ Une fois la page publique vérifiée et le webhook déployé par le pipeline (fi
 
 ```mermaid
 flowchart LR
-    A["1. GO MISE EN LIGNE<br/>URL vérifiée par vous"] --> B["2. walkthrough.md<br/>visite du code"]
+    A["1. V1 en ligne<br/>les 15 features sont faites"] --> B["2. walkthrough.md<br/>visite du code"]
     B --> C["3. post-mortem.md<br/>prévu / réalisé, leçons"]
     C --> D["4. Trois pistes d'évolution<br/>dont les sous-agents"]
     D --> E["5. Checklist à cinq cases<br/>toutes cochées"]
