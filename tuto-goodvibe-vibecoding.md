@@ -33,7 +33,25 @@
 >
 > **Règle 2. Le niveau de langue.** Pour un pilote de profil (1), chaque mot technique est expliqué à sa première apparition, dans le dialogue comme dans les documents. Dans `archi-stack.md`, chaque ligne de la stack a une colonne « En clair ». Avant de montrer un document, tu dis en trois phrases ce qu'il contient et ce que le pilote doit y regarder. Dans la discussion, tu n'écris jamais de Mermaid : la fenêtre ne le dessine pas. Tu dessines un schéma en texte, boîtes et flèches, dans un bloc de code. Pour un pilote de profil (1), tes schémas emploient des mots courants, jamais un nom de fichier ni de bibliothèque. Si le pilote veut le diagramme complet, tu lui indiques la section du tuto à ouvrir en aperçu (Ctrl + Maj + V).
 >
-> **Règle 3. Au PLAN, une seule solution : celle du tuto.** Tu ne proposes pas trois options et tu ne fais pas choisir le pilote entre des variantes. Au PLAN de chaque feature, tu commences par « Ce que vous verrez », tu situes la feature sur la carte d'architecture (ce qui existe déjà, ce qu'on ajoute), puis tu présentes la solution que la fiche retient (« La solution du tuto ») et tu l'expliques. Tu peux dire en une phrase pourquoi on ne fait pas autrement (« Pourquoi pas autrement ») : pour faire comprendre, jamais pour faire choisir. Tu demandes le GO #1 ainsi : « (A) GO ; (B) j'ai une question ». De même au cadrage : l'organisation du code est « un fichier par responsabilité » ; tu l'expliques, tu ne proposes pas de variantes.
+> **Règle 3. Le PLAN : d'abord la leçon, puis le plan, et une seule solution.** Le pilote doit savoir ce que tu vas faire et pourquoi, avant que tu le fasses. Tu présentes le PLAN de chaque feature en deux messages.
+>
+> *Premier message, la leçon.* Avant toute technique, tu t'appuies sur la rubrique « Pourquoi, et l'idée en clair » de la fiche, que tu racontes avec tes mots :
+>
+> 1. **Le problème** : ce qui manque à GoodVibe aujourd'hui, sur une situation concrète.
+> 2. **L'idée** : le principe, en langage courant, avec une comparaison tirée de la vie de tous les jours. Aucun mot technique.
+> 3. **Les mots nouveaux** : ceux que le pilote va rencontrer dans cette feature, chacun défini en une phrase. Tu n'emploies ensuite aucun mot technique que tu n'as pas défini.
+>
+> Tu termines par : « (A) c'est clair, montre-moi le plan ; (B) j'ai une question ».
+>
+> *Second message, le plan.*
+>
+> 1. **Ce que vous verrez** à la fin de la feature.
+> 2. **Où ça se place** sur la carte d'architecture : ce qui existe déjà, ce qu'on ajoute.
+> 3. **Ce que je vais faire**, étape par étape. Chaque étape tient en une phrase, sous la forme « je fais ceci, pour cela » : jamais un nom de fichier sans sa raison d'être.
+> 4. **Ce que vous ferez** au CHECK.
+> 5. **La solution du tuto**, et en une phrase pourquoi on ne fait pas autrement : pour faire comprendre, jamais pour faire choisir. Tu ne proposes pas trois options.
+>
+> Puis tu demandes le GO #1 : « (A) GO ; (B) j'ai une question ». De même au cadrage : l'organisation du code est « un fichier par responsabilité » ; tu l'expliques, tu ne proposes pas de variantes.
 >
 > **Règle 4. Les modèles : au moment du besoin, et c'est toi qui cherches.** Ce tuto ne fixe aucun modèle, et tu n'en choisis aucun au cadrage : dans `archi-stack.md`, tu écris « modèle texte : choisi à la fiche 1 ; modèle image : choisi à la fiche 10 ». Au PLAN de la fiche 1, puis au PLAN de la fiche 10, tu consultes toi-même la documentation officielle de Google (<https://ai.google.dev/gemini-api/docs/models>, <https://ai.google.dev/gemini-api/docs/interactions>, <https://ai.google.dev/gemini-api/docs/pricing>) et tu présentes ta recommandation au pilote. Tes critères : pour le texte, le modèle **Gemini Flash stable le plus récent** que Google recommande pour les agents, compatible avec l'API Interactions, les appels d'outils, le streaming et la réflexion ; pour l'image, le modèle **stable le moins coûteux**. Jamais de modèle « preview » ou « experimental ». Tu vérifies de la même façon la syntaxe de l'API et les noms de champs. Avec le modèle texte, tu vérifies les réglages qu'il accepte (température, longueur maximale de réponse, niveau de réflexion) et tu recommandes des valeurs, expliquées en langage courant ; si la documentation conseille de garder une valeur par défaut, tu le dis et tu la gardes.
 >
@@ -45,11 +63,11 @@
 >
 > Le pilote ne fait aucune recherche : il valide. Une fois le modèle validé, tu l'écris dans `config.py` (`MODELE_TEXTE`, `MODELE_IMAGE`) et tu complètes `archi-stack.md` : identifiant, date de la recherche, pages consultées. À chaque reprise après plus d'un mois d'arrêt, tu vérifies que les modèles retenus sont toujours en service.
 >
-> **Règle 5. Au DO, tu montres le code et tu l'expliques.** Dire « le code est en place » ne suffit pas : le pilote est là pour apprendre à lire ce que tu écris. Après avoir codé et avant le CHECK, tu fais la **lecture guidée** de la feature :
+> **Règle 5. Au DO, tu montres le code et tu l'expliques.** Dire « le code est en place » ne suffit pas : le pilote est là pour apprendre à lire ce que tu écris. Ton compte rendu de DO tient en trois phrases, en langage courant : ce qui existe maintenant, ce que ça permet, ce qui reste à vérifier. Pas de liste de fichiers ni de chiffres techniques à ce stade. Puis, avant le CHECK, tu fais la **lecture guidée** de la feature :
 >
 > 1. Tu commences par le **schéma de séquence** de la feature, en schéma texte : quels fichiers s'appellent, dans quel ordre, et quels échanges partent vers l'extérieur (le modèle, une API, un serveur MCP, la base). Tu transposes le diagramme de la fiche ; tu ne le recopies pas en Mermaid.
 > 2. Pour chaque point « À relire » de la fiche, tu montres l'extrait de code qui y répond : le nom du fichier, puis l'extrait dans un bloc de code, de 5 à 25 lignes. Jamais un fichier entier. Tu dis à quelle étape du schéma il correspond.
-> 3. Sous chaque extrait, tu expliques ce qu'il fait et pourquoi il est écrit ainsi, en le reliant au concept de la section 2. Pour un pilote de profil (1), tu expliques aussi les mots de Python qui apparaissent pour la première fois : une fonction, une boucle, un import, `yield`.
+> 3. Sous chaque extrait, tu commences par une phrase « en clair », sans aucun mot technique, qui dit ce que fait l'extrait. Puis tu expliques pourquoi il est écrit ainsi, en le reliant au concept de la section 2 et à la leçon du PLAN. Pour un pilote de profil (1), tu expliques aussi les mots de Python qui apparaissent pour la première fois : une fonction, une boucle, un import, `yield`.
 > 4. Tu ajoutes l'extrait que tu juges le plus instructif de la feature, même s'il n'est pas dans « À relire ».
 > 5. Tu termines par : « (A) c'est clair, on passe au CHECK ; (B) j'ai une question sur le code ».
 >
@@ -75,7 +93,7 @@ Nous démarrons le projet GoodVibe dans ce répertoire vierge.
 
 Contexte du projet :
 - Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les cinq règles de la note d'en-tête du tuto, qui priment sur lui.
-- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
+- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, commence par la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis dis-moi ce que tu vas faire, étape par étape, et pourquoi. Ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
 - Profil de calibrage : (2) je code déjà, je découvre le vibe coding.
@@ -386,7 +404,7 @@ Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la 
 3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui valide, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
 5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les cinq règles de sa note d'en-tête, il prime sur le skill. »
-6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent présente une seule solution, celle du tuto, et l'explique : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote le schéma de séquence de la feature, puis les extraits de code qui comptent, et les explique. »
+6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent fait d'abord la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis annonce ce qu'il va faire, étape par étape, et pourquoi. Il présente une seule solution, celle du tuto : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote le schéma de séquence de la feature, puis les extraits de code qui comptent, et les explique. »
 
 Si vous utilisez Gemini dans Antigravity plutôt que Claude Code, demandez aussi à l'agent de déposer une copie du fichier sous le nom `AGENTS.md`, que les agents non-Claude lisent. Le contenu du gabarit est volontairement agnostique.
 
@@ -407,13 +425,13 @@ Ce qui doit se passer, dans l'ordre :
 
 Signal d'alerte : s'il ne se présente pas, ne pose pas la question, ou commence à écrire du code, le skill n'est pas chargé. Revenez à la section 1.5.
 
-Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, s'il vous demande de choisir entre trois options, ou s'il passe au CHECK sans vous avoir montré de code, rappelez-lui les cinq règles de la note d'en-tête du tuto.
+Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, s'il vous demande de choisir entre trois options, s'il vous présente un plan sans vous avoir d'abord expliqué le problème et l'idée, ou s'il passe au CHECK sans vous avoir montré de code, rappelez-lui les cinq règles de la note d'en-tête du tuto.
 
 ### 4.2 La boucle que vous allez vivre quatorze fois
 
 ```mermaid
 flowchart TD
-    P["PLAN<br/>l'agent présente et explique<br/>la solution du tuto"] --> G1{"GO #1<br/>(A) GO ou (B) question"}
+    P["PLAN<br/>la leçon, puis le plan :<br/>ce que l'agent va faire, et pourquoi"] --> G1{"GO #1<br/>(A) GO ou (B) question"}
     G1 -- "B : question" --> P
     G1 -- "A : GO" --> DO["DO<br/>l'agent code, explique au fil de l'eau"]
     DO --> LG["LECTURE GUIDÉE<br/>l'agent montre le schéma de séquence,<br/>puis le code qui compte, et l'explique"]
@@ -450,7 +468,7 @@ Avant d'entrer en construction, le skill vous demandera de **citer le critère d
 
 ### 5.0 Comment lire une fiche
 
-Chaque feature a sa fiche, toujours construite pareil :
+Chaque feature a sa fiche, toujours construite pareil. Elle s'ouvre par **Pourquoi, et l'idée en clair** : le problème que la feature résout, le principe en langage courant, et les mots nouveaux. C'est la leçon que l'agent vous fait avant de vous présenter son plan. Viennent ensuite :
 
 1. **Ce que vous verrez** : le résultat concret, celui qu'on a envie d'atteindre.
 2. **Ce qu'on construit**, avec son diagramme.
@@ -505,6 +523,12 @@ flowchart TD
 ---
 
 ### Fiche 1 : squelette et chat terminal
+
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* GoodVibe n'existe pas encore. Un modèle comme Gemini sait répondre à une question, mais il ne sait pas qui il est, il ne sait pas s'arrêter de lui-même, et il n'a aucun programme autour de lui pour vous parler.
+- *L'idée.* On écrit le plus petit agent possible : un programme qui prend votre message, le transmet au modèle avec sa fiche de poste, et affiche la réponse à mesure qu'elle arrive. C'est un standardiste : il transmet, il attend, il vous répète la réponse, et on lui a dit combien de fois il a le droit de rappeler.
+- *Les mots nouveaux.* **Modèle** : le programme de Google qui comprend et rédige du texte. **Boucle d'agent** : le va-et-vient entre notre programme et le modèle. **Prompt système** : la fiche de poste de GoodVibe. **Streaming** : recevoir la réponse par morceaux, sans attendre la fin. **Clé API** : le mot de passe qui vous identifie auprès de Google. **Environnement virtuel** : un dossier qui range les bibliothèques du projet à part, sans toucher au reste de votre ordinateur.
 
 **Ce que vous verrez** : GoodVibe vous répond dans le terminal, et sa réponse s'affiche mot à mot pendant qu'il la compose. À « qui es-tu ? », il se présente comme GoodVibe : vous lui avez donné une fiche de poste.
 
@@ -570,6 +594,12 @@ flowchart TD
 
 ### Fiche 2 : page web
 
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* GoodVibe ne parle que dans le terminal, une fenêtre de texte réservée à votre ordinateur. On ne peut pas l'utiliser depuis un téléphone, et rien n'y est agréable à lire.
+- *L'idée.* On lui ouvre une seconde porte d'entrée : une page web. Le cœur ne change pas, c'est le même agent derrière deux guichets. Une boulangerie qui ajoute une vitrine sur la rue garde le même fournil.
+- *Les mots nouveaux.* **Gradio** : la bibliothèque qui fabrique la page web à partir de quelques lignes de Python. **localhost** : l'adresse de votre propre ordinateur, visible de vous seul. **Port** : le numéro de la porte par laquelle la page répond, ici 7860. **Authentification** : le mot de passe demandé à l'entrée. **Fonction génératrice** : une fonction qui rend son résultat morceau par morceau au lieu d'un seul coup.
+
 **Ce que vous verrez** : GoodVibe dans votre navigateur, derrière un mot de passe, et sa réponse qui s'affiche mot à mot. À partir d'ici, chaque feature aura un endroit où se montrer.
 
 **Ce qu'on construit** : `interface.py` avec Gradio : un onglet Chat en streaming, un mot de passe. Les autres onglets viendront avec leurs features : Brief du jour (fiche 6), Mémoire et Activité (fiche 9).
@@ -615,6 +645,12 @@ flowchart TD
 ---
 
 ### Fiche 3 : journal d'activité
+
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* GoodVibe répond, mais on ne sait ni ce qu'il a fait pour répondre, ni combien de temps il a mis, ni ce que ça a coûté. Le jour où il se trompera, on n'aura aucun moyen de comprendre pourquoi.
+- *L'idée.* On lui fait tenir un livre de bord, comme sur un navire : à chaque geste, une ligne. Et on lui demande de montrer son travail pendant qu'il le fait, puis d'afficher l'addition sous chaque réponse.
+- *Les mots nouveaux.* **Journal** : la liste de ce que l'agent a fait, ligne par ligne. **Base de données SQLite** : un fichier qui range des tableaux, ici le journal. **Token** : le morceau de mot qui sert d'unité de facturation. **Latence** : le temps d'attente avant la réponse. **Coulisses** : ce que l'agent montre de son travail, en direct. **Relevé** : le décompte affiché sous la réponse.
 
 **Ce que vous verrez** : chaque geste de GoodVibe laisse une trace lisible : tour par tour, les tokens consommés (entrée, sortie, réflexion), la latence, et, si vous le demandez, un résumé de ce qu'il a « pensé » avant de répondre.
 
@@ -665,6 +701,12 @@ flowchart TD
 ---
 
 ### Fiche 4 : base et profil
+
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* GoodVibe oublie tout dès qu'on ferme la fenêtre. Le modèle n'a aucune mémoire : chaque conversation repart de zéro, et il faut se présenter à chaque fois.
+- *L'idée.* On lui donne un carnet, et des gestes pour y écrire et pour le relire : ce sont ses premiers outils. C'est lui qui décide quand noter. Un médecin ne se souvient pas de tous ses patients : il tient un dossier, et il le relit avant la consultation.
+- *Les mots nouveaux.* **Outil** : une action que le modèle peut demander à notre programme de faire pour lui. **Appel d'outil** : le moment où il le demande. **JSON** : la façon d'écrire des informations pour qu'un programme puisse les lire, par exemple `{"ville": "Lyon"}`. **Table** : un tableau dans la base. **Minimisation** : ne garder que le strict nécessaire, ici le signe et pas la date de naissance.
 
 **Ce que vous verrez** : vous vous présentez une fois ; vous fermez le chat, vous le relancez, et GoodVibe vous appelle par votre prénom et connaît votre signe.
 
@@ -747,6 +789,12 @@ flowchart TD
 
 ### Fiche 5 : oublier l'utilisateur
 
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* GoodVibe retient des informations personnelles. Vous devez pouvoir les lui faire effacer, toutes, et être sûr qu'il ne le fera jamais par erreur.
+- *L'idée.* On lui donne un outil d'effacement, et une règle : avant un geste qu'on ne peut pas annuler, toujours demander confirmation. C'est la corbeille de votre ordinateur, qui vous demande « voulez-vous vraiment la vider ? ».
+- *Les mots nouveaux.* **Action irréversible** : un geste qu'on ne peut pas défaire. **Confirmation** : la question posée avant ce geste. **Mémoire de travail** : ce que l'agent a en tête pendant la conversation en cours, à vider elle aussi.
+
 **Ce que vous verrez** : « oublie-moi », une confirmation, et GoodVibe ne sait plus rien de vous. Les tables se vident sous vos yeux.
 
 **Ce qu'on construit** : l'outil `oublier_utilisateur`, avec confirmation obligatoire, qui vide `profil`, `notes` et `conversations`.
@@ -781,6 +829,12 @@ sequenceDiagram
 ---
 
 ### Fiche 6 : brief du matin
+
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* GoodVibe ne fait rien tant qu'on ne lui parle pas. Or son métier est de préparer un brief chaque matin, sans qu'on le lui demande.
+- *L'idée.* On écrit la fabrication du brief comme une recette, qu'on peut lancer d'un bouton ou d'une commande. Avec une règle : un seul brief par jour. Le journal du matin n'est imprimé qu'une fois ; si vous en redemandez un, on vous tend le même exemplaire.
+- *Les mots nouveaux.* **Anti-doublon** : la vérification qui empêche de refaire ce qui est déjà fait. **Point d'entrée** : le fichier qu'on lance pour démarrer une tâche. **Flux** : un résultat livré étape par étape, qu'on peut afficher au fur et à mesure. **Forcer** : passer outre l'anti-doublon, pour tester.
 
 **Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » quand vous cliquez « Générer le brief maintenant » ou lancez `cron_brief.py`, et si vous relancez, il refuse poliment d'en faire un second. Vous le voyez se fabriquer en direct : les étapes défilent, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche. L'heure fixe (7 h) viendra avec le serveur, à la fiche 12 : un cron n'a de sens que sur une machine allumée en permanence.
 
@@ -838,6 +892,12 @@ flowchart TD
 
 ### Fiche 7 : météo
 
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* Le modèle ne sait pas quel temps il fait aujourd'hui : ses connaissances s'arrêtent au jour où il a été fabriqué. Si on lui pose la question, il invente une réponse plausible.
+- *L'idée.* On lui donne un outil qui va chercher la vraie prévision auprès d'un service en ligne. Au lieu de deviner, il consulte le bulletin. Et si le service ne répond pas, il le dit, au lieu de rester bloqué.
+- *Les mots nouveaux.* **API** : le guichet par lequel un programme interroge un service en ligne. **Requête HTTP** : la question posée à ce guichet. **Géocodage** : transformer un nom de ville en coordonnées sur la carte. **Délai maximal** (« timeout ») : le temps au bout duquel on cesse d'attendre. **Repli** : ce qu'on fait quand ça ne marche pas.
+
 **Ce que vous verrez** : « quel temps à Lyon ? » et GoodVibe répond avec la vraie prévision du jour ; le brief la contient désormais.
 
 **Ce qu'on construit** : un outil `meteo(ville)` sur Open-Meteo (géocodage puis prévision), un texte de repli, l'intégration au brief.
@@ -887,6 +947,12 @@ flowchart TD
 ---
 
 ### Fiche 8 : horoscope via MCP
+
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* Pour la météo, on a écrit un outil sur mesure. Avec dix outils, ce serait dix fois ce travail, et rien ne serait réutilisable d'un agent à l'autre.
+- *L'idée.* On utilise une prise standard. Comme une prise électrique : n'importe quel appareil s'y branche, sans bricolage. GoodVibe se branche sur un serveur qui sait lire une page web, et gagne cet outil sans qu'on l'ait écrit.
+- *Les mots nouveaux.* **MCP** : le standard qui décrit cette prise. **Serveur MCP** : le programme qui propose des outils. **Client MCP** : celui qui s'y branche, ici GoodVibe. **fetch** : l'outil « va lire cette page web ». **Donnée non fiable** : un contenu venu de l'extérieur, qu'on lit mais auquel on n'obéit jamais.
 
 **Ce que vous verrez** : dans le journal, GoodVibe appelle un outil qu'on n'a pas écrit, `fetch`, lit un horoscope en anglais, et le brief contient une version en français écrite pour vous, avec votre prénom et votre ville.
 
@@ -951,6 +1017,12 @@ flowchart TD
 
 ### Fiche 9 : onglets Mémoire et Activité
 
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* Pour voir ce que GoodVibe sait de vous et ce qu'il a fait, il faut ouvrir sa base avec un logiciel à part. C'est possible, mais personne ne le fera tous les jours.
+- *L'idée.* On ajoute à la page deux onglets qui sont des fenêtres sur la base : on y regarde, on n'y modifie rien. C'est le tableau de bord d'une voiture : il ne conduit pas, il montre.
+- *Les mots nouveaux.* **Lecture seule** : on peut voir, pas changer. **Grille de prix** : le tarif des tokens, qui sert à estimer le coût. **Estimation** : un ordre de grandeur, pas une facture. **Rafraîchir** : relire la base pour afficher les dernières lignes.
+
 **Ce que vous verrez** : vous discutez dans un onglet, vous basculez sur l'autre, et vous voyez apparaître la ligne que GoodVibe vient d'écrire dans sa mémoire, le nombre de tokens qu'il vient de dépenser, et ce que ça coûte en euros.
 
 **Ce qu'on construit** : deux onglets de lecture de la base. **Mémoire** : tableaux `profil`, `notes`, `conversations`, `traites`, bouton « Oublie-moi » avec confirmation. **Activité** : tableau du journal filtrable par exécution, colonnes tokens (entrée, sortie, réflexion), latence, durée ; compteurs du jour et cumul ; estimation en euros via une grille de prix modifiable ; interrupteur « détails techniques » ; commande « explique ce que tu viens de faire » dans le chat.
@@ -981,6 +1053,12 @@ flowchart LR
 ---
 
 ### Fiche 10 : image du jour
+
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* Le brief n'est que du texte. On veut qu'il s'ouvre sur une image du jour, à votre mesure, et pas sur une photo tirée au hasard.
+- *L'idée.* Deux modèles travaillent à la chaîne. Le premier rédige la commande : il décrit l'image à partir de la météo, de la ville et de l'horoscope. Le second la dessine. C'est un directeur artistique et son illustrateur.
+- *Les mots nouveaux.* **Modèle image** : le modèle qui dessine à partir d'une description. **Prompt visuel** : cette description. **Base64** : la façon dont l'image voyage, sous forme de texte, avant d'être enregistrée en fichier. **Repli** : le brief sort quand même si l'image échoue.
 
 **Ce que vous verrez** : au-dessus de votre brief, une image générée ce matin, qui montre votre ville sous la météo du jour dans l'ambiance de votre horoscope.
 
@@ -1037,6 +1115,12 @@ flowchart TD
 
 ### Fiche 11 : tests automatisés
 
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* GoodVibe compte maintenant une quinzaine de fichiers qui dépendent les uns des autres. Chaque fois qu'on en modifie un, on peut en casser un autre sans s'en apercevoir. Aujourd'hui, la seule façon de le savoir est de tout réessayer à la main.
+- *L'idée.* Un test est un petit programme qui utilise GoodVibe à votre place, puis vérifie que le résultat est le bon. C'est la liste de vérifications du pilote avant le décollage : on ne la fait pas parce qu'on doute de l'avion, mais parce qu'on veut le savoir avant de partir.
+- *Les mots nouveaux.* **Test** : une vérification écrite une fois, rejouée à volonté. **Simulation** (« mock ») : un faux Gemini, ou une fausse météo, qui répond toujours la même chose ; on teste ainsi sans payer et sans dépendre d'Internet. **Base en mémoire** : une base jetable, créée pour le test et détruite après ; la vôtre n'est jamais touchée. **pytest** : l'outil qui lance les tests. **ruff** : l'outil qui relit le code et signale les maladresses.
+
 **Ce que vous verrez** : `pytest` vert, `ruff` silencieux ; vous cassez volontairement une fonction, un test rougit et vous dit lequel.
 
 **Ce qu'on construit** : une suite `pytest` avec au moins un test par feature, une base en mémoire, un faux modèle et de fausses API, `ruff` configuré.
@@ -1068,6 +1152,12 @@ flowchart LR
 ---
 
 ### Fiche 12 : mise en ligne sur le VPS
+
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* GoodVibe vit sur votre ordinateur : il s'éteint avec lui. Il ne peut donc ni préparer le brief à 7 h, ni vous répondre sur votre téléphone.
+- *L'idée.* On l'installe sur un ordinateur loué, allumé en permanence et relié à Internet. C'est déménager l'atelier de votre garage vers un local sur la rue : il lui faut une adresse, une serrure, et quelqu'un qui ouvre le matin.
+- *Les mots nouveaux.* **Serveur** ou **VPS** : cet ordinateur loué. **SSH** : la façon de s'y connecter à distance, avec une clé au lieu d'un mot de passe. **Dépôt GitHub** : la copie en ligne du code, où le serveur vient le chercher. **Nom de domaine** : l'adresse de la page. **HTTPS** : la serrure, qui chiffre les échanges. **Cron** : l'horloge du serveur, qui lance le brief à 7 h. **Service** : un programme que le serveur relance tout seul s'il s'arrête. **Pare-feu** : ce qui ferme toutes les portes sauf celles qu'on a choisies.
 
 **Ce que vous verrez** : vous donnez le GO MISE EN LIGNE, le code part sur votre dépôt GitHub privé, puis GoodVibe répond sur `https://goodvibe.votre-domaine.fr` avec le cadenas, depuis n'importe où, et son brief tombe à 7 h sans que votre ordinateur soit allumé.
 
@@ -1102,6 +1192,12 @@ flowchart TD
 ---
 
 ### Fiche 13 : CI/CD GitHub Actions
+
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* Chaque modification demande de se connecter au serveur et d'y retaper les mêmes commandes. C'est long, et on finit toujours par en oublier une.
+- *L'idée.* On confie ce travail à un robot. À chaque envoi de code, il rejoue les tests, puis il met le serveur à jour, seulement si les tests sont bons. C'est le contrôle qualité en sortie d'usine : rien ne part en livraison sans y être passé.
+- *Les mots nouveaux.* **Intégration continue** (CI) : tester à chaque envoi de code. **Déploiement continu** (CD) : mettre en ligne automatiquement si les tests passent. **Pipeline** : la suite des étapes que suit le robot. **Secret** : une information confiée à GitHub, qu'il utilise sans jamais l'afficher. **Clé de déploiement** : celle qui permet au robot d'entrer sur le serveur.
 
 **Ce que vous verrez** : vous poussez un changement, une coche verte apparaît sur GitHub, et trente secondes plus tard la page publique a changé, sans que personne ait touché au serveur.
 
@@ -1149,6 +1245,12 @@ sequenceDiagram
 ---
 
 ### Fiche 14 : webhook pense-bête
+
+**Pourquoi, et l'idée en clair**
+
+- *Le problème.* GoodVibe ne sait rien de ce qui se passe dans votre journée : il faut aller lui parler. On veut pouvoir lui déposer un pense-bête de n'importe où, en une seconde.
+- *L'idée.* On lui installe une boîte aux lettres à serrure : une adresse où déposer un message, qu'il n'accepte que si on présente le bon jeton. Il répond « reçu » tout de suite, et s'en occupe ensuite. Ce qu'il y trouve est un message à transmettre, jamais un ordre à exécuter.
+- *Les mots nouveaux.* **Webhook** : cette adresse, qu'un autre programme appelle pour prévenir GoodVibe. **Jeton** : le mot de passe présenté à chaque dépôt. **Tâche de fond** : un travail fait après avoir répondu, pour ne pas faire attendre. **CORS** : la règle des navigateurs qui interdit à une page d'en appeler une autre sans autorisation. **Injection de prompt** : un message piégé qui tente de donner des ordres à l'agent.
 
 **Ce que vous verrez** : depuis votre téléphone, vous envoyez « Dentiste à 10 h » à GoodVibe en production ; il répond « reçu » en une fraction de seconde, et le brief du lendemain vous le rappelle. C'est aussi la première feature que le pipeline déploie pour vous : un push, une coche verte, et la route existe sur le serveur.
 
@@ -1257,6 +1359,7 @@ Même format qu'en V1, avec « Ce que vous verrez » et « Où on en est ».
 
 **Fiche V2-1 : extraire les spécialistes**
 
+- **Pourquoi, et l'idée en clair** : *le problème* : l'agent unique porte tous ses outils et tous leurs résultats à chaque tour ; sa charge grossit, et la panne d'un seul outil peut désorganiser tout le brief. *L'idée* : un chef d'équipe et des spécialistes. Le chef confie une tâche, le spécialiste la fait avec ses propres outils et rend un résumé court. *Les mots nouveaux* : **orchestrateur**, le chef d'équipe ; **sous-agent**, un spécialiste, qui est lui-même une boucle d'agent ; **en parallèle**, en même temps plutôt que l'un après l'autre.
 - **Ce que vous verrez** : dans le journal, l'orchestrateur décide, puis deux lignes préfixées `[Horoscope]` et `[Météo]` travaillent en même temps, puis l'orchestrateur assemble. Le brief est le même qu'avant.
 - **Ce qu'on construit** : `sous_agents.py` avec une fonction `deleguer(role, tache)` qui instancie une boucle avec son propre prompt système (un fichier `.md` par rôle) et une liste d'outils réduite, et renvoie une réponse courte ; deux rôles, Horoscope et Météo ; l'orchestrateur les appelle **en parallèle** (`asyncio.gather`) et assemble ; profondeur limitée à un niveau ; budget de tours par sous-agent ; préfixe par agent dans le journal.
 - **La solution du tuto** : un sous-agent écrit comme un outil Python qui réutilise `agent.py` : vingt lignes, tout est visible. **Pourquoi pas autrement** : déléguer à Claude Code en sous-processus (`claude -p`) est puissant mais opaque ; une file de messages avec des agents séparés est hors périmètre.
