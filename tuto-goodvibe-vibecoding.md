@@ -399,7 +399,7 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 ### 3.3 Les fonctionnalités, en bref
 
-**Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; « oublie-moi » ; brief du matin par cron avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir les coulisses » (réflexion, appels d'outils et leurs JSON) ; travail de l'agent visible en direct, dans le chat comme dans le brief, avec un relevé des tokens.
+**Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; « oublie-moi » ; brief du matin par cron avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée, avec un bouton « Se déconnecter » ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir les coulisses » (réflexion, appels d'outils et leurs JSON) ; travail de l'agent visible en direct, dans le chat comme dans le brief, avec un relevé des tokens.
 
 **Souhaitable (Should)** : image du jour (météo, lieu, horoscope) ; « explique ce que tu viens de faire ».
 
@@ -617,7 +617,7 @@ flowchart TD
 
 **Ce que vous verrez** : GoodVibe dans votre navigateur, derrière un mot de passe, et sa réponse qui s'affiche mot à mot. À partir d'ici, chaque feature aura un endroit où se montrer.
 
-**Ce qu'on construit** : `interface.py` avec Gradio : un onglet Chat en streaming, un mot de passe. Les autres onglets viendront avec leurs features : Brief du jour (fiche 6), Mémoire et Activité (fiche 9).
+**Ce qu'on construit** : `interface.py` avec Gradio : un onglet Chat en streaming, un mot de passe, un bouton « Se déconnecter ». Les autres onglets viendront avec leurs features : Brief du jour (fiche 6), Mémoire et Activité (fiche 9).
 
 ```mermaid
 flowchart TD
@@ -630,17 +630,17 @@ flowchart TD
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
 
-**Ce que fait l'agent** : ajoute `gradio` à `requirements.txt` ; `interface.py` (`gr.Blocks` avec `gr.Tabs`, `gr.ChatInterface` pour le chat, une fonction génératrice pour le streaming, `auth` lu dans `.env`) ; commande de lancement sur le port 7860, figée dans `archi-stack.md`. Il choisit un identifiant et un mot de passe de départ, les écrit dans `.env` (`WEB_USER`, `WEB_PASSWORD`) et vous les donne dans la discussion. C'est la seule exception à la règle 6, et elle est voulue : ce mot de passe est jetable, il ne protège que la page de votre ordinateur, et vous saisirez vous-même le mot de passe définitif à la fiche 12. Il lance la page et vous donne l'adresse.
+**Ce que fait l'agent** : ajoute `gradio` à `requirements.txt` ; `interface.py` (`gr.Blocks` avec `gr.Tabs`, `gr.ChatInterface` pour le chat, une fonction génératrice pour le streaming, `auth` lu dans `.env`, un bouton « Se déconnecter » en haut de page, visible depuis tous les onglets) ; commande de lancement sur le port 7860, figée dans `archi-stack.md`. Il choisit un identifiant et un mot de passe de départ, les écrit dans `.env` (`WEB_USER`, `WEB_PASSWORD`) et vous les donne dans la discussion. C'est la seule exception à la règle 6, et elle est voulue : ce mot de passe est jetable, il ne protège que la page de votre ordinateur, et vous saisirez vous-même le mot de passe définitif à la fiche 12. Il lance la page et vous donne l'adresse.
 
 **Ce que vous faites** : vous connecter avec ces identifiants. Vous pouvez les changer à tout moment : ouvrez `.env`, modifiez `WEB_PASSWORD`, relancez la page.
 
 **La solution du tuto** : `gr.ChatInterface` dans des `gr.Tabs` : le composant gère saisie, historique et streaming, et les onglets attendent les features suivantes. **Pourquoi pas autrement** : tout écrire à la main avec `gr.Blocks` demande beaucoup de code pour le même résultat ; Chainlit est une autre bibliothèque, citée en fin de tuto.
 
-**À relire** : `interface.py` ne contient **aucune logique métier** : il appelle `agent.py`, exactement comme `chat_terminal.py` ; la fonction de chat est une **génératrice** (`yield`) qui relaie les fragments ; `auth` est présent même en local, pour ne pas l'oublier au déploiement ; le mot de passe vit dans `.env`, jamais dans le code, et le changer ne demande aucune modification de `interface.py` ; `MAX_TOURS` s'applique aussi depuis la page web (il vit dans `agent.py`, pas dans le terminal) ; l'historique transmis à `agent.py` est du **texte simple** : Gradio livre chaque message de l'historique sous la forme d'une liste de morceaux (texte, image), même quand il ne contient que du texte, et `interface.py` en extrait le texte avant de le transmettre. `agent.py` reçoit la même chose des deux guichets.
+**À relire** : `interface.py` ne contient **aucune logique métier** : il appelle `agent.py`, exactement comme `chat_terminal.py` ; la fonction de chat est une **génératrice** (`yield`) qui relaie les fragments ; `auth` est présent même en local, pour ne pas l'oublier au déploiement ; le mot de passe vit dans `.env`, jamais dans le code, et le changer ne demande aucune modification de `interface.py` ; `MAX_TOURS` s'applique aussi depuis la page web (il vit dans `agent.py`, pas dans le terminal) ; l'historique transmis à `agent.py` est du **texte simple** : Gradio livre chaque message de l'historique sous la forme d'une liste de morceaux (texte, image), même quand il ne contient que du texte, et `interface.py` en extrait le texte avant de le transmettre. `agent.py` reçoit la même chose des deux guichets ; le bouton « Se déconnecter » mène à l'adresse de déconnexion que Gradio fournit dès que la page est protégée (`/logout`) : on n'écrit aucune gestion de session à la main. L'agent vérifie cette adresse dans la documentation de Gradio.
 
-**CHECK** : ouvrez http://localhost:7860, connectez-vous avec le mot de passe, posez une question : la réponse arrive mot à mot. Sans mot de passe, la page est refusée. Changez le mot de passe dans `.env`, relancez : l'ancien est refusé, le nouveau est accepté.
+**CHECK** : ouvrez http://localhost:7860, connectez-vous avec le mot de passe, posez une question : la réponse arrive mot à mot. Sans mot de passe, la page est refusée. Changez le mot de passe dans `.env`, relancez : l'ancien est refusé, le nouveau est accepté. Cliquez « Se déconnecter » : la page de connexion réapparaît, et la page n'est plus accessible sans mot de passe.
 
-**Pièges** : Gradio exposé sans `auth` ; `return` au lieu de `yield` (la réponse arrive d'un bloc) ; le port 7860 déjà pris par une page laissée ouverte ; la logique métier qui glisse dans `interface.py` au lieu de rester dans `agent.py` ; un message envoyé au modèle dans son emballage (`[{'text': 'salut', 'type': 'text'}]`) au lieu du texte seul : le modèle s'en sort, mais l'emballage est facturé.
+**Pièges** : Gradio exposé sans `auth` ; croire qu'on est déconnecté parce qu'on a fermé l'onglet (la connexion est gardée par le navigateur : seul le bouton la ferme, et il la ferme sur tous vos appareils) ; `return` au lieu de `yield` (la réponse arrive d'un bloc) ; le port 7860 déjà pris par une page laissée ouverte ; la logique métier qui glisse dans `interface.py` au lieu de rester dans `agent.py` ; un message envoyé au modèle dans son emballage (`[{'text': 'salut', 'type': 'text'}]`) au lieu du texte seul : le modèle s'en sort, mais l'emballage est facturé.
 
 **Où on en est** : GoodVibe parle, dans le terminal et dans le navigateur : deux déclencheurs sur quatre. Fichiers ajoutés : `interface.py`.
 
