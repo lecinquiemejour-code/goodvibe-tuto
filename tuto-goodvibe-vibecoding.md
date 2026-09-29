@@ -1044,11 +1044,11 @@ flowchart TD
 
 **Ce que vous verrez** : vous discutez dans un onglet, vous basculez sur l'autre, et vous voyez apparaître la ligne que GoodVibe vient d'écrire dans sa mémoire, le nombre de tokens qu'il vient de dépenser, et ce que ça coûte en euros.
 
-**Ce qu'on construit** : deux onglets de lecture de la base. **Mémoire** : tableaux `profil`, `notes`, `conversations`, `traites`, bouton « Oublie-moi » avec confirmation. **Activité** : tableau du journal filtrable par exécution, colonnes tokens (entrée, sortie, réflexion), latence, durée ; compteurs du jour et cumul ; estimation en euros via une grille de prix modifiable ; interrupteur « détails techniques » ; commande « explique ce que tu viens de faire » dans le chat.
+**Ce qu'on construit** : deux onglets de lecture de la base. **Mémoire** : tableaux `profil`, `notes`, `conversations`, bouton « Oublie-moi » avec confirmation. La table `traites` n'y figure pas : elle ne dit rien de vous, elle note seulement ce qui a déjà été fait ; elle se consulte avec DB Browser. **Activité** : tableau du journal filtrable par exécution, colonnes tokens (entrée, sortie, réflexion), latence, durée ; compteurs du jour et cumul ; estimation en euros via une grille de prix modifiable ; interrupteur « détails techniques » ; commande « explique ce que tu viens de faire » dans le chat.
 
 ```mermaid
 flowchart LR
-    DB["SQLite"] -- lecture seule --> VM["vue_memoire.py<br/>4 tableaux + Oublie-moi"]
+    DB["SQLite"] -- lecture seule --> VM["vue_memoire.py<br/>3 tableaux + Oublie-moi"]
     DB -- lecture seule --> VA["vue_activite.py<br/>journal filtré<br/>compteurs jour / cumul<br/>coût estimé"]
     TAR["tarifs.py<br/>prix par million de tokens<br/>prix par image"] --> VA
     VM & VA --> G["interface.py"]

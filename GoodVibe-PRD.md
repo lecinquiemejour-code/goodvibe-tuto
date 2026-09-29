@@ -41,7 +41,7 @@ Ce que ce produit ne cherche **pas** à être :
   - Déclencher la génération du brief à la main depuis la page web (bouton « Générer le brief maintenant »), pour tester sans attendre le cron.
   - Recevoir un pense-bête par webhook sécurisé (jeton secret) et l'intégrer au brief suivant.
   - Lire le brief du jour et discuter avec l'agent dans une page web protégée par mot de passe.
-  - Afficher dans la page web le contenu de la mémoire de l'agent (profil, notes, conversations, éléments traités), avec un bouton « Oublie-moi ».
+  - Afficher dans la page web le contenu de la mémoire de l'agent (profil, notes, conversations), avec un bouton « Oublie-moi ».
   - Afficher dans la page web le journal d'activité de l'agent : pour chaque exécution, les outils appelés, les tokens consommés (entrée, sortie, réflexion), la latence de chaque appel, avec compteurs par jour et cumul et une estimation du coût en euros.
   - Enregistrer, pour chaque réponse en conversation, le temps avant le premier mot et la durée totale.
   - Permettre d'afficher ou de masquer les coulisses de chaque réponse, via une case à cocher dans la page web et une commande dans le terminal : le résumé de réflexion (« thinking ») du modèle, puis chaque appel d'outil avec son nom, le JSON de ses arguments et le JSON de son résultat. L'affichage est le même pour tous les outils : fonctions Python, serveurs MCP actuels et futurs. Les coulisses s'affichent à l'écran ; les arguments et les résultats des outils ne sont jamais enregistrés dans le journal. Les coulisses et le relevé ne sont ni enregistrés dans les conversations, ni renvoyés au modèle : la mémoire de conversation et l'historique ne contiennent que le dialogue, c'est-à-dire les messages de l'utilisateur et le texte des réponses.
