@@ -251,6 +251,12 @@ Tous les modèles n'acceptent pas tous les réglages, et certains fonctionnent m
 
 Déclenché par le cron, l'agent travaille en silence : il n'y a personne pour regarder. Le journal garde la trace.
 
+**Ce qu'on montre n'est pas ce qu'on retient.** Les coulisses et le relevé sont faits pour vos yeux, pas pour le modèle. Des quatre choses envoyées à chaque appel, les messages ne contiennent que le dialogue : ce que vous avez écrit, et le texte des réponses de GoodVibe. Tout ce qui s'affiche autour d'une réponse (la réflexion, les appels d'outils et leurs JSON, le relevé) reste à l'écran : on ne le renvoie pas au modèle, et on ne l'enregistre pas.
+
+Si on l'oublie, chaque réponse affichée repart au modèle au message suivant, coulisses comprises. C'est une photocopie de photocopie : chaque message embarque une copie du précédent, et la facture grossit à chaque échange. Rien ne casse, GoodVibe répond normalement : seul le relevé le montre. Entre deux messages qui se suivent, les tokens d'entrée ne doivent augmenter que de la taille du dialogue ajouté, soit quelques dizaines de tokens. La comparaison se fait à nombre de tours égal : le relevé additionne les tours, et une réponse qui a demandé un outil compte donc deux appels au modèle.
+
+GoodVibe sépare à la source : la boucle distingue ce qu'elle affiche du texte de la réponse, et seul ce texte rejoint l'historique et la mémoire de conversation. On ne trie pas après coup un texte où tout a été mélangé : ce tri dépendrait des libellés de l'affichage, et casserait le jour où l'un d'eux change.
+
 ### 2.2 Cron et webhook, les deux déclencheurs
 
 | | Cron | Webhook |
@@ -312,10 +318,10 @@ flowchart TD
     C -- "rechargée à l'ouverture du chat" --> T
 ```
 
-- **Mémoire de travail** : l'historique des messages pendant une exécution. Elle vit dans la boucle et disparaît à la fin.
+- **Mémoire de travail** : l'historique des messages pendant une exécution. Elle vit dans la boucle et disparaît à la fin. Elle ne contient que le dialogue, en texte simple.
 - **Mémoire d'état** : ce que l'agent a déjà fait, pour ne pas le refaire (table `traites`).
 - **Mémoire longue** : le profil (prénom, signe, ville, centres d'intérêt) et les notes que l'agent prend au fil des échanges. Relue au démarrage, complétée en fin de tour via des outils.
-- **Mémoire de conversation** : pour que la page web reprenne le fil entre deux visites (table `conversations`).
+- **Mémoire de conversation** : pour que la page web reprenne le fil entre deux visites (table `conversations`). Elle ne contient que le dialogue : vos messages et le texte des réponses, jamais les coulisses ni le relevé (section 2.1).
 
 Le pilote peut ouvrir la base et voir **exactement** ce que l'agent sait, y compris ce que « oublie-moi » efface. C'est la vertu pédagogique de SQLite : un fichier, aucune magie.
 
@@ -630,11 +636,11 @@ flowchart TD
 
 **La solution du tuto** : `gr.ChatInterface` dans des `gr.Tabs` : le composant gère saisie, historique et streaming, et les onglets attendent les features suivantes. **Pourquoi pas autrement** : tout écrire à la main avec `gr.Blocks` demande beaucoup de code pour le même résultat ; Chainlit est une autre bibliothèque, citée en fin de tuto.
 
-**À relire** : `interface.py` ne contient **aucune logique métier** : il appelle `agent.py`, exactement comme `chat_terminal.py` ; la fonction de chat est une **génératrice** (`yield`) qui relaie les fragments ; `auth` est présent même en local, pour ne pas l'oublier au déploiement ; le mot de passe vit dans `.env`, jamais dans le code, et le changer ne demande aucune modification de `interface.py` ; `MAX_TOURS` s'applique aussi depuis la page web (il vit dans `agent.py`, pas dans le terminal).
+**À relire** : `interface.py` ne contient **aucune logique métier** : il appelle `agent.py`, exactement comme `chat_terminal.py` ; la fonction de chat est une **génératrice** (`yield`) qui relaie les fragments ; `auth` est présent même en local, pour ne pas l'oublier au déploiement ; le mot de passe vit dans `.env`, jamais dans le code, et le changer ne demande aucune modification de `interface.py` ; `MAX_TOURS` s'applique aussi depuis la page web (il vit dans `agent.py`, pas dans le terminal) ; l'historique transmis à `agent.py` est du **texte simple** : Gradio peut livrer un message sous la forme d'une liste de morceaux (texte, image), et `interface.py` en extrait le texte avant de le transmettre. `agent.py` reçoit la même chose des deux guichets.
 
 **CHECK** : ouvrez http://localhost:7860, connectez-vous avec le mot de passe, posez une question : la réponse arrive mot à mot. Sans mot de passe, la page est refusée. Changez le mot de passe dans `.env`, relancez : l'ancien est refusé, le nouveau est accepté.
 
-**Pièges** : Gradio exposé sans `auth` ; `return` au lieu de `yield` (la réponse arrive d'un bloc) ; le port 7860 déjà pris par une page laissée ouverte ; la logique métier qui glisse dans `interface.py` au lieu de rester dans `agent.py`.
+**Pièges** : Gradio exposé sans `auth` ; `return` au lieu de `yield` (la réponse arrive d'un bloc) ; le port 7860 déjà pris par une page laissée ouverte ; la logique métier qui glisse dans `interface.py` au lieu de rester dans `agent.py` ; un message envoyé au modèle dans son emballage (`[{'text': 'salut', 'type': 'text'}]`) au lieu du texte seul : le modèle s'en sort, mais l'emballage est facturé.
 
 **Où on en est** : GoodVibe parle, dans le terminal et dans le navigateur : deux déclencheurs sur quatre. Fichiers ajoutés : `interface.py`.
 
@@ -674,7 +680,7 @@ flowchart LR
     G -- "steps de type thought<br/>(thinking_summaries: auto)" --> A
 ```
 
-**Ce que fait l'agent** : `db.py` avec `initialiser()` et la table `journal` (date, exécution, agent, étape, détail, tokens_entree, tokens_sortie, tokens_reflexion, latence_ms, duree_ms) ; `journal.py` (un handler `logging` personnalisé, une seule ligne d'appel, deux destinations) ; branchement dans `agent.py` ; lecture de `interaction.usage` ; mesure du **temps avant le premier fragment** et de la **durée totale** en streaming ; option `thinking_summaries: "auto"` et affichage des `steps` de type `thought` dans un bloc repliable, les coulisses, quand le réglage est actif ; `gr.Checkbox` « Voir les coulisses » dans `interface.py`, cochée par défaut, qui pilote le même réglage que la commande du terminal ; le relevé affiché sous chaque réponse. À la fiche 4, les appels d'outils rejoindront les coulisses.
+**Ce que fait l'agent** : `db.py` avec `initialiser()` et la table `journal` (date, exécution, agent, étape, détail, tokens_entree, tokens_sortie, tokens_reflexion, latence_ms, duree_ms) ; `journal.py` (un handler `logging` personnalisé, une seule ligne d'appel, deux destinations) ; branchement dans `agent.py` ; lecture de `interaction.usage` ; mesure du **temps avant le premier fragment** et de la **durée totale** en streaming ; option `thinking_summaries: "auto"` et affichage des `steps` de type `thought` dans un bloc repliable, les coulisses, quand le réglage est actif ; `gr.Checkbox` « Voir les coulisses » dans `interface.py`, cochée par défaut, qui pilote le même réglage que la commande du terminal ; le relevé affiché sous chaque réponse ; `agent.py` rend chaque fragment avec sa nature (coulisses, réponse ou relevé) : les deux guichets affichent tout, et ne gardent dans l'historique que le texte de la réponse. À la fiche 4, les appels d'outils rejoindront les coulisses.
 
 **Ce que vous faites** : rien, sauf observer. L'agent installe DB Browser for SQLite pour vous et vous indique comment ouvrir `data/agent.db`.
 
@@ -687,10 +693,12 @@ flowchart LR
 - Si `total_thought_tokens` est absent (modèle sans réflexion), la colonne vaut `null`, rien ne plante.
 - Le relevé affiché sous la réponse reprend les chiffres de `usage` : ce sont les mêmes que ceux du journal.
 - L'interface dit vrai : ce qui défile en streaming, ce sont des fragments, pas des tokens un par un ; la réflexion affichée est le résumé que donne le modèle, pas son raisonnement brut.
+- Les coulisses et le relevé ne repartent **jamais** au modèle : l'historique ne reçoit que le texte de la réponse (section 2.1). La séparation se fait à la source : `agent.py` dit la nature de chaque fragment, et aucun code ne trie après coup le texte affiché en y cherchant des libellés.
+- Dans la page web, c'est Gradio qui tient l'historique affiché : les coulisses et le relevé y sont des messages à part, marqués comme tels, et `interface.py` les écarte avant de transmettre l'historique à `agent.py`. L'agent vérifie dans la documentation de Gradio la façon de marquer un message.
 
-**CHECK** : dialoguez, puis ouvrez `data/agent.db` avec DB Browser, table `journal` : les lignes avec leurs chiffres. Activez « Voir les coulisses », dans le terminal (l'agent vous donne la commande) ou dans la page web (la case à cocher), et constatez le bloc de réflexion avant la réponse. Sous la réponse, le relevé affiche les mêmes chiffres que la ligne du journal. Verdict à deux issues.
+**CHECK** : dialoguez, puis ouvrez `data/agent.db` avec DB Browser, table `journal` : les lignes avec leurs chiffres. Activez « Voir les coulisses », dans le terminal (l'agent vous donne la commande) ou dans la page web (la case à cocher), et constatez le bloc de réflexion avant la réponse. Sous la réponse, le relevé affiche les mêmes chiffres que la ligne du journal. Dernière épreuve, coulisses ouvertes, dans une conversation vide : envoyez « salut », puis « combien font 2 + 2 ? », et relevez les tokens d'entrée sous chaque réponse. Le second chiffre dépasse le premier de quelques dizaines de tokens, pas davantage. Faites-le dans la page web, puis dans le terminal. Verdict à deux issues.
 
-**Pièges** : présenter les fragments comme des tokens, ou le résumé de réflexion comme la pensée brute du modèle ; logs en double si le handler est ajouté deux fois (ouvrir deux fois le chat dans le même processus) ; base verrouillée si deux connexions écrivent sans se fermer ; résumé de réflexion vide sur une question trop simple (le modèle n'a pas assez raisonné pour produire un résumé, c'est normal).
+**Pièges** : tokens d'entrée qui doublent d'un message au suivant (les coulisses ou le relevé sont repartis au modèle avec l'historique : regarder ce que contient l'historique transmis à `agent.py`) ; présenter les fragments comme des tokens, ou le résumé de réflexion comme la pensée brute du modèle ; logs en double si le handler est ajouté deux fois (ouvrir deux fois le chat dans le même processus) ; base verrouillée si deux connexions écrivent sans se fermer ; résumé de réflexion vide sur une question trop simple (le modèle n'a pas assez raisonné pour produire un résumé, c'est normal).
 
 **Où on en est** : GoodVibe parle et raconte ce qu'il fait. Fichiers ajoutés : `db.py`, `journal.py`.
 
@@ -762,7 +770,7 @@ erDiagram
     }
 ```
 
-**Ce que fait l'agent** : étend `db.py` ; crée `outils.py` (chaque outil = une fonction Python + sa description pour le modèle) ; modifie `agent.py` pour déclarer les outils, exécuter les appels d'outils demandés dans les `steps`, renvoyer les résultats, et injecter profil et notes à la suite du prompt système au démarrage ; complète `prompt_systeme.md` (« tu ne connais l'utilisateur que par tes outils ») ; ajoute `signe_depuis_date()` en Python pur ; `interface.py` enregistre chaque échange dans `conversations` et recharge l'historique à l'ouverture de la page ; étend les coulisses : chaque appel d'outil s'y affiche avec son nom, le JSON de ses arguments et le JSON de son résultat, par un code écrit une seule fois dans la boucle.
+**Ce que fait l'agent** : étend `db.py` ; crée `outils.py` (chaque outil = une fonction Python + sa description pour le modèle) ; modifie `agent.py` pour déclarer les outils, exécuter les appels d'outils demandés dans les `steps`, renvoyer les résultats, et injecter profil et notes à la suite du prompt système au démarrage ; complète `prompt_systeme.md` (« tu ne connais l'utilisateur que par tes outils ») ; ajoute `signe_depuis_date()` en Python pur ; `interface.py` enregistre chaque échange dans `conversations` (votre message et le texte de la réponse, sans coulisses ni relevé) et recharge l'historique à l'ouverture de la page ; étend les coulisses : chaque appel d'outil s'y affiche avec son nom, le JSON de ses arguments et le JSON de son résultat, par un code écrit une seule fois dans la boucle.
 
 **Ce que vous faites** : rien.
 
@@ -771,14 +779,15 @@ erDiagram
 **À relire** :
 - Le signe est **calculé en Python** à partir de la date, pas demandé au modèle (il se trompe aux dates limites).
 - La date de naissance complète **n'est pas conservée** une fois le signe connu : minimisation.
-- Chaque outil journalise son appel (nom, durée), sans ses arguments : les JSON des coulisses s'affichent à l'écran et ne sont jamais enregistrés dans le journal.
+- Chaque outil journalise son appel (nom, durée), sans ses arguments : les JSON des coulisses s'affichent à l'écran et ne sont jamais enregistrés, ni dans le journal, ni dans `conversations`.
+- La table `conversations` ne reçoit que le dialogue : votre message en texte simple, et le texte de la réponse. Les appels d'outils rejoignent les coulisses : comme la réflexion, ils ne repartent pas au modèle avec l'historique (fiche 3).
 - L'affichage des coulisses est écrit une seule fois, dans la boucle : il vaut pour toutes les fonctions Python et pour les outils MCP à venir.
 - Le prompt système, avec le profil et les notes, et la liste des outils sont renvoyés à **chaque** appel au modèle, y compris quand on lui rend le résultat d'un outil. L'API ne les garde pas d'un appel à l'autre : elle ne garde que la conversation.
-- Le profil figure à un seul endroit, le prompt système : on ne le recopie pas en plus dans les messages.
+- Le profil figure à un seul endroit, le prompt système : on ne le recopie pas en plus dans les messages. Il ne se retrouve donc ni dans l'historique, ni dans `conversations`, sauf là où vous l'avez écrit vous-même.
 
-**CHECK** : cochez « Voir les coulisses ». Dites « Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo » : l'appel à `enregistrer_profil` apparaît, avec le JSON de ses arguments et le JSON de son résultat. Fermez le chat, relancez, demandez « qu'est-ce que tu sais de moi ? » : prénom, signe Poissons, ville, intérêts, et cette fois **aucun appel d'outil**. Le profil est déjà dans ses consignes : il n'a pas besoin d'agir pour répondre. Dites « en fait, j'habite Marseille » : l'outil repart. Vérifiez la ligne dans DB Browser, table `profil`, et l'absence de la date complète ; dans la table `journal`, le nom de l'outil figure sans ses arguments. Rechargez la page web : l'historique de la conversation est toujours là. Dernière épreuve : posez une question qui oblige GoodVibe à appeler un outil puis à rédiger. Sa réponse garde votre prénom et le ton de son prompt système.
+**CHECK** : cochez « Voir les coulisses ». Dites « Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo » : l'appel à `enregistrer_profil` apparaît, avec le JSON de ses arguments et le JSON de son résultat. Fermez le chat, relancez, demandez « qu'est-ce que tu sais de moi ? » : prénom, signe Poissons, ville, intérêts, et cette fois **aucun appel d'outil**. Le profil est déjà dans ses consignes : il n'a pas besoin d'agir pour répondre. Dites « en fait, j'habite Marseille » : l'outil repart. Vérifiez la ligne dans DB Browser, table `profil`, et l'absence de la date complète ; dans la table `journal`, le nom de l'outil figure sans ses arguments. Rechargez la page web : l'historique de la conversation est toujours là. Dernière épreuve : posez une question qui oblige GoodVibe à appeler un outil puis à rédiger. Sa réponse garde votre prénom et le ton de son prompt système. Ouvrez alors la table `conversations` : chaque réponse de GoodVibe y est une simple phrase, sans réflexion, sans JSON et sans relevé, y compris celle qui a appelé un outil. Enfin, envoyez deux questions de suite qui n'appellent aucun outil, par exemple « combien font 2 + 2 ? » puis « et 3 + 3 ? » : les tokens d'entrée de la seconde dépassent ceux de la première de quelques dizaines, pas davantage. Si un appel d'outil apparaît dans les coulisses, le chiffre n'est pas comparable : le relevé additionne tous les appels au modèle. Recommencez avec une autre question.
 
-**Pièges** : GoodVibe change de ton, ou invente un prénom, juste après avoir appelé un outil (le prompt système n'a pas été renvoyé avec le résultat de l'outil : il rédige sans savoir qui il est) ; le modèle « invente » le profil au lieu d'appeler l'outil (renforcer le prompt système : « tu ne connais l'utilisateur que par l'outil `lire_profil` ») ; signe faux aux dates limites (tester le 20 et le 21 mars) ; appels d'outils non exécutés parce que la boucle ne lit pas les `steps` de type `function_call` ; historique de la page web perdu au rechargement (gardé dans une variable, pas en base).
+**Pièges** : GoodVibe change de ton, ou invente un prénom, juste après avoir appelé un outil (le prompt système n'a pas été renvoyé avec le résultat de l'outil : il rédige sans savoir qui il est) ; le modèle « invente » le profil au lieu d'appeler l'outil (renforcer le prompt système : « tu ne connais l'utilisateur que par l'outil `lire_profil` ») ; signe faux aux dates limites (tester le 20 et le 21 mars) ; appels d'outils non exécutés parce que la boucle ne lit pas les `steps` de type `function_call` ; historique de la page web perdu au rechargement (gardé dans une variable, pas en base) ; coulisses ou profil retrouvés dans la table `conversations` (c'est la réponse affichée qui a été enregistrée, au lieu du seul texte de la réponse) ; tokens d'entrée doublés sur une réponse à deux tours, pris à tort pour un défaut (le relevé additionne les tours : comparer à nombre de tours égal).
 
 **Où on en est** : GoodVibe parle, raconte, et retient. Fichiers ajoutés : `outils.py`.
 
@@ -1054,9 +1063,9 @@ flowchart LR
 
 **À relire** : les vues sont en **lecture seule** sur la base ; les euros sont affichés comme **estimation** ; le bouton « Oublie-moi » demande confirmation et appelle la même fonction que l'outil de la fiche 5 ; le journal n'affiche aucune donnée personnelle, même en mode « détails techniques » : ce mode ajoute les durées et les erreurs brutes, jamais les arguments des outils, qui ne se voient qu'en direct dans les coulisses.
 
-**CHECK** : discutez dans l'onglet Chat, basculez sur Mémoire, cliquez Rafraîchir : la conversation est là. Onglet Activité : la ligne de l'appel, ses tokens, sa latence, le compteur du jour qui a bougé, le coût. Cliquez « Oublie-moi », confirmez : les tableaux se vident. Dans le chat : « explique ce que tu viens de faire » raconte le dernier tour.
+**CHECK** : discutez dans l'onglet Chat, basculez sur Mémoire, cliquez Rafraîchir : la conversation est là, et chaque réponse de GoodVibe y est une simple phrase, sans coulisses ni relevé. Onglet Activité : la ligne de l'appel, ses tokens, sa latence, le compteur du jour qui a bougé, le coût. Cliquez « Oublie-moi », confirmez : les tableaux se vident. Dans le chat : « explique ce que tu viens de faire » raconte le dernier tour.
 
-**Pièges** : affichage de données personnelles dans le journal (relire `journal.py`) ; grille de prix périmée (la dater) ; tableaux trop larges sur mobile (acceptable, c'est une vitrine pédagogique).
+**Pièges** : affichage de données personnelles dans le journal (relire `journal.py`) ; coulisses ou relevé visibles dans le tableau `conversations` (le défaut vient de l'enregistrement, fiche 4, pas de l'onglet : on ne le corrige pas en masquant l'affichage) ; grille de prix périmée (la dater) ; tableaux trop larges sur mobile (acceptable, c'est une vitrine pédagogique).
 
 **Où on en est** : GoodVibe est entièrement observable. Fichiers ajoutés : `vue_memoire.py`, `vue_activite.py`, `tarifs.py`.
 
@@ -1140,7 +1149,7 @@ flowchart LR
     T["tests/"] --> F1["fixture : base SQLite en mémoire"]
     T --> F2["fixture : faux client Gemini<br/>réponses préenregistrées"]
     T --> F3["fixture : fausses API<br/>météo, horoscope"]
-    T --> X["test_agent : max_tours, outils appelés,<br/>prompt système renvoyé à chaque appel"]
+    T --> X["test_agent : max_tours, outils appelés,<br/>prompt système renvoyé à chaque appel,<br/>historique sans coulisses"]
     T --> Y["test_brief : anti-doublon, repli"]
     R["ruff"] --> OK["zéro erreur"]
 ```
@@ -1151,11 +1160,11 @@ flowchart LR
 
 **La solution du tuto** : `pytest` avec des simulations (mocks) du modèle et des API : rapide, gratuit, reproductible. **Pourquoi pas autrement** : des tests contre les vraies API sont lents, coûteux, et cassent quand une API bouge ; se passer de tests est exclu par le PRD, la CI en a besoin.
 
-**À relire** : **aucun test ne fait un vrai appel réseau** ; un test vérifie que le prompt système et les outils sont renvoyés à chaque appel, y compris après un outil ; un test vérifie que le profil de la mémoire part bien vers le modèle, et qu'aucun prénom ne part quand la mémoire est vide ; le test du brief couvre l'anti-doublon ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
+**À relire** : **aucun test ne fait un vrai appel réseau** ; un test vérifie que le prompt système et les outils sont renvoyés à chaque appel, y compris après un outil ; un test vérifie que le profil de la mémoire part bien vers le modèle, et qu'aucun prénom ne part quand la mémoire est vide ; un test joue deux messages de suite, coulisses ouvertes, et vérifie que les messages du second appel ne contiennent que le dialogue : ni réflexion, ni JSON d'outil, ni relevé, ni copie du prompt système ; il part de ce que la boucle produit vraiment au premier message, pas d'un historique écrit à la main ; le même test est rejoué avec un premier message qui appelle un outil, et avec un historique au format de Gradio (liste de morceaux) ; un test vérifie que la table `conversations` ne reçoit que le texte de la réponse ; le test du brief couvre l'anti-doublon ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
 
-**CHECK** : `pytest` vert, `ruff` sans erreur. Demandez à l'agent de casser volontairement `signe_depuis_date()` : un test rougit. Il répare, tout revient au vert.
+**CHECK** : `pytest` vert, `ruff` sans erreur. Demandez à l'agent de casser volontairement `signe_depuis_date()` : un test rougit. Il répare, tout revient au vert. Même épreuve sur la mémoire : demandez-lui de faire repartir le relevé dans l'historique. Le test de l'historique rougit ; il répare, tout revient au vert.
 
-**Pièges** : tests qui dépendent de la vraie clé API (ils échoueront dans la CI) ; base de test qui pointe sur la vraie ; tests trop lents.
+**Pièges** : tests qui dépendent de la vraie clé API (ils échoueront dans la CI) ; base de test qui pointe sur la vraie ; tests trop lents ; test de l'historique toujours vert parce qu'il part d'un historique écrit à la main, déjà propre (il ne prouve rien : il doit partir d'une vraie sortie de la boucle).
 
 **Où on en est** : GoodVibe est complet, observable et testé, entièrement en local. Fichiers ajoutés : `tests/`, `requirements-dev.txt`, `pyproject.toml`. La prochaine fiche sort de la machine.
 
@@ -1753,9 +1762,10 @@ Chaque piste est un nouveau tour de roue PDCA, avec le skill, à partir du `plan
 - **Streaming** : recevoir la réponse du modèle fragment par fragment, au lieu d'attendre la fin.
 - **Token** : l'unité de texte facturée par l'API. Entrée (ce qu'on envoie), sortie (ce que le modèle écrit), réflexion (ce qu'il « pense » avant de répondre, facturé même si on ne le voit pas).
 - **Résumé de réflexion (thought summary)** : le compte rendu que le modèle donne de son raisonnement, quand on l'active. Ce n'est pas le raisonnement brut.
-- **Coulisses** : ce que GoodVibe montre quand on le lui demande : la réflexion du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Affichées à l'écran, jamais enregistrées.
+- **Coulisses** : ce que GoodVibe montre quand on le lui demande : la réflexion du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Affichées à l'écran, et nulle part ailleurs : ni enregistrées dans le journal, ni enregistrées dans `conversations`, ni renvoyées au modèle avec l'historique.
 - **Fragment** : un morceau de réponse reçu en streaming. Il contient souvent plusieurs tokens : on ne voit pas les tokens un par un.
-- **Relevé** : le décompte affiché sous chaque réponse : tokens d'entrée, de réflexion et de sortie, temps avant le premier mot, durée totale. Ses chiffres viennent de l'API.
+- **Relevé** : le décompte affiché sous chaque réponse : tokens d'entrée, de réflexion et de sortie, temps avant le premier mot, durée totale. Ses chiffres viennent de l'API, et additionnent tous les tours de la réponse. Comme les coulisses, il s'affiche et ne va nulle part ailleurs.
+- **Historique** : le dialogue relu au modèle à chaque appel, puisqu'il ne se souvient de rien. Il contient vos messages et le texte des réponses, en texte simple, et rien d'autre.
 - **Latence** : le temps entre l'envoi d'une requête et la réponse. En streaming, on distingue le temps avant le premier fragment et la durée totale.
 - **CI/CD** : intégration continue (tester à chaque push) et déploiement continu (mettre en ligne automatiquement quand les tests passent).
 - **Sous-agent** : une seconde boucle d'agent, avec son rôle et ses outils, appelée par l'orchestrateur comme un outil.
