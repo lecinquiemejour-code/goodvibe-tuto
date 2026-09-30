@@ -82,15 +82,16 @@ Le principe : **l'agent de codage fait, vous pilotez.** L'agent écrit le code, 
 - Un compte **Google AI Studio**. La clé API Gemini se crée plus tard, à la fiche 1 : inutile de l'anticiper.
 - Un compte **GitHub**.
 - *Pour la mise en ligne uniquement (fin de parcours)* : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
-- *Recommandé* : l'extension **Claude Code** dans Antigravity, si vous avez un abonnement Claude. Elle prend le relais quand les quotas gratuits de Gemini sont atteints.
+- *Recommandé* : l'extension **Claude Code** dans Antigravity, si vous avez un abonnement Claude. Elle prend le relais quand les quotas de l'agent de codage Gemini, celui d'Antigravity, sont atteints.
 
 Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils manquent.
 
 ## Ce qui est gratuit, ce qui coûte
 
-- **Gratuit** : Antigravity, la clé Gemini en plan gratuit (avec des quotas : c'est pour cela que Claude Code est recommandé en relais), Open-Meteo et l'API horoscope (sans clé), GitHub et son pipeline GitHub Actions (le quota gratuit suffit largement).
-- **Payant, à partir de la fiche 12 seulement** : le VPS, facturé à l'heure chez Hetzner, avec un plafond de quelques euros par mois. Attention : un serveur éteint reste facturé, il faut le supprimer pour arrêter les frais. Aucun nom de domaine à acheter : le tuto utilise une adresse gratuite. Jusque-là, tout tourne sur votre machine sans dépenser un centime.
-- **À surveiller** : la génération d'images (fiche 10) dépend du quota de votre plan Google AI ; si le quota est atteint, le brief sort sans image, avec un message d'erreur qui le dit.
+- **Gratuit** : Antigravity et son agent de codage Gemini (avec des quotas : c'est pour cela que Claude Code est recommandé en relais), Open-Meteo et l'API horoscope (sans clé), GitHub et son pipeline GitHub Actions (le quota gratuit suffit largement).
+- **Payant à l'usage : les appels de GoodVibe à l'API Gemini**, avec la clé que vous créez à la fiche 1. Le modèle texte a un niveau gratuit, avec des quotas. Le modèle image de la fiche 10 n'en avait pas en septembre 2026 : il faut alors activer la facturation chez Google. Comptez de l'ordre d'un à deux euros par mois pour un brief et une image par jour, dont l'essentiel pour les images. L'agent vous donne le chiffre du jour quand il vous recommande un modèle, et l'onglet Activité affiche le coût estimé. Fixez un plafond de dépense chez Google.
+- **Payant, à partir de la fiche 12** : le VPS, facturé à l'heure chez Hetzner, avec un plafond de quelques euros par mois. Attention : un serveur éteint reste facturé, il faut le supprimer pour arrêter les frais. Aucun nom de domaine à acheter : le tuto utilise une adresse gratuite. Jusque-là, tout tourne sur votre machine.
+- **À surveiller** : la génération d'images (fiche 10). Sans facturation activée, ou si le quota est atteint, le brief sort sans image, avec un message d'erreur qui le dit.
 
 ---
 
@@ -176,7 +177,8 @@ Reprends le vibecoding sur GoodVibe. Ce projet est déjà en cours et suit la m�
 | L'agent écrit du code d'emblée, sans se présenter ni poser la question de calibrage | Il ne suit pas le skill : suivez l'étape 5 du démarrage rapide (dossier du skill, nouvelle conversation, prompt recollé). |
 | L'agent n'arrive pas à télécharger le skill | Téléchargez vous-même son ZIP et déposez-le à la racine du projet : étape 5 du démarrage rapide. |
 | L'agent code ou modifie des fichiers sans attendre votre GO | Rappelez-lui la **Règle 0** du fichier de règles (`CLAUDE.md` et sa copie `AGENTS.md`) : jamais de code sans GO. S'il récidive, ouvrez une nouvelle conversation : le fichier de règles est relu. Vérifiez que `AGENTS.md` existe : c'est lui que lisent l'agent Gemini d'Antigravity, Codex et GitHub Copilot. |
-| « Quota exceeded », réponses qui s'arrêtent : le plan gratuit Gemini est épuisé | Attendez le renouvellement, ou passez le relais à **Claude Code** avec le prompt de reprise. |
+| « Quota exceeded », l'agent de codage s'arrête : son quota gratuit, celui de Gemini dans Antigravity, est épuisé | Attendez le renouvellement, ou passez le relais à **Claude Code** avec le prompt de reprise. |
+| « Quota exceeded » dans GoodVibe lui-même, au chat ou au brief : c'est le quota de votre clé API | Attendez le renouvellement, ou activez la facturation chez Google, avec un plafond de dépense. |
 | Vous reprenez après plusieurs jours sans savoir où vous en êtes | Ouvrez `REPRISE.md` dans votre projet : il dit où vous vous êtes arrêté et ce qui attend votre décision. `plan-action.md` dit quelle feature est « fait » et laquelle est en cours. Puis collez le prompt de reprise. |
 | Erreur 404 ou « model not found » à l'appel de Gemini | Google a retiré ou renommé le modèle. Demandez à l'agent de vérifier la documentation officielle et de changer le nom dans `config.py`. |
 | Un CHECK est KO et l'agent n'arrive pas à réparer | Chaque fiche du tuto a une rubrique **Pièges** : donnez-la à lire à l'agent, elle liste les causes classiques. |
