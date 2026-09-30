@@ -43,6 +43,7 @@ Ce que ce produit ne cherche **pas** à être :
   - Ne produire qu'un brief par jour, même si le déclencheur s'exécute plusieurs fois.
   - Déclencher la génération du brief à la main depuis la page web (bouton « Générer le brief maintenant »), pour tester sans attendre le cron.
   - Recevoir un pense-bête par webhook sécurisé (jeton secret) et l'intégrer au brief suivant.
+  - Retirer un pense-bête précis sur demande dans la conversation, avec confirmation, sans toucher au reste de la mémoire.
   - Lire le brief du jour et discuter avec l'agent dans une page web protégée par mot de passe.
   - Se déconnecter de la page web par un bouton visible depuis tous les onglets.
   - Afficher dans la page web le contenu de la mémoire de l'agent (profil, notes, conversations), avec un bouton « Oublie-moi ».
@@ -69,6 +70,7 @@ Ce que ce produit ne cherche **pas** à être :
 - Il est 7 h → le brief du jour est généré et enregistré ; s'il existe déjà, rien n'est refait et le journal le mentionne.
 - L'utilisateur clique « Générer le brief maintenant » → même génération, immédiate, avec l'anti-doublon contournable pour les tests. Il voit les étapes défiler en direct (outils, réflexion, texte), puis le relevé.
 - Un service externe envoie un pense-bête sur le webhook avec le bon jeton → réponse immédiate « reçu », enregistrement, intégration au brief suivant. Sans jeton ou avec un mauvais jeton → refus.
+- L'utilisateur dit « retire mon pense-bête sur le dentiste » → l'agent cite le pense-bête qu'il a trouvé et demande confirmation, puis ne retire que celui-là, et confirme. Les notes ne sont pas touchées. Si plusieurs pense-bêtes correspondent, ou aucun, il pose la question au lieu de choisir.
 - L'utilisateur ouvre la page web → mot de passe demandé ; puis onglets Chat, Brief du jour, Mémoire, Activité.
 - L'utilisateur clique « Se déconnecter » → la page de connexion réapparaît ; la page n'est plus accessible sans mot de passe.
 - L'utilisateur coche « Voir les coulisses » → avant chaque réponse, les coulisses montrent la requête envoyée au modèle, dans un bloc replié, puis le résumé de raisonnement du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Si le modèle répond sans outil, elles ne montrent que la requête et la réflexion.
@@ -99,7 +101,7 @@ Ce que ce produit ne cherche **pas** à être :
 - Le pilote peut, depuis la page web, lire un brief du jour qui s'ouvre sur sa date et son heure et contient horoscope personnalisé et météo, et voir dans l'onglet Activité les appels et les tokens qui l'ont produit.
 - Pendant une réponse, le pilote lit dans le panneau du flux brut ce que le modèle envoie, événement par événement, et y retrouve la demande d'un outil et les compteurs de tokens du tour.
 - Un second lancement du cron le même jour ne produit pas de second brief, et le journal le dit.
-- Un pense-bête envoyé par webhook avec le bon jeton apparaît dans le brief suivant ; sans jeton, la requête est refusée.
+- Un pense-bête envoyé par webhook avec le bon jeton apparaît dans le brief suivant ; sans jeton, la requête est refusée. Après « retire mon pense-bête sur… » et sa confirmation, ce pense-bête a disparu de l'onglet Mémoire ; les autres pense-bêtes et les notes sont intacts.
 - Après « retire ma note sur… » et sa confirmation, cette note a disparu de l'onglet Mémoire et des réponses de l'agent ; le profil et les autres notes sont intacts.
 - Après « oublie-moi », l'onglet Mémoire est vide et l'agent ne sait plus rien de l'utilisateur.
 - Un push sur `main` déclenche le pipeline, la coche verte apparaît, et la page publique reflète le changement sans intervention manuelle sur le VPS.
