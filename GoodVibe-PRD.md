@@ -34,7 +34,8 @@ Ce que ce produit ne cherche **pas** à être :
   - Discuter avec l'utilisateur dans le terminal, réponses affichées en streaming (mot à mot).
   - Retenir le profil donné en conversation : prénom, date de naissance (dont on déduit le signe astrologique), ville de résidence, centres d'intérêt.
   - Restituer ce que l'agent sait de l'utilisateur sur demande (« qu'est-ce que tu sais de moi ? »).
-  - Oublier complètement l'utilisateur sur demande (profil, notes, conversations), avec confirmation.
+  - Retirer une note précise sur demande, avec confirmation, sans toucher au reste de la mémoire.
+  - Oublier complètement l'utilisateur sur demande (profil, notes, pense-bêtes reçus, conversations), avec confirmation.
   - Produire chaque matin à 7 h un brief : horoscope du jour personnalisé (réécrit pour l'utilisateur à partir d'une source externe) et météo de sa ville.
   - S'adresser à l'utilisateur, dans le brief comme dans le chat, avec le prénom, la ville et le signe lus dans la mémoire au moment de répondre. L'agent n'invente jamais une information de profil : si le prénom manque, il ne salue personne par son nom et invite l'utilisateur à se présenter.
   - Ne produire qu'un brief par jour, même si le déclencheur s'exécute plusieurs fois.
@@ -60,7 +61,8 @@ Ce que ce produit ne cherche **pas** à être :
 
 - L'utilisateur se présente en conversation (« Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo ») → l'agent enregistre le profil, calcule le signe, confirme en une phrase.
 - L'utilisateur demande « qu'est-ce que tu sais de moi ? » → l'agent liste prénom, signe, ville, centres d'intérêt et notes, avec ses mots.
-- L'utilisateur dit « oublie-moi » → l'agent demande confirmation, puis efface profil, notes et conversations, et confirme.
+- L'utilisateur dit « retire ma note sur le dentiste » → l'agent cite la note qu'il a trouvée et demande confirmation, puis ne retire que celle-là, et confirme. Si plusieurs notes correspondent, ou aucune, il pose la question au lieu de choisir.
+- L'utilisateur dit « oublie-moi » → l'agent demande confirmation, puis efface profil, notes, pense-bêtes reçus et conversations, et confirme.
 - Il est 7 h → le brief du jour est généré et enregistré ; s'il existe déjà, rien n'est refait et le journal le mentionne.
 - L'utilisateur clique « Générer le brief maintenant » → même génération, immédiate, avec l'anti-doublon contournable pour les tests. Il voit les étapes défiler en direct (outils, réflexion, texte), puis le relevé.
 - Un service externe envoie un pense-bête sur le webhook avec le bon jeton → réponse immédiate « reçu », enregistrement, intégration au brief suivant. Sans jeton ou avec un mauvais jeton → refus.
@@ -92,6 +94,7 @@ Ce que ce produit ne cherche **pas** à être :
 - Le pilote peut, depuis la page web, lire un brief du jour contenant horoscope personnalisé et météo, et voir dans l'onglet Activité les appels et les tokens qui l'ont produit.
 - Un second lancement du cron le même jour ne produit pas de second brief, et le journal le dit.
 - Un pense-bête envoyé par webhook avec le bon jeton apparaît dans le brief suivant ; sans jeton, la requête est refusée.
+- Après « retire ma note sur… » et sa confirmation, cette note a disparu de l'onglet Mémoire et des réponses de l'agent ; le profil et les autres notes sont intacts.
 - Après « oublie-moi », l'onglet Mémoire est vide et l'agent ne sait plus rien de l'utilisateur.
 - Un push sur `main` déclenche le pipeline, la coche verte apparaît, et la page publique reflète le changement sans intervention manuelle sur le VPS.
 - Aucune donnée personnelle n'apparaît dans les logs ni dans le dépôt.

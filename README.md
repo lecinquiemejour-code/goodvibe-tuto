@@ -46,7 +46,7 @@ Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai ag
 | Cron | Le brief généré chaque matin à 7 h sur le serveur, une seule fois par jour |
 | Webhook | Un pense-bête envoyé depuis votre téléphone via un client HTTP en ligne (Hoppscotch), protégé par un jeton secret |
 | MCP | L'horoscope récupéré via le serveur MCP officiel `fetch` |
-| Mémoire | Le profil, les notes et les conversations en SQLite, avec « Oublie-moi ». Les conversations ne gardent que le dialogue : vos messages et le texte des réponses |
+| Mémoire | Le profil, les notes et les conversations en SQLite, avec le retrait d'une note et « Oublie-moi ». Les conversations ne gardent que le dialogue : vos messages et le texte des réponses |
 | Observabilité | Un journal d'activité : tokens, latence, coût en euros. Et les coulisses, en direct : la réflexion du modèle, puis chaque appel d'outil avec ses JSON, dans le chat comme dans le brief, et un relevé des tokens sous chaque réponse. Coulisses et relevé s'affichent à l'écran, sans être enregistrés ni renvoyés au modèle |
 | CI/CD | Déploiement automatique par GitHub Actions à chaque push |
 | Production | Un VPS Ubuntu, `systemd`, Caddy en HTTPS |
@@ -189,7 +189,7 @@ Tout tourne **en local jusqu'à la feature 11 incluse** : vous avez un produit c
 2. Page web
 3. Journal d'activité
 4. Base et profil
-5. Oublier l'utilisateur
+5. Oublier, une note ou tout
 6. Brief du matin
 7. Météo
 8. Horoscope via MCP
