@@ -620,6 +620,7 @@ flowchart TD
     OUT --> MCP["mcp_client.py<br/>serveur fetch"] --> HOR["horoscope.py"]
     OUT --> MET["outils_meteo.py<br/>Open-Meteo"]
     BR --> IMG["image.py<br/>modèle image du jour J"]
+    PI["prompt_image.md"] --> IMG
     AG & BR & WH --> DB["db.py<br/>SQLite"]
     AG & BR --> JR["journal.py"] --> DB
 ```
@@ -1263,7 +1264,7 @@ flowchart LR
 
 **Ce que vous verrez** : au-dessus de votre brief, une image générée ce matin, qui montre votre ville sous la météo du jour dans l'ambiance de votre horoscope, avec un clin d'œil à l'un de vos centres d'intérêt.
 
-**Ce qu'on construit** : `image.py` : composition d'un prompt visuel par le modèle texte à partir de quatre éléments (météo, lieu, horoscope, centres d'intérêt), génération par le modèle image, sauvegarde dans `data/images/`, affichage dans Gradio, message d'erreur si échec, une image par jour maximum.
+**Ce qu'on construit** : `image.py` et `prompt_image.md` : composition d'un prompt visuel par le modèle texte à partir de quatre éléments (météo, lieu, horoscope, centres d'intérêt), selon une consigne écrite dans `prompt_image.md`, génération par le modèle image, sauvegarde dans `data/images/`, affichage dans Gradio, message d'erreur si échec, une image par jour maximum.
 
 ```mermaid
 sequenceDiagram
@@ -1275,7 +1276,7 @@ sequenceDiagram
     B->>D: lire le profil (ville, centres d'intérêt)
     B->>I: generer_image(meteo, ville, horoscope, interets)
     I->>D: image déjà produite aujourd'hui ?
-    I->>G: "Compose un prompt visuel court à partir de : ..."
+    I->>G: la consigne de prompt_image.md + les éléments disponibles
     G-->>I: prompt visuel (affiché dans les coulisses)
     I->>N: interactions.create(model image, input=prompt)
     N-->>I: output_image (base64)
@@ -1283,21 +1284,21 @@ sequenceDiagram
     I-->>B: chemin de l'image (ou l'erreur et sa cause si échec)
 ```
 
-**Ce que fait l'agent** : `image.py` ; appel du modèle image via l'API Interactions (`model=MODELE_IMAGE`, lecture de `interaction.output_image.data` en base64) ; `gr.Image` dans l'onglet Brief et affichage dans le chat sur « montre-moi l'image du jour » ; `allowed_paths=["data/images"]` au lancement de Gradio ; comptage des images à part dans le journal.
+**Ce que fait l'agent** : `image.py` ; `prompt_image.md` (la consigne du directeur artistique : son rôle, le style de l'image, les règles ; le code y insère seulement la liste des éléments disponibles) ; appel du modèle image via l'API Interactions (`model=MODELE_IMAGE`, lecture de `interaction.output_image.data` en base64) ; `gr.Image` dans l'onglet Brief et affichage dans le chat sur « montre-moi l'image du jour » ; `allowed_paths=["data/images"]` au lancement de Gradio ; comptage des images à part dans le journal.
 
-**Ce que vous faites** : valider le modèle image que l'agent vous recommande ; relever vous-même son prix par image sur la page des tarifs de Google et le donner à l'agent, qui l'ajoute à la grille de prix avec la date du relevé ; si ce modèle n'a pas de niveau gratuit, activer la facturation sur votre compte Google AI et y fixer un plafond de dépense ; vérifier dans AI Studio que votre plan donne accès au modèle et connaître son quota.
+**Ce que vous faites** : valider le modèle image que l'agent vous recommande ; relire la consigne de `prompt_image.md` qu'il vous propose, et ajuster le style de l'image à votre goût ; relever vous-même son prix par image sur la page des tarifs de Google et le donner à l'agent, qui l'ajoute à la grille de prix avec la date du relevé ; si ce modèle n'a pas de niveau gratuit, activer la facturation sur votre compte Google AI et y fixer un plafond de dépense ; vérifier dans AI Studio que votre plan donne accès au modèle et connaître son quota.
 
 **Le choix du modèle image** : au PLAN, avant de présenter la solution, l'agent refait pour l'image la recherche de la fiche 1 et vous recommande **un** modèle, avec le prix par image et le coût mensuel pour GoodVibe, à raison d'une image par jour. Vous validez, ou vous posez vos questions. Puis vous relevez le prix par image sur la page des tarifs, comme à la fiche 1 : l'agent le compare à son estimation et vous signale tout écart.
 
 **La solution du tuto** : un prompt visuel composé par le modèle texte : c'est l'agent qui crée, et le prompt se lit dans les coulisses. **Pourquoi pas autrement** : un gabarit fixe rempli en Python donnerait toujours le même genre d'image ; une banque d'images locale montrerait une image sans rapport avec le jour, et GoodVibe n'affiche jamais un contenu de remplacement.
 
-**À relire** : une image par jour maximum (clé `image-AAAA-MM-JJ` dans `traites`) ; le brief **sort même si l'image échoue**, avec à la place de l'image un message d'erreur qui dit ce qui a échoué et pourquoi, sans image de remplacement ; si la météo ou l'horoscope est en erreur, le prompt visuel se compose avec ce qui reste : aucun élément n'est inventé pour le remplacer ; `brief.py` lit la ville et les centres d'intérêt dans le profil et les transmet à `image.py` : les quatre éléments arrivent jusqu'à la consigne envoyée au modèle texte ; les centres d'intérêt entrent dans l'image comme un détail discret, pas comme son sujet ; un champ vide du profil (ville, centres d'intérêt) est simplement absent du prompt visuel : aucune valeur par défaut n'est écrite dans le code, ni « Paris », ni « ensoleillé » ; si la composition du prompt visuel échoue, aucun prompt écrit d'avance ne prend sa place : le message d'erreur le dit ; le prompt visuel cite la ville et les centres d'intérêt : il se lit dans les coulisses, et ni le journal ni les logs ne l'enregistrent ; le journal note seulement que le prompt a été composé, avec sa durée et ses tokens ; l'image est comptée hors tokens ; `data/images/` dans `.gitignore` ; le nom du modèle image vit dans `config.py` (`MODELE_IMAGE`), vérifié dans la documentation de Google au PLAN.
+**À relire** : une image par jour maximum (clé `image-AAAA-MM-JJ` dans `traites`) ; le brief **sort même si l'image échoue**, avec à la place de l'image un message d'erreur qui dit ce qui a échoué et pourquoi, sans image de remplacement ; si la météo ou l'horoscope est en erreur, le prompt visuel se compose avec ce qui reste : aucun élément n'est inventé pour le remplacer ; `brief.py` lit la ville et les centres d'intérêt dans le profil et les transmet à `image.py` : les quatre éléments arrivent jusqu'à la consigne envoyée au modèle texte ; les centres d'intérêt entrent dans l'image comme un détail discret, pas comme son sujet ; un champ vide du profil (ville, centres d'intérêt) est simplement absent du prompt visuel : aucune valeur par défaut n'est écrite dans le code, ni « Paris », ni « ensoleillé » ; si la composition du prompt visuel échoue, aucun prompt écrit d'avance ne prend sa place : le message d'erreur le dit ; la consigne du directeur artistique vit dans `prompt_image.md`, pas dans le code : elle se lit et s'ajuste comme le prompt système, et le code y insère seulement la liste des éléments disponibles ; ce fichier part sur GitHub : il ne contient aucune donnée personnelle ; s'il est absent, l'image échoue avec un message d'erreur : aucune consigne de secours n'est écrite dans le code ; le prompt visuel cite la ville et les centres d'intérêt : il se lit dans les coulisses, et ni le journal ni les logs ne l'enregistrent ; le journal note seulement que le prompt a été composé, avec sa durée et ses tokens ; l'image est comptée hors tokens ; `data/images/` dans `.gitignore` ; le nom du modèle image vit dans `config.py` (`MODELE_IMAGE`), vérifié dans la documentation de Google au PLAN.
 
-**CHECK** : brief généré depuis la page : les étapes de l'image défilent (le prompt visuel composé, puis la génération), l'image apparaît au-dessus du texte et reflète bien météo et lieu. Lisez le prompt visuel affiché : il cite votre ville et l'un de vos centres d'intérêt, tels que les montre l'onglet Mémoire. Ouvrez l'onglet Activité : la ligne du prompt visuel donne sa durée et ses tokens, sans son texte. Dites « oublie-moi », confirmez, puis générez un brief : le prompt visuel ne cite plus ni ville ni centre d'intérêt, et n'en invente aucun. Présentez-vous de nouveau. Puis la panne : l'agent met un mauvais nom de modèle image dans la config, et vous générez un brief. Il sort quand même, avec à la place de l'image un message d'erreur qui dit ce qui a échoué et pourquoi ; le texte du brief est complet ; l'onglet Activité, détails techniques affichés, note l'échec et sa cause. L'agent remet le bon nom, vous générez un brief : l'image est revenue.
+**CHECK** : brief généré depuis la page : les étapes de l'image défilent (le prompt visuel composé, puis la génération), l'image apparaît au-dessus du texte et reflète bien météo et lieu. Lisez le prompt visuel affiché : il cite votre ville et l'un de vos centres d'intérêt, tels que les montre l'onglet Mémoire. Ouvrez l'onglet Activité : la ligne du prompt visuel donne sa durée et ses tokens, sans son texte. Dites « oublie-moi », confirmez, puis générez un brief : le prompt visuel ne cite plus ni ville ni centre d'intérêt, et n'en invente aucun. Présentez-vous de nouveau. Changez une phrase de style dans `prompt_image.md` (« aquarelle », par exemple), puis générez un brief : l'image change de style, sans qu'on ait touché au code. Puis la panne : l'agent met un mauvais nom de modèle image dans la config, et vous générez un brief. Il sort quand même, avec à la place de l'image un message d'erreur qui dit ce qui a échoué et pourquoi ; le texte du brief est complet ; l'onglet Activité, détails techniques affichés, note l'échec et sa cause. L'agent remet le bon nom, vous générez un brief : l'image est revenue.
 
-**Pièges** : facturation non activée pour un modèle image sans niveau gratuit, ou quota atteint (le message d'erreur doit le dire) ; image de remplacement ou élément inventé dans le prompt visuel quand une source est en panne ; centres d'intérêt absents de l'image (`brief.py` lit le profil mais ne les transmet pas à `image.py`) ; ville ou météo par défaut écrites dans le code, qui donnent une image de Paris au soleil à quelqu'un qui n'a rien dit de sa ville ; prompt visuel écrit d'avance, qui sert quand la composition échoue et cache la panne ; centres d'intérêt qui envahissent l'image (préciser la consigne : un détail, pas le sujet) ; prompt visuel recopié dans le journal ou dans les logs, avec la ville et les centres d'intérêt qu'il cite ; images dans Git ; image « cassée » dans Gradio parce que `allowed_paths` n'inclut pas le dossier ; format ou taille inadaptés.
+**Pièges** : facturation non activée pour un modèle image sans niveau gratuit, ou quota atteint (le message d'erreur doit le dire) ; image de remplacement ou élément inventé dans le prompt visuel quand une source est en panne ; centres d'intérêt absents de l'image (`brief.py` lit le profil mais ne les transmet pas à `image.py`) ; ville ou météo par défaut écrites dans le code, qui donnent une image de Paris au soleil à quelqu'un qui n'a rien dit de sa ville ; prompt visuel écrit d'avance, qui sert quand la composition échoue et cache la panne ; centres d'intérêt qui envahissent l'image (préciser la consigne : un détail, pas le sujet) ; prompt visuel recopié dans le journal ou dans les logs, avec la ville et les centres d'intérêt qu'il cite ; consigne du prompt visuel écrite dans `image.py` (il faut alors lire du Python pour changer le style de l'image) ; images dans Git ; image « cassée » dans Gradio parce que `allowed_paths` n'inclut pas le dossier ; format ou taille inadaptés.
 
-**Où on en est** : le brief est complet, texte et image. Fichiers ajoutés : `image.py`. GoodVibe est complet fonctionnellement : l'architecture cible de la V1 est entièrement en couleur, à l'exception du webhook, construit après la mise en ligne (fiche 14).
+**Où on en est** : le brief est complet, texte et image. Fichiers ajoutés : `image.py`, `prompt_image.md`. GoodVibe est complet fonctionnellement : l'architecture cible de la V1 est entièrement en couleur, à l'exception du webhook, construit après la mise en ligne (fiche 14).
 
 ```mermaid
 flowchart TD
@@ -1309,6 +1310,7 @@ flowchart TD
     AG --> OUT["outils.py"] --> MCP["mcp_client.py"] & MET["outils_meteo.py"]
     MCP --> HOR["horoscope.py"]
     BR --> IMG["image.py"]
+    PI["prompt_image.md"] --> IMG
     AG & BR --> JR["journal.py"] --> DB
     classDef todo fill:#eee,stroke:#bbb,color:#999
 ```
@@ -1764,6 +1766,7 @@ flowchart TD
     AG --> OUT["outils.py"] --> MCP["mcp_client.py"] & MET["outils_meteo.py"]
     MCP --> HOR["horoscope.py"]
     BR --> IMG["image.py"]
+    PI["prompt_image.md"] --> IMG
     AG & BR --> JR["journal.py"] --> DB
 ```
 
@@ -1781,7 +1784,7 @@ flowchart LR
     D --> E["5. Checklist à cinq cases<br/>toutes cochées"]
 ```
 
-**`walkthrough.md`**, la visite guidée du code, fichier par fichier, écrite pour quelqu'un qui découvre le projet. Vérifiez que chacun des fichiers de GoodVibe y a son paragraphe (rôle, ce qu'il expose, ce qu'il ne fait pas) : `config.py`, `prompt_systeme.md`, `agent.py`, `outils.py`, `outils_meteo.py`, `mcp_client.py`, `horoscope.py`, `image.py`, `brief.py`, `cron_brief.py`, `webhook.py`, `interface.py`, `vue_memoire.py`, `vue_activite.py`, `tarifs.py`, `journal.py`, `db.py`, `deploy/`, `.github/workflows/`. Il est commité et poussé : le pipeline le déploie comme le reste.
+**`walkthrough.md`**, la visite guidée du code, fichier par fichier, écrite pour quelqu'un qui découvre le projet. Vérifiez que chacun des fichiers de GoodVibe y a son paragraphe (rôle, ce qu'il expose, ce qu'il ne fait pas) : `config.py`, `prompt_systeme.md`, `agent.py`, `outils.py`, `outils_meteo.py`, `mcp_client.py`, `horoscope.py`, `image.py`, `prompt_image.md`, `brief.py`, `cron_brief.py`, `webhook.py`, `interface.py`, `vue_memoire.py`, `vue_activite.py`, `tarifs.py`, `journal.py`, `db.py`, `deploy/`, `.github/workflows/`. Il est commité et poussé : le pipeline le déploie comme le reste.
 
 **`post-mortem.md`** : prévu contre réalisé, ce qui a bien marché, les frictions (déploiement compris), les décisions revues en route, les leçons pour le prochain projet. Ajoutez-y **vos propres chiffres** lus dans l'onglet Activité : tokens du premier jour, latence moyenne, coût estimé. Ils serviront de référence pour la comparaison V1 / V2.
 
