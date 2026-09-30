@@ -73,6 +73,7 @@ Pour les **développeurs intermédiaires** qui découvrent les agents et le vibe
 Le principe : **l'agent de codage fait, vous pilotez.** L'agent écrit le code, installe les outils, lance les commandes et gère Git, en expliquant ce qu'il fait. Vous :
 
 - créez les comptes en ligne et copiez les clés API ;
+- relevez vous-même les prix des modèles sur la page des tarifs de Google : un prix que vous avez lu est un prix vérifié ;
 - validez chaque étape (les « GO ») ;
 - testez le résultat (le CHECK) : c'est vous qui jugez, jamais l'agent.
 
@@ -226,7 +227,7 @@ Tout tourne **en local jusqu'à la feature 11 incluse** : vous avez un produit c
 Imposée par le PRD. C'est l'agent qui l'installe.
 
 - **Langage** : Python 3.12
-- **IA** : SDK `google-genai` (API Interactions). Les modèles ne sont pas imposés : au moment où une feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), l'agent recherche dans la [documentation de Google](https://ai.google.dev/gemini-api/docs/models) ceux qui sont recommandés ce jour-là (le Gemini Flash stable le plus récent pour le texte, le modèle image stable le moins coûteux) et vous recommande un modèle, en l'expliquant. Vous validez.
+- **IA** : SDK `google-genai` (API Interactions). Les modèles ne sont pas imposés : au moment où une feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), l'agent recherche dans la [documentation de Google](https://ai.google.dev/gemini-api/docs/models) ceux qui sont recommandés ce jour-là (le Gemini Flash stable le plus récent pour le texte, le modèle image stable le moins coûteux) et vous recommande un modèle, en l'expliquant. Vous validez, puis vous relevez vous-même ses prix sur la [page des tarifs](https://ai.google.dev/gemini-api/docs/pricing) : l'agent n'en écrit aucun de mémoire.
 - **Web** : FastAPI + uvicorn (webhook), Gradio (page web)
 - **Données** : SQLite
 - **Outils** : `httpx` (appels directs aux API), bibliothèque `mcp` (client MCP), serveur `mcp-server-fetch` lancé par `uvx` (serveur MCP), `logging`
