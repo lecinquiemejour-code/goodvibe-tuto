@@ -45,7 +45,9 @@ Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai ag
 | Prompt système et réglages | La fiche de poste de GoodVibe, dans un fichier Markdown, et le tempérament du modèle : température, longueur de réponse, réflexion |
 | Cron | Le brief généré chaque matin à 7 h sur le serveur, une seule fois par jour |
 | Webhook | Un pense-bête envoyé depuis votre téléphone via un client HTTP en ligne (Hoppscotch), protégé par un jeton secret |
-| MCP | L'horoscope récupéré via le serveur MCP officiel `fetch` |
+| Outil sur mesure | La météo, lue dans l'API Open-Meteo par un appel direct : la description de l'outil, la requête et la mise en forme sont écrites par nous |
+| MCP | L'horoscope, lu dans une autre API par le serveur MCP officiel `fetch` : cette fois l'outil est apporté par le serveur, un petit programme que GoodVibe lance sur sa propre machine. Deux chemins vers deux API, à comparer |
+| Pannes visibles | Quand une source ne répond pas, le brief sort avec un message d'erreur à sa place, qui dit ce qui a échoué et pourquoi. Aucun contenu de remplacement, rien d'inventé |
 | Mémoire | Le profil, les notes et les conversations en SQLite, avec le retrait d'une note et « Oublie-moi ». Les conversations ne gardent que le dialogue : vos messages et le texte des réponses |
 | Observabilité | Un journal d'activité : tokens, latence, coût en euros. Et les coulisses, en direct : la réflexion du modèle, puis chaque appel d'outil avec ses JSON, dans le chat comme dans le brief, et un relevé des tokens sous chaque réponse. Coulisses et relevé s'affichent à l'écran, sans être enregistrés ni renvoyés au modèle |
 | CI/CD | Déploiement automatique par GitHub Actions à chaque push |
@@ -86,7 +88,7 @@ Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils
 
 - **Gratuit** : Antigravity, la clé Gemini en plan gratuit (avec des quotas : c'est pour cela que Claude Code est recommandé en relais), Open-Meteo et l'API horoscope (sans clé), GitHub et son pipeline GitHub Actions (le quota gratuit suffit largement).
 - **Payant, à partir de la fiche 12 seulement** : le VPS, facturé à l'heure chez Hetzner, avec un plafond de quelques euros par mois. Attention : un serveur éteint reste facturé, il faut le supprimer pour arrêter les frais. Aucun nom de domaine à acheter : le tuto utilise une adresse gratuite. Jusque-là, tout tourne sur votre machine sans dépenser un centime.
-- **À surveiller** : la génération d'images (fiche 10) dépend du quota de votre plan Google AI ; le tuto prévoit un repli si le quota est atteint.
+- **À surveiller** : la génération d'images (fiche 10) dépend du quota de votre plan Google AI ; si le quota est atteint, le brief sort sans image, avec un message d'erreur qui le dit.
 
 ---
 
@@ -208,8 +210,8 @@ Imposée par le PRD. C'est l'agent qui l'installe.
 - **IA** : SDK `google-genai` (API Interactions). Les modèles ne sont pas imposés : au moment où une feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), l'agent recherche dans la [documentation de Google](https://ai.google.dev/gemini-api/docs/models) ceux qui sont recommandés ce jour-là (le Gemini Flash stable le plus récent pour le texte, le modèle image stable le moins coûteux) et vous recommande un modèle, en l'expliquant. Vous validez.
 - **Web** : FastAPI + uvicorn (webhook), Gradio (page web)
 - **Données** : SQLite
-- **Outils** : bibliothèque `mcp` (client MCP), `httpx`, `logging`
-- **Sources externes** : [freehoroscopeapi.com](https://freehoroscopeapi.com) (horoscope), [Open-Meteo](https://open-meteo.com) (météo, sans clé)
+- **Outils** : `httpx` (appels directs aux API), bibliothèque `mcp` (client MCP), serveur `mcp-server-fetch` lancé par `uvx` (serveur MCP), `logging`
+- **Sources externes**, deux API sans clé : [Open-Meteo](https://open-meteo.com) (météo, appelée directement), [freehoroscopeapi.com](https://freehoroscopeapi.com) (horoscope, lu via le serveur MCP `fetch`)
 - **Production** : VPS Ubuntu LTS, `systemd`, Caddy (HTTPS), GitHub Actions
 
 ## Règles d'or

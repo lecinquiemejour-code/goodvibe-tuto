@@ -71,7 +71,7 @@ Ce que ce produit ne cherche **pas** à être :
 - L'utilisateur clique « Se déconnecter » → la page de connexion réapparaît ; la page n'est plus accessible sans mot de passe.
 - L'utilisateur coche « Voir les coulisses » → avant chaque réponse, un bloc repliable montre le résumé de raisonnement du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Si le modèle répond sans outil, le bloc ne montre que la réflexion.
 - L'utilisateur demande « explique ce que tu viens de faire » → l'agent raconte son dernier tour, outil par outil, à partir du journal.
-- Une API externe ne répond pas → le brief sort quand même, avec un texte de repli, et le journal note l'échec.
+- Une source externe ne répond pas (API météo, serveur MCP ou API horoscope, modèle image) → le brief sort quand même, avec un message d'erreur à la place de la section concernée : il dit ce qui a échoué et pourquoi. Aucun contenu de remplacement n'est affiché ni inventé, et le journal note l'échec.
 
 ## 6. Spécifications visuelles / d'interface
 
@@ -85,7 +85,7 @@ Ce que ce produit ne cherche **pas** à être :
 - **Données :** un seul utilisateur, profil fictif recommandé pour la démo. Jamais de donnée personnelle dans les logs, le journal, les tests ni le dépôt Git. Minimisation : le signe suffit, la date de naissance complète n'est pas conservée après calcul. Effacement complet sur demande.
 - **Observabilité :** chaque appel au modèle ou à un outil enregistre tokens (entrée, sortie, réflexion), latence et durée, sans donnée personnelle.
 - **Coût :** le prompt système, le profil et les outils partent une seule fois par appel au modèle. D'un message au suivant, à nombre de tours égal, les tokens d'entrée n'augmentent que de la taille du dialogue ajouté.
-- **Qualité :** au moins un test automatisé par fonctionnalité, exécuté par la CI, sans appel réseau réel. Nombre maximal de tours par exécution de l'agent. Texte de repli si une API externe échoue.
+- **Qualité :** au moins un test automatisé par fonctionnalité, exécuté par la CI, sans appel réseau réel. Nombre maximal de tours par exécution de l'agent. Message d'erreur explicite si une source externe échoue, jamais de contenu de remplacement.
 - **Performance :** premier mot affiché en moins de 3 secondes en conversation dans les conditions normales de l'API ; brief généré en moins de 60 secondes.
 - **Compatibilité :** page web utilisable sur un navigateur de bureau récent ; lisible sur mobile sans être optimisée.
 - **Accessibilité :** contrastes suffisants, aucune information portée par la couleur seule.
@@ -102,5 +102,5 @@ Ce que ce produit ne cherche **pas** à être :
 
 ## 9. Hypothèses & Questions ouvertes
 
-- **Hypothèses retenues :** la source d'horoscope est une API publique gratuite en anglais (freehoroscopeapi.com), lue via le serveur MCP officiel `fetch`, avec un plan B local si elle ne répond pas ; la météo vient d'Open-Meteo (sans clé) ; l'utilisateur unique est identifié par la session, sans compte.
+- **Hypothèses retenues :** la source d'horoscope est une API publique gratuite en anglais (freehoroscopeapi.com), lue via le serveur MCP officiel `fetch` ; si elle ne répond pas, le brief l'indique par un message d'erreur, sans horoscope de remplacement ; la météo vient de l'API Open-Meteo (sans clé), appelée directement, sans MCP ; l'utilisateur unique est identifié par la session, sans compte.
 - **À trancher plus tard :** aucune pour la version 1. La version 2 (sous-agents) sera cadrée dans un second cycle à partir de la section « Pour aller plus loin » du plan d'action.
