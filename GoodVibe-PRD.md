@@ -40,9 +40,9 @@ Ce que ce produit ne cherche **pas** à être :
   - Produire chaque matin à 7 h un brief : horoscope du jour personnalisé (réécrit pour l'utilisateur à partir d'une source externe) et météo de sa ville.
   - Ouvrir le brief par le jour de la semaine, la date et l'heure de sa création, lus sur l'horloge de la machine : le modèle ne les devine jamais.
   - S'adresser à l'utilisateur, dans le brief comme dans le chat, avec le prénom, la ville et le signe lus dans la mémoire au moment de répondre. L'agent n'invente jamais une information de profil : si le prénom manque, il ne salue personne par son nom et invite l'utilisateur à se présenter.
-  - Ne produire qu'un brief par jour, même si le déclencheur s'exécute plusieurs fois.
+  - Ne produire qu'un brief par jour par le cron, même s'il s'exécute plusieurs fois. Le bouton de la page et le webhook, eux, refont le brief du jour : c'est le dernier produit qui s'affiche.
   - Déclencher la génération du brief à la main depuis la page web (bouton « Générer le brief maintenant »), pour tester sans attendre le cron.
-  - Recevoir un pense-bête par webhook sécurisé (jeton secret) et l'intégrer au brief suivant.
+  - Recevoir un pense-bête par webhook sécurisé (jeton secret), répondre « reçu » aussitôt, puis, en tâche de fond, refaire le brief du jour en cycle complet (texte et image), qui l'intègre.
   - Retirer un pense-bête précis sur demande dans la conversation, avec confirmation, sans toucher au reste de la mémoire.
   - Lire le brief du jour et discuter avec l'agent dans une page web protégée par mot de passe.
   - Se déconnecter de la page web par un bouton visible depuis tous les onglets.
@@ -69,7 +69,7 @@ Ce que ce produit ne cherche **pas** à être :
 - L'utilisateur dit « oublie-moi » → l'agent demande confirmation, puis efface profil, notes, pense-bêtes reçus et conversations, et confirme.
 - Il est 7 h → le brief du jour est généré et enregistré ; s'il existe déjà, rien n'est refait et le journal le mentionne.
 - L'utilisateur clique « Générer le brief maintenant » → même génération, immédiate, avec l'anti-doublon contournable pour les tests. Il voit les étapes défiler en direct (outils, réflexion, texte), puis le relevé.
-- Un service externe envoie un pense-bête sur le webhook avec le bon jeton → réponse immédiate « reçu », enregistrement, intégration au brief suivant. Sans jeton ou avec un mauvais jeton → refus.
+- Un service externe envoie un pense-bête sur le webhook avec le bon jeton → réponse immédiate « reçu », enregistrement, puis génération d'un nouveau brief du jour, texte et image, qui l'intègre ; l'utilisateur le lit sur la page. Si la génération échoue, le journal note l'échec et sa cause, et le pense-bête reste en attente du brief suivant. Sans jeton ou avec un mauvais jeton → refus.
 - L'utilisateur dit « retire mon pense-bête sur le dentiste » → l'agent cite le pense-bête qu'il a trouvé et demande confirmation, puis ne retire que celui-là, et confirme. Les notes ne sont pas touchées. Si plusieurs pense-bêtes correspondent, ou aucun, il pose la question au lieu de choisir.
 - L'utilisateur ouvre la page web → mot de passe demandé ; puis onglets Chat, Brief du jour, Mémoire, Activité.
 - L'utilisateur clique « Se déconnecter » → la page de connexion réapparaît ; la page n'est plus accessible sans mot de passe.
@@ -101,7 +101,7 @@ Ce que ce produit ne cherche **pas** à être :
 - Le pilote peut, depuis la page web, lire un brief du jour qui s'ouvre sur sa date et son heure et contient horoscope personnalisé et météo, et voir dans l'onglet Activité les appels et les tokens qui l'ont produit.
 - Pendant une réponse, le pilote lit dans le panneau du flux brut ce que le modèle envoie, événement par événement, et y retrouve la demande d'un outil et les compteurs de tokens du tour.
 - Un second lancement du cron le même jour ne produit pas de second brief, et le journal le dit.
-- Un pense-bête envoyé par webhook avec le bon jeton apparaît dans le brief suivant ; sans jeton, la requête est refusée. Après « retire mon pense-bête sur… » et sa confirmation, ce pense-bête a disparu de l'onglet Mémoire ; les autres pense-bêtes et les notes sont intacts.
+- Un pense-bête envoyé par webhook avec le bon jeton reçoit « reçu » en moins d'une seconde, et un nouveau brief du jour qui le cite, avec son image, s'affiche sur la page dans la minute ; sans jeton, la requête est refusée. Après « retire mon pense-bête sur… » et sa confirmation, ce pense-bête a disparu de l'onglet Mémoire ; les autres pense-bêtes et les notes sont intacts.
 - Après « retire ma note sur… » et sa confirmation, cette note a disparu de l'onglet Mémoire et des réponses de l'agent ; le profil et les autres notes sont intacts.
 - Après « oublie-moi », l'onglet Mémoire est vide et l'agent ne sait plus rien de l'utilisateur.
 - Un push sur `main` déclenche le pipeline, la coche verte apparaît, et la page publique reflète le changement sans intervention manuelle sur le VPS.

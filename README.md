@@ -46,7 +46,7 @@ Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai ag
 | Boucle d'agent | Le chat en streaming, avec appels d'outils |
 | Prompt système et réglages | La fiche de poste de GoodVibe, dans un fichier Markdown, et le tempérament du modèle : température, longueur de réponse, réflexion |
 | Cron | Le brief généré chaque matin à 7 h sur le serveur, une seule fois par jour |
-| Webhook | Un pense-bête envoyé depuis votre téléphone via un client HTTP en ligne (Hoppscotch), ou depuis votre terminal avec `curl`, protégé par un jeton secret |
+| Webhook | Un pense-bête envoyé depuis votre téléphone via un client HTTP en ligne (Hoppscotch), ou depuis votre terminal avec `curl`, protégé par un jeton secret ; il refait aussitôt le brief du jour, texte et image |
 | Outil sur mesure | La météo, lue dans l'API Open-Meteo par un appel direct : la description de l'outil, la requête et la mise en forme sont écrites par nous |
 | MCP | L'horoscope, lu dans une autre API par le serveur MCP officiel `fetch` : cette fois l'outil est apporté par le serveur, un petit programme que GoodVibe lance sur sa propre machine. Deux chemins vers deux API, à comparer |
 | Pannes visibles | Quand une source ne répond pas, le brief sort avec un message d'erreur à sa place, qui dit ce qui a échoué et pourquoi. Aucun contenu de remplacement, rien d'inventé |
