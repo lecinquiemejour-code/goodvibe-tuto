@@ -3,7 +3,7 @@
 > Webhook, cron, MCP, mémoire, observabilité, VPS et sous-agents, avec le skill **VibeCoding Copilote** (Le Cinquième Jour).
 > Public : développeurs intermédiaires qui découvrent les agents et le vibe coding. Version 1.0, septembre 2026.
 
-> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les sept règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO.
+> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les sept règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO. Si le pilote demande une feature qui n'a pas de fiche, tu l'inscris d'abord sur sa propre ligne dans `fdd.md` et dans `plan-action.md`, puis tu lui fais suivre le même cycle, comme l'indique la section 4.2.
 >
 > **Règle 1. Avant tout document : la visite guidée du projet.** Après la carte du voyage et avant `archi-stack.md`, tu présentes GoodVibe au pilote. Tant que cette visite n'est pas finie, tu ne rédiges aucun document et tu ne cites ni fichier ni bibliothèque. Tu t'appuies sur `GoodVibe-presentation.md` (la présentation du projet) et sur ce tuto : tu racontes ces textes avec tes mots, adaptés au profil du pilote, tu ne les colles pas. Dans `GoodVibe-presentation.md`, tu ignores les sections « Démarrage rapide », « Si ça coince » et « Liens », qui concernent le téléchargement du kit. Quatre temps, un message par temps, et tu attends la réponse du pilote entre chacun :
 >
@@ -460,6 +460,10 @@ flowchart TD
 ```
 
 Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du code de cette feature, en local ; **GO #2** autorise le commit local ; **GO MISE EN LIGNE**, une seule fois, au début de la feature 12, autorise l'envoi du code sur GitHub puis la mise en ligne de la page. Le CHECK est **le vôtre** : l'agent lance ce qu'il faut et vous passe la main. Il ne s'auto-valide jamais. Entre le DO et le CHECK, il vous fait la **lecture guidée** du code : vous ne validez jamais un code que vous n'avez pas vu.
+
+**Une feature qui n'a pas de fiche.** Vous pouvez demander à tout moment une feature que ce tuto ne prévoit pas. Elle suit la même boucle, à trois conditions. L'agent l'inscrit d'abord dans `fdd.md` et dans `plan-action.md`, sur sa propre ligne, avec son critère de réussite : il ne la range pas sous le nom d'une autre feature, et l'état des autres ne change pas. Au PLAN, il dit que la solution est la sienne, et non celle du tuto, et il écrit lui-même ce qu'une fiche aurait fourni : les points « À relire » et le CHECK. Enfin, tant que vous n'avez pas rendu votre verdict, `plan-action.md` dit que ce CHECK est en attente : sans cela, une session interrompue reprend à la feature suivante, et le CHECK est perdu.
+
+**Après la fiche 13, pousser, c'est publier.** Le pipeline met en production chaque push sur `main`. L'ordre ne change pas : CHECK en local, GO #2, commit ; puis l'agent annonce le push et attend votre GO ; vous vérifiez ensuite la page publique. Si vous préférez vérifier directement en ligne, l'agent vous dit d'abord ce que cela implique : le code part en production avant d'avoir été vérifié, et s'il a un défaut, il y reste jusqu'au correctif. Il lance `pytest` et `ruff` en local, vous en donne le résultat, et attend votre GO avant de pousser. « On vérifie en ligne » est une demande, pas un GO.
 
 ### 4.3 Les trois documents de cadrage : ce que vous devez y trouver
 
@@ -1527,7 +1531,7 @@ Quand un envoi échoue, l'agent vous le dit aussitôt, vous montre la ligne du c
 
 **Pièges** : envoyer le code avant d'avoir créé les secrets ; poser un fichier à la main sur le serveur ; enchaîner casser et réparer sans laisser le pilote voir la croix rouge ; oublier de retirer le changement visible du test heureux ; afficher la clé privée pour la faire copier ; confondre les deux clés ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 12 manque) ; workflow déclenché sur toutes les branches.
 
-**Où on en est** : GoodVibe V1 est en production, mis à jour par un pipeline. Fichiers ajoutés : `.github/workflows/deploy.yml`, `deploy/deployer.sh`. Treize features sur quatorze sont « fait » dans `plan-action.md`. La dernière, le webhook, sera la première feature déployée par ce pipeline, sans connexion SSH.
+**Où on en est** : GoodVibe V1 est en production, mis à jour par un pipeline. Fichiers ajoutés : `.github/workflows/deploy.yml`, `deploy/deployer.sh`. Treize features sur quatorze sont « fait » dans `plan-action.md`. La dernière, le webhook, sera la première feature déployée par ce pipeline, sans connexion SSH. À partir de maintenant, chaque push sur `main` met en production : l'agent l'annonce et attend votre GO, même si vous demandez à vérifier en ligne (section 4.2).
 
 ---
 
