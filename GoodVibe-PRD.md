@@ -20,13 +20,14 @@ Ce que ce produit ne cherche **pas** à être :
 - Une application d'astrologie sérieuse : l'horoscope est un prétexte ludique.
 - Un système de notification : pas d'envoi de mail, de SMS ni de message instantané.
 - Un moteur de recherche dans sa mémoire : pas de recherche sémantique ni de RAG.
+- Une application pour téléphone : la page web est conçue pour un écran d'ordinateur. Le téléphone ne sert qu'à envoyer un pense-bête.
 
 ## 3. Utilisateurs cibles
 
 | Persona | Caractéristiques | Besoin principal |
 |---------|------------------|------------------|
 | Le pilote (stagiaire du bootcamp) | Code déjà, découvre les agents et le vibe coding, dispose d'Antigravity et d'une clé Gemini | Construire un agent complet en comprenant chaque brique, et pouvoir observer ce que l'agent fait et sait |
-| L'utilisateur de GoodVibe (souvent la même personne, avec un profil fictif) | Utilise un navigateur et un téléphone | Recevoir un brief du matin personnalisé et pouvoir discuter avec l'assistant |
+| L'utilisateur de GoodVibe (souvent la même personne, avec un profil fictif) | Utilise un navigateur sur ordinateur ; son téléphone lui sert à envoyer un pense-bête | Recevoir un brief du matin personnalisé et pouvoir discuter avec l'assistant |
 
 ## 4. Fonctionnalités (MoSCoW)
 
@@ -47,9 +48,9 @@ Ce que ce produit ne cherche **pas** à être :
   - Afficher dans la page web le contenu de la mémoire de l'agent (profil, notes, conversations), avec un bouton « Oublie-moi ».
   - Afficher dans la page web le journal d'activité de l'agent : pour chaque exécution, les outils appelés, les tokens consommés (entrée, sortie, réflexion), la latence de chaque appel, avec compteurs par jour et cumul et une estimation du coût en euros.
   - Enregistrer, pour chaque réponse en conversation, le temps avant le premier mot et la durée totale.
-  - Permettre d'afficher ou de masquer les coulisses de chaque réponse, via une case à cocher dans la page web et une commande dans le terminal : le résumé de réflexion (« thinking ») du modèle, puis chaque appel d'outil avec son nom, le JSON de ses arguments et le JSON de son résultat. L'affichage est le même pour tous les outils : fonctions Python, serveurs MCP actuels et futurs. Les coulisses s'affichent à l'écran ; les arguments et les résultats des outils ne sont jamais enregistrés dans le journal. Les coulisses et le relevé ne sont ni enregistrés dans les conversations, ni renvoyés au modèle : la mémoire de conversation et l'historique ne contiennent que le dialogue, c'est-à-dire les messages de l'utilisateur et le texte des réponses.
+  - Permettre d'afficher ou de masquer les coulisses de chaque réponse, via une case à cocher dans la page web et une commande dans le terminal : la requête envoyée au modèle, dans un bloc replié (le JSON complet de l'appel, un bloc par tour) ; le résumé de réflexion (« thinking ») du modèle ; puis chaque appel d'outil avec son nom, le JSON de ses arguments et le JSON de son résultat. L'affichage est le même pour tous les outils : fonctions Python, serveurs MCP actuels et futurs. Les coulisses s'affichent à l'écran ; les arguments et les résultats des outils ne sont jamais enregistrés dans le journal. Les coulisses et le relevé ne sont ni enregistrés dans les conversations, ni renvoyés au modèle : la mémoire de conversation et l'historique ne contiennent que le dialogue, c'est-à-dire les messages de l'utilisateur et le texte des réponses.
   - Afficher dans la page web le flux brut reçu du modèle : chaque événement que l'API envoie pendant une réponse, tel quel, dans un panneau à côté du chat et à côté du brief. Le panneau se lit comme une arborescence, se copie en un clic, reste calé sur le dernier événement pendant la réception, et sa largeur se règle. Il se remplit quand les coulisses sont affichées, et repart de zéro à chaque message. Comme les coulisses, le flux brut n'est ni enregistré, ni journalisé, ni renvoyé au modèle.
-  - Montrer en direct le travail de l'agent chaque fois que l'utilisateur le déclenche, dans le chat comme dans la génération du brief. Dans l'ordre : chaque appel d'outil avec son nom, ses JSON et sa durée ; le résumé de réflexion du modèle, au fil de l'eau ; la réponse, mot à mot ; puis un relevé : tokens d'entrée, de réflexion et de sortie, nombre de tours, temps avant le premier mot, durée totale. Les chiffres du relevé sont ceux que renvoie l'API, jamais une estimation ; les tokens sont additionnés sur tous les tours de la réponse. Déclenché par le cron, l'agent travaille en silence : seul le journal en garde la trace, sans donnée personnelle.
+  - Montrer en direct le travail de l'agent chaque fois que l'utilisateur le déclenche, dans le chat comme dans la génération du brief. Dans l'ordre : la requête envoyée au modèle ; chaque appel d'outil avec son nom, ses JSON et sa durée ; le résumé de réflexion du modèle, au fil de l'eau ; la réponse, mot à mot ; puis un relevé : tokens d'entrée, de réflexion et de sortie, nombre de tours, temps avant le premier mot, durée totale. Les chiffres du relevé sont ceux que renvoie l'API, jamais une estimation ; les tokens sont additionnés sur tous les tours de la réponse. Déclenché par le cron, l'agent travaille en silence : seul le journal en garde la trace, sans donnée personnelle.
 - **Should have** :
   - Générer une image du jour inspirée de quatre éléments : la météo du jour, le lieu de résidence, la prévision d'horoscope et les centres d'intérêt de l'utilisateur ; l'afficher au-dessus du brief et sur demande dans le chat.
   - Expliquer dans le chat ce que l'agent vient de faire, outil par outil, à partir de son journal.
@@ -57,7 +58,7 @@ Ce que ce produit ne cherche **pas** à être :
   - Envoyer le pense-bête depuis le téléphone via un raccourci (Raccourcis iOS, HTTP Shortcuts Android).
   - Version 2 : déléguer l'horoscope et la météo à des sous-agents spécialisés, avec comparaison mesurée V1 / V2 (tokens, latence, comportement en panne).
 - **Won't have (pour l'instant)** :
-  - Budget quotidien de tokens et mode économe, plusieurs utilisateurs, notifications sortantes, recherche sémantique dans la mémoire, chiffrement de la base au repos, authentification à deux facteurs.
+  - Page web adaptée au téléphone, budget quotidien de tokens et mode économe, plusieurs utilisateurs, notifications sortantes, recherche sémantique dans la mémoire, chiffrement de la base au repos, authentification à deux facteurs.
 
 ## 5. Interactions
 
@@ -70,14 +71,14 @@ Ce que ce produit ne cherche **pas** à être :
 - Un service externe envoie un pense-bête sur le webhook avec le bon jeton → réponse immédiate « reçu », enregistrement, intégration au brief suivant. Sans jeton ou avec un mauvais jeton → refus.
 - L'utilisateur ouvre la page web → mot de passe demandé ; puis onglets Chat, Brief du jour, Mémoire, Activité.
 - L'utilisateur clique « Se déconnecter » → la page de connexion réapparaît ; la page n'est plus accessible sans mot de passe.
-- L'utilisateur coche « Voir les coulisses » → avant chaque réponse, un bloc repliable montre le résumé de raisonnement du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Si le modèle répond sans outil, le bloc ne montre que la réflexion.
+- L'utilisateur coche « Voir les coulisses » → avant chaque réponse, les coulisses montrent la requête envoyée au modèle, dans un bloc replié, puis le résumé de raisonnement du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Si le modèle répond sans outil, elles ne montrent que la requête et la réflexion.
 - L'utilisateur envoie un message ou génère un brief depuis la page, coulisses affichées → à droite, le panneau du flux brut se remplit événement par événement pendant que la réponse s'écrit à gauche. Il peut y lire la demande d'un outil, les morceaux de la réponse et, en fin de tour, les compteurs de tokens. Il tire la barre entre les deux zones pour régler leur largeur.
 - L'utilisateur demande « explique ce que tu viens de faire » → l'agent raconte son dernier tour, outil par outil, à partir du journal.
 - Une source externe ne répond pas (API météo, serveur MCP ou API horoscope, modèle image) → le brief sort quand même, avec un message d'erreur à la place de la section concernée : il dit ce qui a échoué et pourquoi. Aucun contenu de remplacement n'est affiché ni inventé, et le journal note l'échec.
 
 ## 6. Spécifications visuelles / d'interface
 
-- **Apparence :** sobre et lisible, page web en quatre onglets (Chat, Brief du jour, Mémoire, Activité). Les onglets Chat et Brief du jour sont en deux zones côte à côte : le contenu à gauche, le flux brut reçu du modèle à droite, séparés par une barre qu'on tire à la souris. L'image du jour, si présente, s'affiche au-dessus du texte du brief. Les tableaux de la mémoire et du journal sont bruts et complets : c'est une vitrine pédagogique, pas une interface grand public.
+- **Apparence :** sobre et lisible, page web conçue pour un écran d'ordinateur, en quatre onglets (Chat, Brief du jour, Mémoire, Activité). Les onglets Chat et Brief du jour sont en deux zones côte à côte : le contenu à gauche, le flux brut reçu du modèle à droite, séparés par une barre qu'on tire à la souris. L'image du jour, si présente, s'affiche au-dessus du texte du brief. Les tableaux de la mémoire et du journal sont bruts et complets : c'est une vitrine pédagogique, pas une interface grand public.
 - **Comportement :** le chat affiche les réponses mot à mot ; les onglets Mémoire et Activité ont un bouton « Rafraîchir » ; la case « Voir les coulisses » est cochée par défaut, et on peut la décocher pour un affichage épuré ; un interrupteur « détails techniques » dans l'onglet Activité ajoute les durées et les erreurs brutes. Les arguments des outils ne s'y affichent jamais : ils ne se voient qu'en direct, dans les coulisses.
 
 ## 7. Contraintes (exigences non-fonctionnelles)
@@ -90,7 +91,7 @@ Ce que ce produit ne cherche **pas** à être :
 - **Qualité :** au moins un test automatisé par fonctionnalité, exécuté par la CI, sans appel réseau réel. Nombre maximal de tours par exécution de l'agent. Message d'erreur explicite si une source externe échoue, jamais de contenu de remplacement.
 - **Erreurs :** une erreur ne se cache jamais : elle se dit et elle s'affiche. Aucune erreur n'est masquée : ni contenu de remplacement, ni valeur par défaut à la place d'une donnée manquante, ni erreur interceptée en silence, ni phrase rassurante. Quand quelque chose échoue (une source, un outil, un fichier, un réglage absent), GoodVibe le dit là où l'utilisateur regarde (le chat, le brief, l'onglet Activité), par un message qui nomme ce qui a échoué et pourquoi ; le journal note l'échec et sa cause ; le reste continue quand c'est possible. L'objectif est pédagogique et pratique : on apprend en voyant ce qui casse, et une panne visible se répare.
 - **Performance :** premier mot affiché en moins de 3 secondes en conversation dans les conditions normales de l'API ; brief généré en moins de 60 secondes.
-- **Compatibilité :** page web utilisable sur un navigateur de bureau récent ; lisible sur mobile sans être optimisée. Les deux zones des onglets Chat et Brief du jour sont pensées pour un écran d'ordinateur : sur un téléphone, elles restent côte à côte et deviennent étroites.
+- **Compatibilité :** page web conçue pour un écran d'ordinateur, sur un navigateur de bureau récent. Elle n'est pas adaptée au téléphone : les deux zones des onglets Chat et Brief du jour y restent côte à côte et deviennent étroites.
 - **Accessibilité :** contrastes suffisants, aucune information portée par la couleur seule.
 
 ## 8. Critères de succès
