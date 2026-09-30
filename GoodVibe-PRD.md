@@ -37,6 +37,7 @@ Ce que ce produit ne cherche **pas** à être :
   - Retirer une note précise sur demande, avec confirmation, sans toucher au reste de la mémoire.
   - Oublier complètement l'utilisateur sur demande (profil, notes, pense-bêtes reçus, conversations), avec confirmation.
   - Produire chaque matin à 7 h un brief : horoscope du jour personnalisé (réécrit pour l'utilisateur à partir d'une source externe) et météo de sa ville.
+  - Ouvrir le brief par le jour de la semaine, la date et l'heure de sa création, lus sur l'horloge de la machine : le modèle ne les devine jamais.
   - S'adresser à l'utilisateur, dans le brief comme dans le chat, avec le prénom, la ville et le signe lus dans la mémoire au moment de répondre. L'agent n'invente jamais une information de profil : si le prénom manque, il ne salue personne par son nom et invite l'utilisateur à se présenter.
   - Ne produire qu'un brief par jour, même si le déclencheur s'exécute plusieurs fois.
   - Déclencher la génération du brief à la main depuis la page web (bouton « Générer le brief maintenant »), pour tester sans attendre le cron.
@@ -91,7 +92,7 @@ Ce que ce produit ne cherche **pas** à être :
 
 ## 8. Critères de succès
 
-- Le pilote peut, depuis la page web, lire un brief du jour contenant horoscope personnalisé et météo, et voir dans l'onglet Activité les appels et les tokens qui l'ont produit.
+- Le pilote peut, depuis la page web, lire un brief du jour qui s'ouvre sur sa date et son heure et contient horoscope personnalisé et météo, et voir dans l'onglet Activité les appels et les tokens qui l'ont produit.
 - Un second lancement du cron le même jour ne produit pas de second brief, et le journal le dit.
 - Un pense-bête envoyé par webhook avec le bon jeton apparaît dans le brief suivant ; sans jeton, la requête est refusée.
 - Après « retire ma note sur… » et sa confirmation, cette note a disparu de l'onglet Mémoire et des réponses de l'agent ; le profil et les autres notes sont intacts.

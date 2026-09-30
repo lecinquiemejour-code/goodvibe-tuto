@@ -399,7 +399,7 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 ### 3.3 Les fonctionnalités, en bref
 
-**Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; retrait d'une note sur demande ; « oublie-moi » ; brief du matin par cron avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée, avec un bouton « Se déconnecter » ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir les coulisses » (réflexion, appels d'outils et leurs JSON) ; travail de l'agent visible en direct, dans le chat comme dans le brief, avec un relevé des tokens.
+**Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; retrait d'une note sur demande ; « oublie-moi » ; brief du matin par cron, daté, avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée, avec un bouton « Se déconnecter » ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir les coulisses » (réflexion, appels d'outils et leurs JSON) ; travail de l'agent visible en direct, dans le chat comme dans le brief, avec un relevé des tokens.
 
 **Souhaitable (Should)** : image du jour (météo, lieu, horoscope) ; « explique ce que tu viens de faire ».
 
@@ -866,13 +866,13 @@ sequenceDiagram
 
 **Pourquoi, et l'idée en clair**
 
-- *Le problème.* GoodVibe ne fait rien tant qu'on ne lui parle pas. Or son métier est de préparer un brief chaque matin, sans qu'on le lui demande.
-- *L'idée.* On écrit la fabrication du brief comme une recette, qu'on peut lancer d'un bouton ou d'une commande. Avec une règle : un seul brief par jour. Le journal du matin n'est imprimé qu'une fois ; si vous en redemandez un, on vous tend le même exemplaire.
-- *Les mots nouveaux.* **Anti-doublon** : la vérification qui empêche de refaire ce qui est déjà fait. **Point d'entrée** : le fichier qu'on lance pour démarrer une tâche. **Flux** : un résultat livré étape par étape, qu'on peut afficher au fur et à mesure. **Forcer** : passer outre l'anti-doublon, pour tester.
+- *Le problème.* GoodVibe ne fait rien tant qu'on ne lui parle pas. Or son métier est de préparer un brief chaque matin, sans qu'on le lui demande. Et pour dater ce brief, il lui manque une chose : le modèle ne sait pas quel jour on est.
+- *L'idée.* On écrit la fabrication du brief comme une recette, qu'on peut lancer d'un bouton ou d'une commande. Avec une règle : un seul brief par jour. Le journal du matin n'est imprimé qu'une fois ; si vous en redemandez un, on vous tend le même exemplaire. Et comme tout journal, il porte sa date en première ligne : notre programme la lit sur l'horloge de la machine et la donne au modèle.
+- *Les mots nouveaux.* **Anti-doublon** : la vérification qui empêche de refaire ce qui est déjà fait. **Ligne de date** : la première ligne du brief, avec le jour de la semaine, la date et l'heure de sa création. **Point d'entrée** : le fichier qu'on lance pour démarrer une tâche. **Flux** : un résultat livré étape par étape, qu'on peut afficher au fur et à mesure. **Forcer** : passer outre l'anti-doublon, pour tester.
 
-**Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » quand vous cliquez « Générer le brief maintenant » ou lancez `cron_brief.py`, et si vous relancez, il refuse poliment d'en faire un second. Vous le voyez se fabriquer en direct : les étapes défilent, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche. L'heure fixe (7 h) viendra avec le serveur, à la fiche 12 : un cron n'a de sens que sur une machine allumée en permanence.
+**Ce que vous verrez** : un brief signé GoodVibe apparaît dans l'onglet « Brief du jour » quand vous cliquez « Générer le brief maintenant » ou lancez `cron_brief.py`, et si vous relancez, il refuse poliment d'en faire un second. Il s'ouvre sur sa ligne de date, par exemple « Mercredi 30 septembre 2026 — 08h00 ». Vous le voyez se fabriquer en direct : les étapes défilent, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche. L'heure fixe (7 h) viendra avec le serveur, à la fiche 12 : un cron n'a de sens que sur une machine allumée en permanence.
 
-**Ce qu'on construit** : `generer_brief()` (pour l'instant une phrase d'accueil personnalisée et les notes ; horoscope et météo arrivent aux fiches 7 et 8), les tables `briefs` et `traites`, le point d'entrée `cron_brief.py` (celui que le cron du serveur appellera à la fiche 12), un paramètre `--forcer`, l'onglet « Brief du jour » et son bouton « Générer le brief maintenant » dans la page web.
+**Ce qu'on construit** : `generer_brief()` (pour l'instant la ligne de date, une phrase d'accueil personnalisée et les notes ; horoscope et météo arrivent aux fiches 7 et 8), les tables `briefs` et `traites`, le point d'entrée `cron_brief.py` (celui que le cron du serveur appellera à la fiche 12), un paramètre `--forcer`, l'onglet « Brief du jour » et son bouton « Générer le brief maintenant » dans la page web.
 
 ```mermaid
 sequenceDiagram
@@ -895,17 +895,17 @@ sequenceDiagram
     end
 ```
 
-**Ce que fait l'agent** : `brief.py`, dont `generer_brief()` est une fonction génératrice : elle émet ses étapes, la réflexion, le texte et le relevé au fur et à mesure ; `cron_brief.py` avec `--forcer`, lancé avec le Python du venv, qui consomme ce flux en silence ; tables ; onglet « Brief du jour » dans `interface.py`, dont le bouton appelle `generer_brief(forcer=True)` et affiche le flux en direct.
+**Ce que fait l'agent** : `brief.py`, dont `generer_brief()` est une fonction génératrice : elle émet ses étapes, la réflexion, le texte et le relevé au fur et à mesure ; une fonction de `brief.py` écrit la date et l'heure en français, jour de la semaine en toutes lettres, et les glisse dans la consigne envoyée au modèle ; `prompt_systeme.md` demande de les recopier telles quelles en première ligne du brief ; `cron_brief.py` avec `--forcer`, lancé avec le Python du venv, qui consomme ce flux en silence ; tables ; onglet « Brief du jour » dans `interface.py`, dont le bouton appelle `generer_brief(forcer=True)` et affiche le flux en direct.
 
 **Ce que vous faites** : rien.
 
 **La solution du tuto** : l'anti-doublon par une clé date dans la table `traites` : lisible, survit au redémarrage, réutilisable pour l'image. **Pourquoi pas autrement** : un fichier marqueur sur le disque ou un verrou de processus sont plus fragiles, et ne se voient pas dans la base.
 
-**À relire** : `generer_brief()` **ne sait pas** si elle est appelée par `cron_brief.py` ou par le bouton de la page web : c'est une seule fonction, qui émet un flux ; la page l'affiche, le cron le consomme sans rien afficher ; le journal indique « brief déjà produit » au second lancement ; `--forcer` est réservé aux tests et journalisé comme tel.
+**À relire** : `generer_brief()` **ne sait pas** si elle est appelée par `cron_brief.py` ou par le bouton de la page web : c'est une seule fonction, qui émet un flux ; la page l'affiche, le cron le consomme sans rien afficher ; le journal indique « brief déjà produit » au second lancement ; `--forcer` est réservé aux tests et journalisé comme tel ; le jour, la date et l'heure sont calculés en Python et donnés au modèle, qui les recopie sans les modifier : il ne les devine jamais ; la ligne de date et la clé de l'anti-doublon lisent la même horloge, celle de la machine ; le format de la date a son test, sans appel au modèle.
 
-**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Dans la page web, cliquez « Générer le brief maintenant » : les étapes défilent en direct, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche. Ouvrez l'onglet Mémoire à côté : le prénom du brief est exactement celui de la table `profil`. Effacez votre profil, générez un brief : il ne salue personne par son nom, et il n'en invente aucun.
+**CHECK** : lancez `cron_brief.py` deux fois de suite : un brief en base, un message « déjà produit » au second. Puis `--forcer` : un second brief. Sa première ligne donne le jour de la semaine, la date et l'heure : comparez avec votre montre. Dans la page web, cliquez « Générer le brief maintenant » : les étapes défilent en direct, la réflexion s'écrit, le brief arrive mot à mot, puis le relevé s'affiche. Ouvrez l'onglet Mémoire à côté : le prénom du brief est exactement celui de la table `profil`. Effacez votre profil, générez un brief : il ne salue personne par son nom, et il n'en invente aucun.
 
-**Pièges** : brief qui salue par un prénom inventé (le profil n'est pas arrivé jusqu'au modèle au moment où il rédige : voir la fiche 4) ; `cron_brief.py` lancé sans le Python du venv (modules introuvables) ; `.env` non chargé quand le script est lancé hors du terminal (le charger explicitement dans `config.py`, le cron du serveur en aura besoin) ; deux processus (Gradio et `cron_brief.py`) qui écrivent en base en même temps sans fermer leurs connexions.
+**Pièges** : brief qui salue par un prénom inventé (le profil n'est pas arrivé jusqu'au modèle au moment où il rédige : voir la fiche 4) ; jour ou date inventés (la date n'est pas arrivée jusqu'au modèle, qui ne connaît pas le jour) ; ligne de date absente, déplacée ou reformulée (c'est le modèle qui l'écrit : préciser la consigne, « en première ligne, sans la modifier ») ; `cron_brief.py` lancé sans le Python du venv (modules introuvables) ; `.env` non chargé quand le script est lancé hors du terminal (le charger explicitement dans `config.py`, le cron du serveur en aura besoin) ; deux processus (Gradio et `cron_brief.py`) qui écrivent en base en même temps sans fermer leurs connexions.
 
 **Où on en est** : GoodVibe parle, retient, et produit un brief à la demande, une seule fois par jour : deux déclencheurs sur quatre (terminal, page web) ; le cron et le webhook arriveront avec le serveur. Fichiers ajoutés : `brief.py`, `cron_brief.py`.
 
@@ -1405,7 +1405,7 @@ Si le compte rendu est absent, le cron ne s'est pas déclenché. S'il contient u
 
 *6. Le tester sans attendre demain.* L'agent ajoute au fichier une ligne provisoire, qui se déclenche dans cinq minutes, et l'installe. Vous attendez, puis vous lisez les trois preuves. Il retire ensuite la ligne provisoire, et vous vérifiez que le serveur est revenu au fichier d'origine.
 
-*7. L'heure du serveur.* Le cron suit l'heure du serveur, pas celle de votre montre. Beaucoup de serveurs sont réglés sur l'heure universelle (UTC) : en été, 7 h sur le serveur font 9 h à Paris. L'agent lit l'heure du serveur, règle son fuseau sur le vôtre, et vous montre le résultat. Une fois le fuseau réglé, le passage à l'heure d'été se fait tout seul.
+*7. L'heure du serveur.* Le cron suit l'heure du serveur, pas celle de votre montre. Beaucoup de serveurs sont réglés sur l'heure universelle (UTC) : en été, 7 h sur le serveur font 9 h à Paris. L'agent lit l'heure du serveur, règle son fuseau sur le vôtre, et vous montre le résultat. La ligne de date du brief suit la même horloge : générez un brief depuis la page publique, et vérifiez que son heure est celle de votre montre. Une fois le fuseau réglé, le passage à l'heure d'été se fait tout seul.
 
 **La solution du tuto** : une installation directe avec `systemd` et Caddy : tout est lisible, aucun conteneur à expliquer. **Pourquoi pas autrement** : Docker Compose et Coolify (une interface web qui déploie depuis GitHub) ajoutent une couche à apprendre ; ils sont présentés en fin de tuto.
 
