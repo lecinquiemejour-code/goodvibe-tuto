@@ -3,7 +3,7 @@
 > Webhook, cron, MCP, mémoire, observabilité, VPS et sous-agents, avec le skill **VibeCoding Copilote** (Le Cinquième Jour).
 > Public : développeurs intermédiaires qui découvrent les agents et le vibe coding. Version 1.0, septembre 2026.
 
-> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les sept règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO. Si le pilote demande une feature qui n'a pas de fiche, tu l'inscris d'abord sur sa propre ligne dans `fdd.md` et dans `plan-action.md`, puis tu lui fais suivre le même cycle, comme l'indique la section 4.2.
+> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les sept règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO. Si le pilote demande une feature qui n'a pas de fiche, tu l'inscris d'abord sur sa propre ligne dans `fdd.md` et dans `plan-action.md`, puis tu lui fais suivre le même cycle, comme l'indique la section 4.2. Tu tiens à jour le document de reprise, `REPRISE.md`, comme l'indique la même section.
 >
 > **Règle 1. Avant tout document : la visite guidée du projet.** Après la carte du voyage et avant `archi-stack.md`, tu présentes GoodVibe au pilote. Tant que cette visite n'est pas finie, tu ne rédiges aucun document et tu ne cites ni fichier ni bibliothèque. Tu t'appuies sur `GoodVibe-presentation.md` (la présentation du projet) et sur ce tuto : tu racontes ces textes avec tes mots, adaptés au profil du pilote, tu ne les colles pas. Dans `GoodVibe-presentation.md`, tu ignores les sections « Démarrage rapide », « Si ça coince » et « Liens », qui concernent le téléchargement du kit. Quatre temps, un message par temps, et tu attends la réponse du pilote entre chacun :
 >
@@ -81,22 +81,26 @@
 
 ## Démarrage rapide
 
-1. Créez un **répertoire vierge** (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE**.
+1. Créez un **répertoire vierge** (par exemple `goodvibe/`) et ouvrez-le avec votre éditeur : **Antigravity IDE** ou **VS Code**.
 2. Déposez-y le fichier ZIP du kit, tel quel, sans l'ouvrir : c'est l'agent qui le décompressera. Il contient `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `README.md` (la présentation du projet, que l'agent renommera en `GoodVibe-presentation.md`). Rien d'autre : pas de venv, pas de Git, pas de skill. L'agent s'occupe du reste.
 
    > Pour lire ce tuto **dans Antigravity** avec ses schémas : ils sont en Mermaid, que l'aperçu Markdown ne dessine pas seul. Ouvrez les extensions (**Ctrl + Maj + X**), tapez **`bierner.markdown-mermaid`** (la marketplace d'Antigravity est Open VSX, et la recherche en clair classe mal cette extension), installez **Markdown Preview Mermaid Support**, puis ouvrez l'aperçu avec **Ctrl + Maj + V**. Sinon, lisez le tuto sur GitHub, qui dessine les schémas nativement.
 
-3. Complétez la ligne « Profil de calibrage », à la fin du prompt ci-dessous : c'est elle qui règle le niveau des explications. Puis collez le prompt dans l'agent d'Antigravity :
+3. Complétez la ligne « Profil de calibrage », à la fin du prompt ci-dessous : c'est elle qui règle le niveau des explications. Puis collez le prompt dans votre agent :
 
 ```
-Nous démarrons le projet GoodVibe dans ce répertoire vierge.
+Nous démarrons le projet GoodVibe dans ce répertoire vierge. Si une étape ci-dessous est déjà faite, dis-le-moi et passe à la suivante.
 
-Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier, place ses trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md) à la racine, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas). Puis installe le skill VibeCoding Copilote depuis https://github.com/lecinquiemejour-code/vibecoding-copilote dans .agent/skills/vibecoding-copilote/, vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, puis dis-moi si je dois redémarrer la session pour qu'il soit pris en compte.
+Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier (celui qui contient GoodVibe-PRD.md), place ses trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md) à la racine, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas).
 
-Étape 2 : lance le vibecoding sur GoodVibe-PRD.md.
+Étape 2 : installe le skill VibeCoding Copilote dans .agents/skills/vibecoding-copilote/, dans ce seul dossier. Télécharge le ZIP du dépôt https://github.com/lecinquiemejour-code/vibecoding-copilote et extrais-le là, sans dossier .git. Si un ZIP du skill est déjà présent à la racine du projet, extrais celui-là au lieu de télécharger, puis supprime-le. Vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, et dis-moi ce que tu as installé, et où.
+
+Étape 3 : lis le SKILL.md du skill et déroule-le fidèlement sur GoodVibe-PRD.md, en commençant par la Phase 0.
 
 Contexte du projet :
 - Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les sept règles de la note d'en-tête du tuto, qui priment sur lui.
+- Fichier de règles : quand le skill dépose son gabarit CLAUDE.md à la racine, ajoute-y les sept lignes de la section 3.4 du tuto, corrige les lignes du gabarit qu'elles contredisent, et montre-moi le fichier entier. Dépose-en une copie identique sous le nom AGENTS.md, et garde les deux fichiers identiques à chaque modification : selon l'agent, c'est l'un ou l'autre qui est lu.
+- Document de reprise : tiens REPRISE.md à jour, comme l'indique la section 4.2 du tuto.
 - Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, commence par la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis dis-moi ce que tu vas faire, étape par étape, et pourquoi. Ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. N'affiche jamais un secret dans la discussion : ni clé, ni mot de passe, ni jeton. Au CHECK, fais une seule action à la fois et arrête-toi pour que je constate. Dis-moi toujours quand quelque chose échoue, et pourquoi. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
@@ -105,9 +109,19 @@ Contexte du projet :
 Commence par l'étape 1.
 ```
 
-> Si vous utilisez **Claude Code** plutôt que l'agent Gemini d'Antigravity, remplacez dans l'étape 1 `.agent/skills/vibecoding-copilote/` par `~/.claude/skills/vibecoding-copilote/` : c'est là que Claude Code cherche ses skills.
+> **Un autre agent, ou un autre éditeur ?** Le même prompt vaut pour l'agent Gemini d'Antigravity, pour Claude Code, pour Codex et pour GitHub Copilot dans VS Code : il fait lire le `SKILL.md` à l'agent, sans attendre que l'éditeur détecte le skill. La section 1.5 dit comment chacun retrouve ensuite le skill et ses règles.
 
-Si l'agent demande un redémarrage après l'installation du skill, redémarrez la session et collez simplement : **« lance le vibecoding sur GoodVibe-PRD.md, en suivant le contexte du prompt précédent »**. Ce prompt reprend les sept lignes du `CLAUDE.md` pour couvrir le premier lancement, avant que le skill dépose le fichier de règles. Pour les sessions suivantes, **« reprends le vibecoding sur GoodVibe »** suffit. Tout le reste du document explique ce qui va se passer et ce que vous devez vérifier à chaque étape.
+4. Vérifiez que l'agent suit le skill : il doit **se présenter**, résumer la méthode PDCA en une phrase et poser **une seule question** de calibrage. S'il écrit du code d'emblée ou saute la présentation, suivez la section 1.5 : le dossier du skill, puis une nouvelle conversation, puis le même prompt recollé en entier. L'agent constate ce qui est déjà fait et reprend à la bonne étape.
+
+Ce prompt reprend les sept lignes du `CLAUDE.md` pour couvrir le premier lancement, avant que le skill dépose le fichier de règles.
+
+**Pour les sessions suivantes.** À la fin de chaque session, dites à l'agent : « on s'arrête là ». Il met à jour `REPRISE.md`, le document de reprise du projet (section 4.2). Au début de la session suivante, ouvrez une nouvelle conversation et collez le prompt qui figure à la fin de `REPRISE.md`. S'il n'existe pas encore, collez celui-ci :
+
+```
+Reprends le vibecoding sur GoodVibe. Ce projet est déjà en cours et suit la méthode VibeCoding PDCA. Avant de me répondre, lis le SKILL.md du skill VibeCoding Copilote (dossier .agents/skills/vibecoding-copilote/), en particulier sa section « Reprise de session », puis la note d'en-tête de tuto-goodvibe-vibecoding.md, REPRISE.md et plan-action.md. Dis-moi où nous en sommes et ce que tu proposes de faire ensuite, puis attends ma réponse. Ne modifie aucun fichier sans mon GO.
+```
+
+Tout le reste du document explique ce qui va se passer et ce que vous devez vérifier à chaque étape.
 
 ---
 
@@ -160,7 +174,7 @@ Tout tourne **en local jusqu'à la feature 11 incluse**. Le VPS n'arrive qu'en f
 
 ### 1.4 Prérequis
 
-- **Antigravity** installé, avec Gemini intégré.
+- Un éditeur avec un agent de codage : **Antigravity** et son agent Gemini intégré, ou **VS Code** avec Claude Code, Codex ou GitHub Copilot. Le parcours a été rodé avec Antigravity ; le prompt de démarrage et les fichiers de règles sont prévus pour les quatre agents (section 1.5).
 - Un compte **Google AI Studio**. La clé API Gemini se crée **le moment venu**, à la fiche 1, quand l'agent prépare le `.env` : inutile de l'anticiper.
 - Un compte **GitHub**. Python 3.12 et Git ne sont pas des prérequis : **l'agent de codage les installe** s'ils manquent, puis gère l'environnement virtuel et les dépendances. « Intermédiaire » signifie ici savoir **lire** le code généré pour le juger au CHECK.
 - Pour la section déploiement uniquement : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
@@ -170,15 +184,31 @@ Tout tourne **en local jusqu'à la feature 11 incluse**. Le VPS n'arrive qu'en f
 
 Le skill est un dossier de fichiers Markdown : https://github.com/lecinquiemejour-code/vibecoding-copilote
 
-**Ce que fait l'agent** (c'est l'étape 1 du prompt de démarrage rapide) :
+**Ce que fait l'agent** (ce sont les étapes 2 et 3 du prompt de démarrage rapide) :
 
-- Cloner le dépôt dans le dossier des skills du projet. Dans Antigravity, les skills se chargent depuis `.agent/skills/<nom>/` (projet) ou `~/.gemini/antigravity/skills/<nom>/` (global). Dans Claude Code (extension dans Antigravity), depuis `~/.claude/skills/<nom>/`.
-- Vérifier que `SKILL.md`, `references/` et `assets/CLAUDE.md` sont bien présents.
-- Annoncer qu'il suivra ces règles.
+- Télécharger le ZIP du dépôt et l'extraire dans `.agents/skills/vibecoding-copilote/`, en un seul exemplaire et sans dossier `.git` : un skill cloné avec Git deviendrait un dépôt dans le dépôt du projet.
+- Vérifier que `SKILL.md`, `references/` et `assets/CLAUDE.md` sont bien présents, et vous dire ce qu'il a installé, et où.
+- Lire le `SKILL.md` et le dérouler, en commençant par sa Phase 0. Le prompt le lui demande en toutes lettres : il n'attend pas que l'éditeur détecte le skill.
 
-**Tout vit dans le projet** : le skill (dans `.agent/skills/`) et, à la racine, `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `GoodVibe-presentation.md` (le `README.md` du kit, renommé par l'agent). Le pilote lit le tuto ; l'agent le suit (voir la note en tête du document et la section 3.4).
+**Un seul dossier, deux fichiers de règles.** Chaque agent a ses habitudes. Le dossier `.agents/skills/` et le couple `CLAUDE.md` / `AGENTS.md` les couvrent tous :
 
-**Ce que vous faites** : ouvrir le répertoire vierge dans Antigravity et y déposer le ZIP du kit, puis, après le redémarrage de la session d'agent (Antigravity redétecte les skills au redémarrage), vérifier que le skill répond. Le test : dites « lance le vibecoding sur mon PRD ». L'agent doit **se présenter**, résumer la méthode PDCA en une phrase et poser **une seule question** de calibrage (débutant ou développeur). S'il écrit du code d'emblée ou saute la présentation, le skill n'est pas chargé : revenez à cette étape.
+| Agent | Où il tourne | Comment il retrouve le skill | Le fichier de règles qu'il lit |
+|---|---|---|---|
+| Agent Gemini | Antigravity | Il détecte `.agents/skills/` | `AGENTS.md` |
+| Codex | VS Code, terminal | Il détecte `.agents/skills/` | `AGENTS.md` |
+| GitHub Copilot | VS Code | Il détecte `.agents/skills/` | `AGENTS.md` |
+| Claude Code | VS Code, Antigravity, terminal | Son fichier de règles lui dit où est le skill et de le lire (section 3.4) | `CLAUDE.md` |
+
+Claude Code ne détecte pas `.agents/skills/` (il cherche ses skills dans `.claude/skills/`) : c'est son fichier de règles qui le conduit au skill. Les deux fichiers de règles ont le même contenu, et l'agent les garde identiques. Vous pouvez donc changer d'agent en cours de projet : quand les quotas de l'un sont atteints, un autre reprend avec le prompt de reprise. Ces emplacements viennent de la documentation de chaque outil, consultée en septembre 2026 (<https://antigravity.google/docs/skills>, <https://antigravity.google/docs/rules>, <https://code.claude.com/docs/en/skills>, <https://learn.chatgpt.com/docs/build-skills>, <https://code.visualstudio.com/docs/copilot/customization/agent-skills>) : ils changent, et l'agent les revérifie s'il ne retrouve pas le skill.
+
+**Tout vit dans le projet** : le skill (dans `.agents/skills/`) et, à la racine, `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `GoodVibe-presentation.md` (le `README.md` du kit, renommé par l'agent). Le pilote lit le tuto ; l'agent le suit (voir la note en tête du document et la section 3.4).
+
+**Ce que vous faites** : ouvrir le répertoire vierge dans votre éditeur, y déposer le ZIP du kit, coller le prompt, puis vérifier que l'agent suit le skill. Le test : il doit **se présenter**, résumer la méthode PDCA en une phrase et poser **une seule question** de calibrage (débutant ou développeur). S'il écrit du code d'emblée ou saute la présentation, il ne suit pas le skill. Dans l'ordre :
+
+1. Vérifiez que le dossier `.agents/skills/vibecoding-copilote/` existe et contient `SKILL.md`.
+2. S'il manque, l'agent n'a pas pu télécharger le skill. Faites-le vous-même : sur la page du skill, bouton vert **`<> Code`**, puis **Download ZIP**. Déposez ce ZIP tel quel à la racine du projet, sans l'ouvrir : l'étape 2 du prompt prévoit ce cas.
+3. Ouvrez une **nouvelle conversation** avec l'agent : c'est cela, « redémarrer la session ». L'agent relit alors ses fichiers de règles et la liste des skills.
+4. Recollez le prompt de démarrage, en entier. L'agent constate ce qui est déjà fait et reprend à la bonne étape.
 
 > Lisez toujours le contenu d'un skill avant de l'activer. Celui-ci ne contient que du Markdown : aucun script, aucune dépendance.
 
@@ -449,19 +479,19 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 ### 3.4 Les sept lignes à ajouter au CLAUDE.md
 
-Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la **Règle 0** : jamais de code ni de publication sans GO. Il ne l'écrase jamais s'il existe. Pour GoodVibe, **l'agent y ajoute sept lignes** (demandez-lui, et vérifiez qu'il vous montre le résultat) :
+Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la **Règle 0** : jamais de code ni de publication sans GO. Il ne l'écrase jamais s'il existe. Pour GoodVibe, **l'agent y ajoute sept lignes** (le prompt de démarrage le lui demande ; vérifiez qu'il vous montre le résultat) :
 
 1. **Mise en ligne** : « La publication se fait sur un VPS, pas sur Netlify. Le GO MISE EN LIGNE se demande au début de la feature 12, avant tout envoi : il autorise le premier push vers le dépôt GitHub privé, puis la mise en ligne de la page. Avant lui, rien ne quitte la machine du pilote. À partir de la feature 13, GitHub Actions déploie chaque push sur `main`. »
 2. **CHECK** : « Le test humain ne passe pas toujours par un navigateur : selon la feature, il se fait dans le terminal, avec `curl`, dans l'onglet Activité ou dans la page Gradio. Le critère de réussite du `plan-action.md` précise lequel. »
 3. **Modèle** : « Le modèle de l'agent construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent les recherche dans la documentation officielle et les recommande au pilote, qui valide, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
-5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les sept règles de sa note d'en-tête, il prime sur le skill. »
+5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les sept règles de sa note d'en-tête, il prime sur le skill. La méthode est celle du skill VibeCoding Copilote, installé dans `.agents/skills/vibecoding-copilote/` : au début de chaque session, l'agent lit son `SKILL.md`, puis `REPRISE.md` et `plan-action.md`, avant de répondre. »
 6. **Pédagogie** : « Avant tout document, l'agent présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Chaque mot technique est expliqué à sa première apparition. Au PLAN, l'agent fait d'abord la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis annonce ce qu'il va faire, étape par étape, et pourquoi. Il présente une seule solution, celle du tuto : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote le schéma de séquence de la feature, puis les extraits de code qui comptent, et les explique. »
 7. **Secrets et CHECK** : « L'agent n'affiche jamais un secret, ni dans la discussion, ni dans un fichier du dépôt, ni dans un document de reprise : clé privée, mot de passe, jeton, clé API. Il le copie dans le presse-papiers du pilote, ou indique le fichier où il se trouve. Il n'ouvre jamais le fichier `.env` sans l'autorisation explicite du pilote. Au CHECK, il fait une seule action à la fois, s'arrête pour que le pilote constate, et ne conclut jamais à sa place. Quand une action échoue, il le dit aussitôt, avec la cause. »
 
-**L'agent corrige aussi les lignes du gabarit que ces règles contredisent.** Le gabarit du skill est écrit pour un projet quelconque : il place la mise en ligne en fin de projet, décrit un PLAN sans leçon, et peut avoir retenu un autre profil que le vôtre. Demandez à l'agent d'aligner ces lignes sur les sept règles, puis de vous montrer le fichier entier. Vérifiez qu'aucune consigne n'en contredit une autre : devant deux consignes contraires, l'agent choisit sans vous le dire.
+**L'agent corrige aussi les lignes du gabarit que ces règles contredisent.** Le gabarit du skill est écrit pour un projet quelconque : il place la mise en ligne en fin de projet, décrit un PLAN sans leçon, et peut avoir retenu un autre profil que le vôtre. Le prompt de démarrage demande à l'agent d'aligner ces lignes sur les sept règles, puis de vous montrer le fichier entier. Vérifiez qu'aucune consigne n'en contredit une autre : devant deux consignes contraires, l'agent choisit sans vous le dire.
 
-Si vous utilisez Gemini dans Antigravity plutôt que Claude Code, demandez aussi à l'agent de déposer une copie du fichier sous le nom `AGENTS.md`, que les agents non-Claude lisent. Le contenu du gabarit est volontairement agnostique.
+**Deux fichiers, un seul contenu.** L'agent dépose aussi une copie identique du fichier sous le nom `AGENTS.md`. Ce n'est pas une option : Claude Code lit `CLAUDE.md`, mais l'agent Gemini d'Antigravity, Codex et GitHub Copilot lisent `AGENTS.md` (section 1.5). Sans cette copie, l'agent Gemini et Codex travaillent sans la Règle 0 et sans les sept lignes : ils ne lisent pas `CLAUDE.md`. Les deux fichiers restent identiques : toute modification de l'un se reporte dans l'autre, dans le même commit. Le contenu du gabarit est volontairement agnostique.
 
 ---
 
@@ -469,7 +499,7 @@ Si vous utilisez Gemini dans Antigravity plutôt que Claude Code, demandez aussi
 
 ### 4.1 Le lancement
 
-Le répertoire ouvert dans Antigravity contient `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `GoodVibe-presentation.md`, et l'agent vient d'installer le skill (étape 1 du prompt de la section « Démarrage rapide »). L'étape 2 du même prompt lance le skill.
+Le répertoire ouvert dans votre éditeur contient `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `GoodVibe-presentation.md`, et l'agent vient d'installer le skill (étape 2 du prompt de la section « Démarrage rapide »). L'étape 3 du même prompt lui fait lire le `SKILL.md` et le dérouler.
 
 Ce qui doit se passer, dans l'ordre :
 
@@ -478,7 +508,7 @@ Ce qui doit se passer, dans l'ordre :
 3. Il donne la « carte du voyage » (pourquoi la méthode, puis les trois temps : cadrage, construction, mise en ligne) et demande un **premier GO** pour vérifier le `CLAUDE.md` et attaquer le cadrage.
 4. Il vous fait la **visite guidée du projet**, en quatre messages : ce qu'on construit et pour quoi faire, ce qu'est un agent, les capacités de GoodVibe, la vue d'architecture. Aucun document n'est rédigé avant la fin de cette visite. La vue d'architecture arrive en schéma texte, car la fenêtre de discussion ne dessine pas les diagrammes ; le diagramme complet est en section 5.0.
 
-Signal d'alerte : s'il ne se présente pas, ne pose pas la question, ou commence à écrire du code, le skill n'est pas chargé. Revenez à la section 1.5.
+Signal d'alerte : s'il ne se présente pas, ne pose pas la question, ou commence à écrire du code, il ne suit pas le skill. Revenez à la section 1.5.
 
 Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, s'il vous demande de choisir entre trois options, s'il vous présente un plan sans vous avoir d'abord expliqué le problème et l'idée, ou s'il passe au CHECK sans vous avoir montré de code, rappelez-lui les sept règles de la note d'en-tête du tuto.
 
@@ -505,6 +535,17 @@ Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du cod
 
 **Après la fiche 13, pousser, c'est publier.** Le pipeline met en production chaque push sur `main`. L'ordre ne change pas : CHECK en local, GO #2, commit ; puis l'agent annonce le push et attend votre GO ; vous vérifiez ensuite la page publique. Si vous préférez vérifier directement en ligne, l'agent vous dit d'abord ce que cela implique : le code part en production avant d'avoir été vérifié, et s'il a un défaut, il y reste jusqu'au correctif. Il lance `pytest` et `ruff` en local, vous en donne le résultat, et attend votre GO avant de pousser. « On vérifie en ligne » est une demande, pas un GO.
 
+**Le document de reprise.** Le contexte de l'agent s'efface entre deux sessions ; les fichiers, eux, restent. `plan-action.md` dit quelle feature est faite, en cours ou à faire. Il ne dit pas où l'on s'est arrêté à l'intérieur d'une feature : la leçon est-elle faite, le GO #1 donné, le CHECK en attente ? C'est le rôle de `REPRISE.md`, à la racine du projet. C'est le marque-page du projet : `plan-action.md` est la table des matières, `REPRISE.md` dit à quelle ligne on a posé le livre.
+
+| Partie | Ce qu'elle contient |
+|---|---|
+| 1. L'état du projet | Les features faites, celle en cours, l'état des tests, ce qui est en ligne |
+| 2. La situation exacte | L'étape de la boucle où l'on s'est arrêté, ce qui attend votre décision, les actions suivantes dans l'ordre |
+| 3. Où trouver les accès | Le nom des lignes du `.env` et des fichiers de clés : jamais un secret, jamais l'adresse du serveur |
+| 4. Le prompt de reprise | Le texte à coller à la prochaine session, écrit pour la situation du jour |
+
+L'agent crée `REPRISE.md` au commit de cadrage. Il le met à jour à chaque GO #2, à chaque push, et chaque fois que la session s'arrête au milieu d'une feature : dites-lui « on s'arrête là », il le met à jour avant de vous répondre. Le prompt de la partie 4 demande toujours à l'agent de lire le `SKILL.md` du skill, la note d'en-tête de ce tuto, `REPRISE.md` et `plan-action.md` avant de répondre, et de ne rien modifier sans GO : c'est ce qui permet de changer d'agent d'une session à l'autre. Le fichier est enregistré dans Git : il suit la règle 6, et ne contient aucun secret. Si `REPRISE.md` et `plan-action.md` se contredisent sur l'état d'une feature, `plan-action.md` fait foi, et l'agent vous signale l'écart.
+
 ### 4.3 Les trois documents de cadrage : ce que vous devez y trouver
 
 Le skill rédige chaque document, l'écrit réellement sur le disque, vous le montre, et attend votre validation avant le suivant. Voici ce que vous devez vérifier.
@@ -519,7 +560,7 @@ La liste des features, formulées « action, résultat, objet » (« afficher le
 L'ordre des features et leur **critère de réussite**. L'ordre attendu est celui de la section 5 : la page web dès la feature 2, pour que chaque feature suivante soit visible dans le navigateur ; le journal d'activité juste après (feature 3) pour que tout le reste soit observable ; la base et le profil avant le brief ; les tests avant le VPS ; le GO MISE EN LIGNE et le dépôt GitHub au début de la feature 12 ; le cron avec le serveur (feature 12) ; le CI/CD après le VPS ; le webhook en dernier, après la mise en ligne, pour être la première feature déployée par le pipeline. Ce document est **vivant** : il sera mis à jour à chaque tour, et c'est lui que vous relirez pour reprendre une session interrompue.
 
 **Le sas**
-Avant d'entrer en construction, le skill vous demandera de **citer le critère de réussite de la première feature**, en ouvrant `plan-action.md`. Ce n'est pas un piège : c'est pour garantir que vous avez réellement lu un document de cadrage. Puis il fait un **commit de cadrage** (les quatre documents et le `CLAUDE.md`) : c'est le point de reprise propre du projet.
+Avant d'entrer en construction, le skill vous demandera de **citer le critère de réussite de la première feature**, en ouvrant `plan-action.md`. Ce n'est pas un piège : c'est pour garantir que vous avez réellement lu un document de cadrage. Puis il fait un **commit de cadrage** (les quatre documents, le `CLAUDE.md`, sa copie `AGENTS.md` et le document de reprise `REPRISE.md`) : c'est le point de reprise propre du projet.
 
 ---
 
@@ -1914,6 +1955,9 @@ Chaque piste est un nouveau tour de roue PDCA, avec le skill, à partir du `plan
 - **Latence** : le temps entre l'envoi d'une requête et la réponse. En streaming, on distingue le temps avant le premier fragment et la durée totale.
 - **CI/CD** : intégration continue (tester à chaque push) et déploiement continu (mettre en ligne automatiquement quand les tests passent).
 - **Sous-agent** : une seconde boucle d'agent, avec son rôle et ses outils, appelée par l'orchestrateur comme un outil.
+- **Skill** : un dossier de consignes qu'un agent de codage sait lire pour suivre une méthode. Ici : VibeCoding Copilote, dans `.agents/skills/`.
+- **Fichier de règles** : le fichier que l'agent lit au début de chaque session. `CLAUDE.md` pour Claude Code, `AGENTS.md` pour l'agent Gemini d'Antigravity, Codex et GitHub Copilot : même contenu dans les deux.
+- **Document de reprise** : `REPRISE.md`, le marque-page du projet : où l'on s'est arrêté, ce qui attend votre décision, et le prompt à coller à la session suivante.
 - **PRD** : Product Requirements Document, le cahier des charges qui dit le quoi, pas le comment.
 - **FDD** : la décomposition en features-unités de construction, nommées « action, résultat, objet ».
 - **GO** : la validation humaine explicite. GO #1 autorise le code, GO #2 le commit local, GO MISE EN LIGNE la publication.

@@ -76,7 +76,7 @@ Le principe : **l'agent de codage fait, vous pilotez.** L'agent écrit le code, 
 
 ## Prérequis
 
-- **Antigravity IDE** installé, avec Gemini intégré.
+- Un éditeur avec un agent de codage : **Antigravity IDE** et son agent Gemini intégré, ou **VS Code** avec Claude Code, Codex ou GitHub Copilot. Le parcours a été rodé avec Antigravity ; le prompt de démarrage et les fichiers de règles sont prévus pour les quatre agents.
 - Un compte **Google AI Studio**. La clé API Gemini se crée plus tard, à la fiche 1 : inutile de l'anticiper.
 - Un compte **GitHub**.
 - *Pour la mise en ligne uniquement (fin de parcours)* : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
@@ -96,7 +96,7 @@ Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils
 
 ### 1. Préparez un répertoire vierge
 
-Créez un dossier vide (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE**. Vous n'y mettrez qu'un seul fichier : le ZIP du kit.
+Créez un dossier vide (par exemple `goodvibe/`) et ouvrez-le avec votre éditeur : **Antigravity IDE** ou **VS Code**. Vous n'y mettrez qu'un seul fichier : le ZIP du kit.
 
 ### 2. Déposez le ZIP du kit dans le dossier
 
@@ -110,19 +110,23 @@ Ce dépôt est privé : vous avez reçu une **invitation GitHub par mail**. Acce
 
 > 💡 Les schémas du tuto sont en Mermaid : ils s'affichent sur GitHub, mais pas dans l'aperçu Markdown d'Antigravity sans extension. Installez **Markdown Preview Mermaid Support** : Ctrl + Maj + X, tapez `bierner.markdown-mermaid` (la marketplace d'Antigravity est Open VSX, la recherche en clair la classe mal), puis Ctrl + Maj + V pour l'aperçu. Ou lisez le tuto **sur GitHub**.
 
-### 3. Collez ce prompt dans l'agent d'Antigravity
+### 3. Collez ce prompt dans votre agent
 
 Complétez d'abord la ligne « Profil de calibrage », à la fin du prompt : c'est elle qui règle le niveau des explications. Si vous débutez, écrivez « (1) je débute » : l'agent expliquera chaque mot technique.
 
 ```
-Nous démarrons le projet GoodVibe dans ce répertoire vierge.
+Nous démarrons le projet GoodVibe dans ce répertoire vierge. Si une étape ci-dessous est déjà faite, dis-le-moi et passe à la suivante.
 
-Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier, place ses trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md) à la racine, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas). Puis installe le skill VibeCoding Copilote depuis https://github.com/lecinquiemejour-code/vibecoding-copilote dans .agent/skills/vibecoding-copilote/, vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, puis dis-moi si je dois redémarrer la session pour qu'il soit pris en compte.
+Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier (celui qui contient GoodVibe-PRD.md), place ses trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md) à la racine, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas).
 
-Étape 2 : lance le vibecoding sur GoodVibe-PRD.md.
+Étape 2 : installe le skill VibeCoding Copilote dans .agents/skills/vibecoding-copilote/, dans ce seul dossier. Télécharge le ZIP du dépôt https://github.com/lecinquiemejour-code/vibecoding-copilote et extrais-le là, sans dossier .git. Si un ZIP du skill est déjà présent à la racine du projet, extrais celui-là au lieu de télécharger, puis supprime-le. Vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, et dis-moi ce que tu as installé, et où.
+
+Étape 3 : lis le SKILL.md du skill et déroule-le fidèlement sur GoodVibe-PRD.md, en commençant par la Phase 0.
 
 Contexte du projet :
 - Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les sept règles de la note d'en-tête du tuto, qui priment sur lui.
+- Fichier de règles : quand le skill dépose son gabarit CLAUDE.md à la racine, ajoute-y les sept lignes de la section 3.4 du tuto, corrige les lignes du gabarit qu'elles contredisent, et montre-moi le fichier entier. Dépose-en une copie identique sous le nom AGENTS.md, et garde les deux fichiers identiques à chaque modification : selon l'agent, c'est l'un ou l'autre qui est lu.
+- Document de reprise : tiens REPRISE.md à jour, comme l'indique la section 4.2 du tuto.
 - Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis sa note d'en-tête et applique-la. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, commence par la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis dis-moi ce que tu vas faire, étape par étape, et pourquoi. Ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. N'affiche jamais un secret dans la discussion : ni clé, ni mot de passe, ni jeton. Au CHECK, fais une seule action à la fois et arrête-toi pour que je constate. Dis-moi toujours quand quelque chose échoue, et pourquoi. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
@@ -131,36 +135,47 @@ Contexte du projet :
 Commence par l'étape 1.
 ```
 
-> 💡 **Claude Code plutôt que l'agent Gemini d'Antigravity ?** Remplacez, dans l'étape 1 du prompt, `.agent/skills/vibecoding-copilote/` par `~/.claude/skills/vibecoding-copilote/` : c'est là que Claude Code cherche ses skills.
+> 💡 **Un autre agent, ou un autre éditeur ?** Le même prompt vaut pour tous : il fait lire le `SKILL.md` à l'agent, sans attendre que l'éditeur détecte le skill. Ensuite, chaque agent retrouve le skill et les règles par ses propres moyens :
+>
+> | Agent | Où il tourne | Comment il retrouve le skill | Le fichier de règles qu'il lit |
+> |---|---|---|---|
+> | Agent Gemini | Antigravity | Il détecte `.agents/skills/` | `AGENTS.md` |
+> | Codex | VS Code, terminal | Il détecte `.agents/skills/` | `AGENTS.md` |
+> | GitHub Copilot | VS Code | Il détecte `.agents/skills/` | `AGENTS.md` |
+> | Claude Code | VS Code, Antigravity, terminal | Son fichier de règles lui dit où est le skill et de le lire | `CLAUDE.md` |
+>
+> C'est pour cela que le prompt demande deux fichiers de règles identiques, `CLAUDE.md` et `AGENTS.md`, et un seul dossier pour le skill. Vous pouvez changer d'agent en cours de projet : le prompt de reprise suffit.
 
-### 4. Si l'agent demande un redémarrage
+### 4. Vérifiez que l'agent suit le skill
 
-Redémarrez la session d'agent (Antigravity ne détecte les nouveaux skills qu'au redémarrage), puis collez :
+L'agent doit **se présenter**, résumer la méthode PDCA en une phrase et poser **une seule question** de calibrage. S'il écrit du code d'emblée ou saute la présentation, il ne suit pas le skill : passez à l'étape 5.
 
-```
-lance le vibecoding sur GoodVibe-PRD.md, en suivant le contexte du prompt précédent
-```
+### 5. Si l'agent ne suit pas le skill
 
-### 5. Vérifiez que le skill est bien chargé
-
-L'agent doit **se présenter**, résumer la méthode PDCA en une phrase et poser **une seule question** de calibrage. S'il écrit du code d'emblée ou saute la présentation, le skill n'est pas chargé : revenez à l'étape 3.
+1. Vérifiez que le dossier `.agents/skills/vibecoding-copilote/` existe dans votre projet et contient `SKILL.md`.
+2. S'il manque, l'agent n'a pas pu télécharger le skill. Faites-le vous-même : sur [la page du skill](https://github.com/lecinquiemejour-code/vibecoding-copilote), bouton vert **`<> Code`** → **Download ZIP**, puis déposez ce ZIP tel quel à la racine de votre projet, sans l'ouvrir.
+3. Ouvrez une **nouvelle conversation** avec l'agent : c'est cela, « redémarrer la session ». L'agent relit alors ses fichiers de règles et la liste des skills.
+4. Recollez le prompt de l'étape 3, en entier. L'agent constate ce qui est déjà fait et reprend à la bonne étape.
 
 ### Pour les sessions suivantes
 
-Un seul prompt suffit :
+**À la fin de chaque session**, dites à l'agent : « on s'arrête là ». Il met à jour `REPRISE.md`, le document de reprise du projet : où vous en êtes, ce qui attend votre décision, et le prompt à coller la prochaine fois.
+
+**Au début de la session suivante**, ouvrez une nouvelle conversation et collez le prompt qui figure à la fin de `REPRISE.md`. S'il n'existe pas encore, collez celui-ci :
 
 ```
-reprends le vibecoding sur GoodVibe
+Reprends le vibecoding sur GoodVibe. Ce projet est déjà en cours et suit la méthode VibeCoding PDCA. Avant de me répondre, lis le SKILL.md du skill VibeCoding Copilote (dossier .agents/skills/vibecoding-copilote/), en particulier sa section « Reprise de session », puis la note d'en-tête de tuto-goodvibe-vibecoding.md, REPRISE.md et plan-action.md. Dis-moi où nous en sommes et ce que tu proposes de faire ensuite, puis attends ma réponse. Ne modifie aucun fichier sans mon GO.
 ```
 
 ## Si ça coince
 
 | Symptôme | Que faire |
 |---|---|
-| L'agent écrit du code d'emblée, sans se présenter ni poser la question de calibrage | Le skill n'est pas chargé : vérifiez que `SKILL.md` est dans le dossier des skills, redémarrez la session d'agent, recollez le prompt de reprise. |
-| L'agent code ou modifie des fichiers sans attendre votre GO | Rappelez-lui la **Règle 0** du `CLAUDE.md` : jamais de code sans GO. S'il récidive, redémarrez la session, le fichier de règles est relu. |
-| « Quota exceeded », réponses qui s'arrêtent : le plan gratuit Gemini est épuisé | Attendez le renouvellement, ou passez le relais à **Claude Code** avec « reprends le vibecoding sur GoodVibe ». |
-| Vous reprenez après plusieurs jours sans savoir où vous en êtes | Ouvrez `plan-action.md` dans votre projet : il dit quelle feature est « fait » et laquelle est en cours. Puis « reprends le vibecoding sur GoodVibe ». |
+| L'agent écrit du code d'emblée, sans se présenter ni poser la question de calibrage | Il ne suit pas le skill : suivez l'étape 5 du démarrage rapide (dossier du skill, nouvelle conversation, prompt recollé). |
+| L'agent n'arrive pas à télécharger le skill | Téléchargez vous-même son ZIP et déposez-le à la racine du projet : étape 5 du démarrage rapide. |
+| L'agent code ou modifie des fichiers sans attendre votre GO | Rappelez-lui la **Règle 0** du fichier de règles (`CLAUDE.md` et sa copie `AGENTS.md`) : jamais de code sans GO. S'il récidive, ouvrez une nouvelle conversation : le fichier de règles est relu. Vérifiez que `AGENTS.md` existe : c'est lui que lisent l'agent Gemini d'Antigravity, Codex et GitHub Copilot. |
+| « Quota exceeded », réponses qui s'arrêtent : le plan gratuit Gemini est épuisé | Attendez le renouvellement, ou passez le relais à **Claude Code** avec le prompt de reprise. |
+| Vous reprenez après plusieurs jours sans savoir où vous en êtes | Ouvrez `REPRISE.md` dans votre projet : il dit où vous vous êtes arrêté et ce qui attend votre décision. `plan-action.md` dit quelle feature est « fait » et laquelle est en cours. Puis collez le prompt de reprise. |
 | Erreur 404 ou « model not found » à l'appel de Gemini | Google a retiré ou renommé le modèle. Demandez à l'agent de vérifier la documentation officielle et de changer le nom dans `config.py`. |
 | Un CHECK est KO et l'agent n'arrive pas à réparer | Chaque fiche du tuto a une rubrique **Pièges** : donnez-la à lire à l'agent, elle liste les causes classiques. |
 | Sur GitHub, les schémas affichent « Unable to render rich display » | Ce n'est pas le tuto : une extension du navigateur empêche GitHub de dessiner les schémas. Ouvrez la page en navigation privée, ou désactivez les extensions une par une pour trouver la fautive. |
