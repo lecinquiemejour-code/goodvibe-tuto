@@ -2,6 +2,8 @@
 
 > Webhook, cron, MCP, mémoire, observabilité, VPS et sous-agents, avec le skill **VibeCoding Copilote** (Le Cinquième Jour).
 > Public : développeurs intermédiaires qui découvrent les agents et le vibe coding. Version 1.0, septembre 2026.
+>
+> Conçu et validé pour **Antigravity IDE**. Il doit fonctionner aussi dans VS Code ou l'un de ses forks, sans que ce parcours ait été validé (section 1.5).
 
 > **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les sept règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO. Si le pilote demande une feature qui n'a pas de fiche, tu l'inscris d'abord sur sa propre ligne dans `fdd.md` et dans `plan-action.md`, puis tu lui fais suivre le même cycle, comme l'indique la section 4.2. Tu tiens à jour le document de reprise, `REPRISE.md`, comme l'indique la même section.
 >
@@ -81,7 +83,7 @@
 
 ## Démarrage rapide
 
-1. Créez un **répertoire vierge** (par exemple `goodvibe/`) et ouvrez-le avec votre éditeur : **Antigravity IDE** ou **VS Code**.
+1. Créez un **répertoire vierge** (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE** (ou, à défaut, VS Code ou l'un de ses forks).
 2. Déposez-y le fichier ZIP du kit, tel quel, sans l'ouvrir : c'est l'agent qui le décompressera. Il contient `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `README.md` (la présentation du projet, que l'agent renommera en `GoodVibe-presentation.md`). Rien d'autre : pas de venv, pas de Git, pas de skill. L'agent s'occupe du reste.
 
    > Pour lire ce tuto **dans Antigravity** avec ses schémas : ils sont en Mermaid, que l'aperçu Markdown ne dessine pas seul. Ouvrez les extensions (**Ctrl + Maj + X**), tapez **`bierner.markdown-mermaid`** (la marketplace d'Antigravity est Open VSX, et la recherche en clair classe mal cette extension), installez **Markdown Preview Mermaid Support**, puis ouvrez l'aperçu avec **Ctrl + Maj + V**. Sinon, lisez le tuto sur GitHub, qui dessine les schémas nativement.
@@ -109,7 +111,7 @@ Contexte du projet :
 Commence par l'étape 1.
 ```
 
-> **Un autre agent, ou un autre éditeur ?** Le même prompt vaut pour l'agent Gemini d'Antigravity, pour Claude Code, pour Codex et pour GitHub Copilot dans VS Code : il fait lire le `SKILL.md` à l'agent, sans attendre que l'éditeur détecte le skill. La section 1.5 dit comment chacun retrouve ensuite le skill et ses règles.
+> **Un autre agent, ou un autre éditeur ?** Ce tuto est validé avec l'agent Gemini d'Antigravity. Le même prompt doit valoir pour Claude Code, pour Codex et pour GitHub Copilot, dans VS Code ou l'un de ses forks : il fait lire le `SKILL.md` à l'agent, sans attendre que l'éditeur détecte le skill. La section 1.5 dit comment chacun retrouve ensuite le skill et ses règles.
 
 4. Vérifiez que l'agent suit le skill : il doit **se présenter**, résumer la méthode PDCA en une phrase et poser **une seule question** de calibrage. S'il écrit du code d'emblée ou saute la présentation, suivez la section 1.5 : le dossier du skill, puis une nouvelle conversation, puis le même prompt recollé en entier. L'agent constate ce qui est déjà fait et reprend à la bonne étape.
 
@@ -174,7 +176,7 @@ Tout tourne **en local jusqu'à la feature 11 incluse**. Le VPS n'arrive qu'en f
 
 ### 1.4 Prérequis
 
-- Un éditeur avec un agent de codage : **Antigravity** et son agent Gemini intégré, ou **VS Code** avec Claude Code, Codex ou GitHub Copilot. Le parcours a été rodé avec Antigravity ; le prompt de démarrage et les fichiers de règles sont prévus pour les quatre agents (section 1.5).
+- **Antigravity** installé, avec Gemini intégré. Ce tuto est conçu et validé pour Antigravity IDE. Il doit fonctionner aussi dans **VS Code** ou l'un de ses forks, avec Claude Code, Codex ou GitHub Copilot : le prompt de démarrage et les fichiers de règles sont prévus pour eux (section 1.5), mais ce parcours n'a pas été validé.
 - Un compte **Google AI Studio**. La clé API Gemini se crée **le moment venu**, à la fiche 1, quand l'agent prépare le `.env` : inutile de l'anticiper.
 - Un compte **GitHub**. Python 3.12 et Git ne sont pas des prérequis : **l'agent de codage les installe** s'ils manquent, puis gère l'environnement virtuel et les dépendances. « Intermédiaire » signifie ici savoir **lire** le code généré pour le juger au CHECK.
 - Pour la section déploiement uniquement : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.

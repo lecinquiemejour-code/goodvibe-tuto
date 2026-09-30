@@ -2,6 +2,8 @@
 
 > **Ceci est un projet pédagogique.** Son but n'est pas de livrer une application, mais de vous apprendre à **concevoir, coder et mettre en production un agent IA autonome écrit en Python**, pas à pas, en vibe coding.
 > Par **Le Cinquième Jour** · Version 1.0 · septembre 2026
+>
+> Conçu et validé pour **Antigravity IDE**. Il doit fonctionner aussi dans VS Code ou l'un de ses forks, sans que ce parcours ait été validé.
 
 ## 🎯 Un projet pour apprendre
 
@@ -76,7 +78,7 @@ Le principe : **l'agent de codage fait, vous pilotez.** L'agent écrit le code, 
 
 ## Prérequis
 
-- Un éditeur avec un agent de codage : **Antigravity IDE** et son agent Gemini intégré, ou **VS Code** avec Claude Code, Codex ou GitHub Copilot. Le parcours a été rodé avec Antigravity ; le prompt de démarrage et les fichiers de règles sont prévus pour les quatre agents.
+- **Antigravity IDE** installé, avec Gemini intégré. Ce tuto est conçu et validé pour Antigravity IDE. Il doit fonctionner aussi dans **VS Code** ou l'un de ses forks, avec Claude Code, Codex ou GitHub Copilot : le prompt de démarrage et les fichiers de règles sont prévus pour eux, mais ce parcours n'a pas été validé.
 - Un compte **Google AI Studio**. La clé API Gemini se crée plus tard, à la fiche 1 : inutile de l'anticiper.
 - Un compte **GitHub**.
 - *Pour la mise en ligne uniquement (fin de parcours)* : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
@@ -96,7 +98,7 @@ Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils
 
 ### 1. Préparez un répertoire vierge
 
-Créez un dossier vide (par exemple `goodvibe/`) et ouvrez-le avec votre éditeur : **Antigravity IDE** ou **VS Code**. Vous n'y mettrez qu'un seul fichier : le ZIP du kit.
+Créez un dossier vide (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE** (ou, à défaut, VS Code ou l'un de ses forks). Vous n'y mettrez qu'un seul fichier : le ZIP du kit.
 
 ### 2. Déposez le ZIP du kit dans le dossier
 
@@ -135,7 +137,7 @@ Contexte du projet :
 Commence par l'étape 1.
 ```
 
-> 💡 **Un autre agent, ou un autre éditeur ?** Le même prompt vaut pour tous : il fait lire le `SKILL.md` à l'agent, sans attendre que l'éditeur détecte le skill. Ensuite, chaque agent retrouve le skill et les règles par ses propres moyens :
+> 💡 **Un autre agent, ou un autre éditeur ?** Le tuto est validé avec l'agent Gemini d'Antigravity. Le même prompt doit valoir pour les autres : il fait lire le `SKILL.md` à l'agent, sans attendre que l'éditeur détecte le skill. Ensuite, chaque agent retrouve le skill et les règles par ses propres moyens :
 >
 > | Agent | Où il tourne | Comment il retrouve le skill | Le fichier de règles qu'il lit |
 > |---|---|---|---|
