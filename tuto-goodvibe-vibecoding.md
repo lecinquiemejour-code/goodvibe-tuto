@@ -473,7 +473,7 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 **Indispensable (Must)** : chat terminal en streaming ; profil retenu en conversation ; « qu'est-ce que tu sais de moi ? » ; retrait d'une note sur demande ; « oublie-moi » ; brief du matin par cron, daté, avec anti-doublon ; bouton « Générer le brief maintenant » ; webhook pense-bête avec jeton ; page web protégée, avec un bouton « Se déconnecter » ; onglets Mémoire et Activité (tokens entrée, sortie, réflexion ; latence ; coût estimé) ; case « Voir les coulisses » (réflexion, appels d'outils et leurs JSON) ; travail de l'agent visible en direct, dans le chat comme dans le brief, avec un relevé des tokens.
 
-**Souhaitable (Should)** : image du jour (météo, lieu, horoscope) ; « explique ce que tu viens de faire ».
+**Souhaitable (Should)** : image du jour (météo, lieu, horoscope, centres d'intérêt) ; « explique ce que tu viens de faire ».
 
 **Bonus (Could)** : pense-bête depuis le téléphone ; version 2 à sous-agents.
 
@@ -1253,12 +1253,12 @@ flowchart LR
 **Pourquoi, et l'idée en clair**
 
 - *Le problème.* Le brief n'est que du texte. On veut qu'il s'ouvre sur une image du jour, à votre mesure, et pas sur une photo tirée au hasard.
-- *L'idée.* Deux modèles travaillent à la chaîne. Le premier rédige la commande : il décrit l'image à partir de la météo, de la ville et de l'horoscope. Le second la dessine. C'est un directeur artistique et son illustrateur.
+- *L'idée.* Deux modèles travaillent à la chaîne. Le premier rédige la commande : il décrit l'image à partir de la météo, de la ville, de l'horoscope et de vos centres d'intérêt. Le second la dessine. C'est un directeur artistique et son illustrateur.
 - *Les mots nouveaux.* **Modèle image** : le modèle qui dessine à partir d'une description. **Prompt visuel** : cette description. **Base64** : la façon dont l'image voyage, sous forme de texte, avant d'être enregistrée en fichier. **Message d'erreur** : ce qui s'affiche à la place de l'image si elle échoue ; le brief sort quand même.
 
-**Ce que vous verrez** : au-dessus de votre brief, une image générée ce matin, qui montre votre ville sous la météo du jour dans l'ambiance de votre horoscope.
+**Ce que vous verrez** : au-dessus de votre brief, une image générée ce matin, qui montre votre ville sous la météo du jour dans l'ambiance de votre horoscope, avec un clin d'œil à l'un de vos centres d'intérêt.
 
-**Ce qu'on construit** : `image.py` : composition d'un prompt visuel par le modèle texte à partir de trois éléments (météo, lieu, horoscope), génération par le modèle image, sauvegarde dans `data/images/`, affichage dans Gradio, message d'erreur si échec, une image par jour maximum.
+**Ce qu'on construit** : `image.py` : composition d'un prompt visuel par le modèle texte à partir de quatre éléments (météo, lieu, horoscope, centres d'intérêt), génération par le modèle image, sauvegarde dans `data/images/`, affichage dans Gradio, message d'erreur si échec, une image par jour maximum.
 
 ```mermaid
 sequenceDiagram
@@ -1267,7 +1267,8 @@ sequenceDiagram
     participant G as Gemini texte
     participant N as Gemini image (MODELE_IMAGE)
     participant D as SQLite / disque
-    B->>I: generer_image(meteo, ville, horoscope)
+    B->>D: lire le profil (ville, centres d'intérêt)
+    B->>I: generer_image(meteo, ville, horoscope, interets)
     I->>D: image déjà produite aujourd'hui ?
     I->>G: "Compose un prompt visuel court à partir de : ..."
     G-->>I: prompt visuel (journalisé)
@@ -1285,11 +1286,11 @@ sequenceDiagram
 
 **La solution du tuto** : un prompt visuel composé par le modèle texte : c'est l'agent qui crée, et le prompt est journalisé. **Pourquoi pas autrement** : un gabarit fixe rempli en Python donnerait toujours le même genre d'image ; une banque d'images locale montrerait une image sans rapport avec le jour, et GoodVibe n'affiche jamais un contenu de remplacement.
 
-**À relire** : une image par jour maximum (clé `image-AAAA-MM-JJ` dans `traites`) ; le brief **sort même si l'image échoue**, avec à la place de l'image un message d'erreur qui dit ce qui a échoué et pourquoi, sans image de remplacement ; si la météo ou l'horoscope est en erreur, le prompt visuel se compose avec ce qui reste : aucun élément n'est inventé pour le remplacer ; le prompt visuel est journalisé, l'image comptée hors tokens ; `data/images/` dans `.gitignore` ; le nom du modèle image vit dans `config.py` (`MODELE_IMAGE`), vérifié dans la documentation de Google au PLAN.
+**À relire** : une image par jour maximum (clé `image-AAAA-MM-JJ` dans `traites`) ; le brief **sort même si l'image échoue**, avec à la place de l'image un message d'erreur qui dit ce qui a échoué et pourquoi, sans image de remplacement ; si la météo ou l'horoscope est en erreur, le prompt visuel se compose avec ce qui reste : aucun élément n'est inventé pour le remplacer ; `brief.py` lit la ville et les centres d'intérêt dans le profil et les transmet à `image.py` : les quatre éléments arrivent jusqu'à la consigne envoyée au modèle texte ; les centres d'intérêt entrent dans l'image comme un détail discret, pas comme son sujet ; un champ vide du profil (ville, centres d'intérêt) est simplement absent du prompt visuel : aucune valeur par défaut n'est écrite dans le code, ni « Paris », ni « ensoleillé » ; si la composition du prompt visuel échoue, aucun prompt écrit d'avance ne prend sa place : le message d'erreur le dit ; le prompt visuel est journalisé, l'image comptée hors tokens ; `data/images/` dans `.gitignore` ; le nom du modèle image vit dans `config.py` (`MODELE_IMAGE`), vérifié dans la documentation de Google au PLAN.
 
-**CHECK** : brief généré depuis la page : les étapes de l'image défilent (le prompt visuel composé, puis la génération), l'image apparaît au-dessus du texte et reflète bien météo et lieu. Puis la panne : l'agent met un mauvais nom de modèle image dans la config, et vous générez un brief. Il sort quand même, avec à la place de l'image un message d'erreur qui dit ce qui a échoué et pourquoi ; le texte du brief est complet ; l'onglet Activité, détails techniques affichés, note l'échec et sa cause. L'agent remet le bon nom, vous générez un brief : l'image est revenue.
+**CHECK** : brief généré depuis la page : les étapes de l'image défilent (le prompt visuel composé, puis la génération), l'image apparaît au-dessus du texte et reflète bien météo et lieu. Lisez le prompt visuel affiché : il cite votre ville et l'un de vos centres d'intérêt, tels que les montre l'onglet Mémoire. Dites « oublie-moi », confirmez, puis générez un brief : le prompt visuel ne cite plus ni ville ni centre d'intérêt, et n'en invente aucun. Présentez-vous de nouveau. Puis la panne : l'agent met un mauvais nom de modèle image dans la config, et vous générez un brief. Il sort quand même, avec à la place de l'image un message d'erreur qui dit ce qui a échoué et pourquoi ; le texte du brief est complet ; l'onglet Activité, détails techniques affichés, note l'échec et sa cause. L'agent remet le bon nom, vous générez un brief : l'image est revenue.
 
-**Pièges** : quota du plan gratuit atteint (le message d'erreur doit le dire) ; image de remplacement ou élément inventé dans le prompt visuel quand une source est en panne ; images dans Git ; image « cassée » dans Gradio parce que `allowed_paths` n'inclut pas le dossier ; format ou taille inadaptés.
+**Pièges** : quota du plan gratuit atteint (le message d'erreur doit le dire) ; image de remplacement ou élément inventé dans le prompt visuel quand une source est en panne ; centres d'intérêt absents de l'image (`brief.py` lit le profil mais ne les transmet pas à `image.py`) ; ville ou météo par défaut écrites dans le code, qui donnent une image de Paris au soleil à quelqu'un qui n'a rien dit de sa ville ; prompt visuel écrit d'avance, qui sert quand la composition échoue et cache la panne ; centres d'intérêt qui envahissent l'image (préciser la consigne : un détail, pas le sujet) ; images dans Git ; image « cassée » dans Gradio parce que `allowed_paths` n'inclut pas le dossier ; format ou taille inadaptés.
 
 **Où on en est** : le brief est complet, texte et image. Fichiers ajoutés : `image.py`. GoodVibe est complet fonctionnellement : l'architecture cible de la V1 est entièrement en couleur, à l'exception du webhook, construit après la mise en ligne (fiche 14).
 
@@ -1337,7 +1338,7 @@ flowchart LR
 
 **La solution du tuto** : `pytest` avec des simulations (mocks) du modèle et des API : rapide, gratuit, reproductible. **Pourquoi pas autrement** : des tests contre les vraies API sont lents, coûteux, et cassent quand une API bouge ; se passer de tests est exclu par le PRD, la CI en a besoin.
 
-**À relire** : **aucun test ne fait un vrai appel réseau** ; un test vérifie que le prompt système et les outils sont renvoyés à chaque appel, y compris après un outil ; un test vérifie que le profil de la mémoire part bien vers le modèle, et qu'aucun prénom ne part quand la mémoire est vide ; un test joue deux messages de suite, coulisses ouvertes, et vérifie que les messages du second appel ne contiennent que le dialogue : ni réflexion, ni JSON d'outil, ni relevé, ni copie du prompt système ; il part de ce que la boucle produit vraiment au premier message, pas d'un historique écrit à la main ; le même test est rejoué avec un premier message qui appelle un outil, et avec un historique au format de Gradio (liste de morceaux) ; un test vérifie que la table `conversations` ne reçoit que le texte de la réponse ; un test vérifie qu'après un effacement la page rend un historique vide, et que l'échange suivant est bien enregistré ; le test du brief couvre l'anti-doublon ; un test met chaque source en panne (météo, serveur `fetch`, API horoscope, modèle image) et vérifie que l'outil rend un message d'erreur qui nomme la cause, jamais un contenu de remplacement ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
+**À relire** : **aucun test ne fait un vrai appel réseau** ; un test vérifie que le prompt système et les outils sont renvoyés à chaque appel, y compris après un outil ; un test vérifie que le profil de la mémoire part bien vers le modèle, et qu'aucun prénom ne part quand la mémoire est vide ; un test joue deux messages de suite, coulisses ouvertes, et vérifie que les messages du second appel ne contiennent que le dialogue : ni réflexion, ni JSON d'outil, ni relevé, ni copie du prompt système ; il part de ce que la boucle produit vraiment au premier message, pas d'un historique écrit à la main ; le même test est rejoué avec un premier message qui appelle un outil, et avec un historique au format de Gradio (liste de morceaux) ; un test vérifie que la table `conversations` ne reçoit que le texte de la réponse ; un test vérifie qu'après un effacement la page rend un historique vide, et que l'échange suivant est bien enregistré ; le test du brief couvre l'anti-doublon ; un test met chaque source en panne (météo, serveur `fetch`, API horoscope, modèle image) et vérifie que l'outil rend un message d'erreur qui nomme la cause, jamais un contenu de remplacement ; un test vérifie, sans appel au modèle, que la ville et les centres d'intérêt du profil figurent dans la consigne du prompt visuel, et qu'un profil vide n'y ajoute aucune valeur par défaut ; la base de test est en mémoire et n'écrase jamais `data/agent.db`.
 
 **CHECK** : `pytest` vert, `ruff` sans erreur. Demandez à l'agent de casser volontairement `signe_depuis_date()` : un test rougit. Il répare, tout revient au vert. Même épreuve sur la mémoire : demandez-lui de faire repartir le relevé dans l'historique. Le test de l'historique rougit ; il répare, tout revient au vert.
 
