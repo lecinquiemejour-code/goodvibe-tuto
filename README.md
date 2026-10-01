@@ -15,6 +15,14 @@
 
 Pour apprendre tout cela sur du concret, vous construisez un agent complet : **GoodVibe**. Ce n'est qu'un prétexte, un fil rouge. Ce qui compte, ce sont les briques que vous apprenez à assembler, réutilisables pour n'importe quel autre agent.
 
+### Ce qu'est un agent
+
+**Un agent est un programme qui confie à un modèle d'IA un objectif et des outils, puis le fait tourner en boucle.** À chaque tour, le modèle choisit l'action suivante : appeler un outil, ou répondre. Notre code exécute l'outil, le résultat revient au modèle, et il décide de la suite. La boucle s'arrête quand l'objectif est atteint, ou quand un garde-fou l'arrête.
+
+Cinq ingrédients : un **modèle** (le cerveau), des **consignes** (sa fiche de poste), des **outils** (ses mains), une **boucle** (il observe le résultat et décide de la suite) et une **condition d'arrêt** (l'objectif atteint, ou un nombre maximal de tours).
+
+**La différence avec un programme classique, appelé aussi *workflow*** : dans un workflow, le développeur fixe l'ordre des étapes à l'avance. Dans un agent, c'est le modèle qui le décide, d'après ce qu'il observe. Le mot « agent » est partout dans le marketing : cette définition est celle sur laquelle s'accordent les praticiens.
+
 ### Pourquoi vibe coder son agent soi-même ?
 
 Des plateformes permettent de créer un agent sans écrire de code, ou presque : outils sans code (Dust, n8n), kits des fournisseurs de modèles (Anthropic, OpenAI, Microsoft Azure AI Foundry, Google), frameworks d'agents (LangGraph, CrewAI). Elles sont souvent le bon choix pour aller vite. Ce tuto poursuit un autre but : **comprendre et maîtriser**.
@@ -32,15 +40,9 @@ En vibe codant GoodVibe vous-même :
 
 *Exemples cités en octobre 2026 : les noms et les offres évoluent vite.*
 
-### Ce qu'est un agent
+### Un agent en action : le brief de GoodVibe
 
-**Un agent est un programme qui confie à un modèle d'IA un objectif et des outils, puis le fait tourner en boucle.** À chaque tour, le modèle choisit l'action suivante : appeler un outil, ou répondre. Notre code exécute l'outil, le résultat revient au modèle, et il décide de la suite. La boucle s'arrête quand l'objectif est atteint, ou quand un garde-fou l'arrête.
-
-Cinq ingrédients : un **modèle** (le cerveau), des **consignes** (sa fiche de poste), des **outils** (ses mains), une **boucle** (il observe le résultat et décide de la suite) et une **condition d'arrêt** (l'objectif atteint, ou un nombre maximal de tours).
-
-**La différence avec un programme classique, appelé aussi *workflow*** : dans un workflow, le développeur fixe l'ordre des étapes à l'avance. Dans un agent, c'est le modèle qui le décide, d'après ce qu'il observe. Le mot « agent » est partout dans le marketing : cette définition est celle sur laquelle s'accordent les praticiens.
-
-Exemple : le brief du matin de GoodVibe, de bout en bout. Il combine les deux : la rédaction est la partie agent, l'image la partie workflow.
+Le brief du matin de GoodVibe, de bout en bout. Il combine les deux : la rédaction est la partie agent, l'image la partie workflow.
 
 ```mermaid
 flowchart TD
