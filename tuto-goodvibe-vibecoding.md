@@ -469,11 +469,11 @@ flowchart LR
     P["push sur main"] --> T["Job test<br/>ruff + pytest"]
     T -- "vert" --> D["Job deploy<br/>SSH vers le VPS"]
     T -- "rouge" --> STOP["Rien n'est déployé"]
-    D --> V["VPS : git pull,<br/>dépendances,<br/>systemctl restart"]
+    D -- "identifiant<br/>du commit testé" --> V["VPS : installe<br/>ce commit précis,<br/>dépendances,<br/>systemctl restart"]
     V --> OK["Page publique à jour"]
 ```
 
-Deux jobs : **test** à chaque push (le code est installé, vérifié par `ruff`, testé par `pytest`) ; **deploy** uniquement sur `main` et si test est vert (connexion SSH au VPS avec une clé stockée dans les secrets GitHub, `git pull`, mise à jour des dépendances, redémarrage des services). Le GO MISE EN LIGNE se donne une seule fois, avant le premier envoi du code (fiche 12). Une fois le pipeline en place (fiche 13), chaque commit poussé se déploie seul.
+Deux jobs : **test** à chaque push (le code est installé, vérifié par `ruff`, testé par `pytest`) ; **deploy** uniquement sur `main` et si test est vert (connexion SSH au VPS avec une clé stockée dans les secrets GitHub ; le pipeline transmet l'identifiant du commit qu'il vient de tester, et le serveur installe cette version précise, pas « la dernière » ; puis mise à jour des dépendances et redémarrage des services). Le GO MISE EN LIGNE se donne une seule fois, avant le premier envoi du code (fiche 12). Une fois le pipeline en place (fiche 13), chaque commit poussé se déploie seul.
 
 ### 2.7 Choisir un modèle
 
@@ -1766,8 +1766,8 @@ Si le compte rendu est absent, le cron ne s'est pas déclenché. S'il contient u
 **Pourquoi, et l'idée en clair**
 
 - *Le problème.* Chaque modification demande de se connecter au serveur et d'y retaper les mêmes commandes. C'est long, et on finit toujours par en oublier une.
-- *L'idée.* On confie ce travail à un robot. À chaque envoi de code, il rejoue les tests, puis il met le serveur à jour, seulement si les tests sont bons. C'est le contrôle qualité en sortie d'usine : rien ne part en livraison sans y être passé.
-- *Les mots nouveaux.* **Intégration continue** (CI) : tester à chaque envoi de code. **Déploiement continu** (CD) : mettre en ligne automatiquement si les tests passent. **Pipeline** : la suite des étapes que suit le robot. **Secret** : une information confiée à GitHub, qu'il utilise sans jamais l'afficher. **Clé de déploiement** : celle qui permet au robot d'entrer sur le serveur.
+- *L'idée.* On confie ce travail à un robot. À chaque envoi de code, il rejoue les tests, puis il met le serveur à jour, seulement si les tests sont bons. C'est le contrôle qualité en sortie d'usine : rien ne part en livraison sans y être passé. Et le robot livre exactement ce qu'il a contrôlé : le contrôleur dit au livreur « livre le colis n° 12 », pas « prends le dernier sur l'étagère ».
+- *Les mots nouveaux.* **Intégration continue** (CI) : tester à chaque envoi de code. **Déploiement continu** (CD) : mettre en ligne automatiquement si les tests passent. **Pipeline** : la suite des étapes que suit le robot. **Secret** : une information confiée à GitHub, qu'il utilise sans jamais l'afficher. **Clé de déploiement** : celle qui permet au robot d'entrer sur le serveur. **Identifiant de commit** : le numéro, une suite de lettres et de chiffres, qui désigne une version précise du code.
 
 **Ce que vous verrez** : vous poussez un changement, une coche verte apparaît sur GitHub, et trente secondes plus tard la page publique a changé, sans que personne ait touché au serveur.
 
@@ -1778,7 +1778,7 @@ Si le compte rendu est absent, le cron ne s'est pas déclenché. S'il contient u
 | 1. La clé de déploiement | L'agent de codage crée une paire de clés et installe la partie publique sur le serveur | Vous savez d'où vient la clé, où elle est rangée, et à quoi elle sert |
 | 2. Les trois secrets | L'agent de codage copie chaque valeur dans votre presse-papiers, sans l'afficher | Vous les collez vous-même sur GitHub. L'agent de codage vérifie ensuite que les trois existent |
 | 3. Le premier envoi | L'agent de codage envoie le pipeline sur GitHub | Vous ouvrez l'onglet Actions et regardez le robot travailler : orange, puis vert |
-| 4. Le test heureux | L'agent de codage annonce un changement visible, puis l'envoie | Vous constatez le changement sur la page publique |
+| 4. Le test heureux | L'agent de codage annonce un changement visible, puis l'envoie | Vous constatez le changement sur la page publique, et que la version installée est bien celle que le robot a testée |
 | 5. Le test protecteur : casser | L'agent de codage vous montre la ligne qu'il casse, l'envoie, et s'arrête | Vous voyez la croix rouge, puis vous vérifiez que la page publique n'a pas changé |
 | 6. Le test protecteur : réparer | L'agent de codage vous montre la ligne réparée, l'envoie, et s'arrête | Vous voyez le vert revenir |
 | 7. Le ménage | L'agent de codage retire le changement visible du test heureux | La page publique est revenue à son état normal |
@@ -1795,15 +1795,15 @@ sequenceDiagram
     alt test rouge
         GH-->>D: coche rouge, rien déployé
     else test vert
-        GH->>V: ssh (clé de déploiement)
-        V->>V: deploy/deployer.sh : git pull, pip install, crontab, systemctl restart
-        V-->>GH: sortie des commandes
+        GH->>V: ssh (clé de déploiement) + identifiant du commit testé
+        V->>V: deploy/deployer.sh : installe ce commit, pip install, crontab, systemctl restart
+        V-->>GH: sortie des commandes, dont l'identifiant installé
         GH-->>D: coche verte
         D->>V: ouvre la page publique : smoke test
     end
 ```
 
-**Ce que fait l'agent de codage** : `.github/workflows/deploy.yml` (job `test` sur tout push ; job `deploy` sur `main` seulement, `needs: test`, action SSH qui exécute `deploy/deployer.sh`) ; `deploy/deployer.sh` idempotent, qui réinstalle aussi `deploy/crontab` : un horaire modifié dans le fichier arrive sur le serveur au prochain envoi ; création d'une paire de clés SSH dédiée au déploiement (clé publique installée sur le VPS, clé privée rangée dans le dossier `.ssh` de votre ordinateur, **jamais affichée dans la discussion**) ; copie de chacun des trois secrets (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`) dans votre presse-papiers ; vérification que les trois secrets existent sur GitHub **avant** le premier envoi ; puis `push` du workflow.
+**Ce que fait l'agent de codage** : `.github/workflows/deploy.yml` (job `test` sur tout push ; job `deploy` sur `main` seulement, `needs: test`, action SSH qui exécute `deploy/deployer.sh` en lui passant l'identifiant du commit testé) ; `deploy/deployer.sh` idempotent : il reçoit cet identifiant, s'arrête avec un message clair s'il manque, installe cette version précise, et affiche à la fin l'identifiant réellement installé ; il réinstalle aussi `deploy/crontab` : un horaire modifié dans le fichier arrive sur le serveur au prochain envoi ; création d'une paire de clés SSH dédiée au déploiement (clé publique installée sur le VPS, clé privée rangée dans le dossier `.ssh` de votre ordinateur, **jamais affichée dans la discussion**) ; copie de chacun des trois secrets (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`) dans votre presse-papiers ; vérification que les trois secrets existent sur GitHub **avant** le premier envoi ; puis `push` du workflow.
 
 **Ce que vous faites** : coller vous-même les trois secrets dans Settings, Secrets and variables, Actions ; regarder l'onglet Actions pendant chaque envoi ; puis **vérifier l'URL publique** après le déploiement automatique : c'est le smoke test de production, et il est à vous.
 
@@ -1867,11 +1867,15 @@ Quand un envoi échoue, l'agent de codage vous le dit aussitôt, vous montre la 
 
 **La solution du tuto** : une connexion SSH directe depuis le job, avec un script sur le VPS : trente lignes de YAML, tout est visible. **Pourquoi pas autrement** : construire une image Docker poussée sur un registre, ou passer par un outil tiers de déploiement, cache les étapes qu'on veut comprendre.
 
-**À relire** : le job deploy ne tourne que sur `main` et après un job test vert ; la clé privée n'apparaît **jamais**, ni dans les logs (secret masqué), ni dans la discussion, ni dans un fichier du dépôt ; les trois secrets existent sur GitHub avant le premier envoi ; aucun fichier n'a été posé à la main sur le serveur ; `deployer.sh` est relançable sans dégât ; un job test vert ne dit pas que le déploiement a réussi : l'agent de codage lit le résultat du job deploy et vous le rapporte ; une modification de `deployer.sh` ne s'applique qu'au déploiement suivant, car le script en cours d'exécution est encore l'ancien ; le workflow ne déploie pas depuis les branches de travail.
+**Le commit testé, et pas un autre.** Entre le moment où le robot commence ses tests et celui où il met le serveur à jour, une autre version peut arriver sur GitHub. Exemple : la version A passe les tests. Pendant ce temps, vous poussez une version B. Si le serveur prenait « la dernière version », le déploiement de A installerait B, que personne n'a encore testée. Avec l'identifiant, le déploiement de A installe bien A, et B suit son propre cycle : ses tests, puis son déploiement.
+
+**La leçon** : la validation doit porter sur ce qui est effectivement publié.
+
+**À relire** : le job deploy ne tourne que sur `main` et après un job test vert ; la clé privée n'apparaît **jamais**, ni dans les logs (secret masqué), ni dans la discussion, ni dans un fichier du dépôt ; les trois secrets existent sur GitHub avant le premier envoi ; aucun fichier n'a été posé à la main sur le serveur ; `deployer.sh` est relançable sans dégât ; il reçoit l'identifiant du commit testé et installe cette version, jamais « la dernière de `main` » ; sans identifiant, il s'arrête avec un message clair, sans rien installer ; en fin de déploiement, il affiche l'identifiant réellement installé ; un job test vert ne dit pas que le déploiement a réussi : l'agent de codage lit le résultat du job deploy et vous le rapporte ; une modification de `deployer.sh` ne s'applique qu'au déploiement suivant, car le script en cours d'exécution est encore l'ancien ; le workflow ne déploie pas depuis les branches de travail.
 
 **CHECK**, en quatre temps, avec un arrêt après chacun : c'est vous qui regardez l'onglet Actions et la page publique.
 
-1. Le test heureux : l'agent de codage annonce un changement visible (un mot dans le titre de la page), puis l'envoie. Vous voyez la coche verte, puis le changement sur la page publique.
+1. Le test heureux : l'agent de codage annonce un changement visible (un mot dans le titre de la page), puis l'envoie. Vous voyez la coche verte, puis le changement sur la page publique. Puis la vérification du commit : dans l'onglet Actions, vous lisez l'identifiant du commit de cet envoi (ses sept premiers caractères suffisent) ; dans le compte rendu du job deploy, la dernière ligne du script donne l'identifiant installé sur le serveur. Les deux sont identiques.
 2. Le test protecteur, casser : l'agent de codage vous montre la ligne d'un test avant et après l'avoir cassée, puis l'envoie. Vous voyez la croix rouge sur les tests et le déploiement annulé. Vous rechargez la page publique : elle n'a pas changé.
 3. Le test protecteur, réparer : l'agent de codage vous montre la ligne réparée, puis l'envoie. Vous voyez le vert revenir.
 4. Le ménage : l'agent de codage retire le changement visible et l'envoie. La page publique est revenue à son état normal.
@@ -1879,7 +1883,7 @@ Quand un envoi échoue, l'agent de codage vous le dit aussitôt, vous montre la 
 <details>
 <summary><b>Pièges</b> (à ouvrir après le verdict du CHECK)</summary>
 
-envoyer le code avant d'avoir créé les secrets ; poser un fichier à la main sur le serveur ; changer sur le serveur les droits d'un fichier du dépôt (`chmod`), ce qui bloque le `git pull` du déploiement suivant ; annoncer « c'est en ligne » après des tests verts, sans avoir lu le résultat du déploiement ; enchaîner casser et réparer sans laisser le pilote voir la croix rouge ; oublier de retirer le changement visible du test heureux ; afficher la clé privée pour la faire copier ; confondre les deux clés ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 12 manque) ; workflow déclenché sur toutes les branches.
+envoyer le code avant d'avoir créé les secrets ; poser un fichier à la main sur le serveur ; changer sur le serveur les droits d'un fichier du dépôt (`chmod`), ce qui bloque la mise à jour du déploiement suivant ; script qui retombe sur la dernière version de `main` quand l'identifiant manque (il doit s'arrêter) ; croire qu'une coche verte garantit que la version en ligne est celle qui a été testée, sans avoir comparé les deux identifiants ; annoncer « c'est en ligne » après des tests verts, sans avoir lu le résultat du déploiement ; enchaîner casser et réparer sans laisser le pilote voir la croix rouge ; oublier de retirer le changement visible du test heureux ; afficher la clé privée pour la faire copier ; confondre les deux clés ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 12 manque) ; workflow déclenché sur toutes les branches.
 
 </details>
 
@@ -2066,10 +2070,13 @@ flowchart LR
     S1["Secrets hors du code,<br/>.env en chmod 600"] --> S2["HTTPS partout (Caddy)"]
     S2 --> S3["Mot de passe<br/>sur la page web,<br/>jeton sur le webhook"]
     S3 --> S4["Contenu externe = donnée,<br/>jamais instruction"]
-    S4 --> S5["Aucune donnée personnelle<br/>dans logs,<br/>journal, tests, Git"]
+    S4 --> S4a["Outils en lecture seule<br/>pendant le brief"]
+    S4a --> S4b["Suppressions confirmées<br/>par vous, jamais<br/>par le modèle"]
+    S4b --> S5["Aucune donnée personnelle<br/>dans logs,<br/>journal, tests, Git"]
     S5 --> S6["Nombre max de tours,<br/>plafond de dépense<br/>chez Google"]
     S6 --> S7["Sauvegarde nocturne<br/>de la base"]
     S7 --> S8["Clés dédiées<br/>et révocables :<br/>Gemini, Hetzner,<br/>déploiement"]
+    S8 --> S9["Le serveur installe<br/>le commit testé"]
 ```
 
 Et une dernière fois : à chaque appel, prénom, ville et horoscope partent vers l'API Gemini. Vérifiez les conditions de votre plan Google AI, notamment l'usage des données envoyées en plan gratuit. Avec un profil fictif, c'est acceptable. Avec vos vraies données, c'est un choix informé.
