@@ -13,7 +13,7 @@
 - **l'observer** : voir ce qu'il fait, ce qu'il sait et ce qu'il coûte ;
 - **l'héberger** : le déployer sur votre propre serveur (VPS), en HTTPS, mis à jour automatiquement à chaque modification.
 
-Pour apprendre tout cela sur du concret, vous construisez un agent IA complet : **GoodVibe**. Ce n'est qu'un prétexte, un fil rouge. Ce qui compte, ce sont les briques que vous apprenez à assembler, réutilisables pour n'importe quel autre agent IA.
+Pour apprendre tout cela sur du concret, vous construisez un agent IA complet : **GoodVibe**. Ce n'est qu'un prétexte, un fil rouge. Ce qui compte, ce sont les briques que vous apprenez à assembler, réutilisables pour d'autres agents IA.
 
 ### Ce qu'est un agent IA
 
@@ -125,7 +125,7 @@ Ce tuto est l'application pratique du skill **[VibeCoding Copilote](https://gith
 - répond à vos questions dans la journée, depuis votre **terminal** ou une **page web privée**, conçue pour un écran d'ordinateur ;
 - montre tout ce qu'il sait de vous et tout ce qu'il fait (outils appelés, tokens consommés, coût estimé).
 
-Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai agent IA en production : remplacez horoscope et météo par veille concurrentielle et boîte mail, rien ne change.
+Le sujet est volontairement léger. Les briques apprises dans GoodVibe sont réutilisables pour d'autres agents IA. Chaque nouvel usage demande cependant de réexaminer les données accessibles, les actions autorisées, les validations humaines et les exigences de fiabilité.
 
 ## Ce que vous allez apprendre
 

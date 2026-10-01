@@ -176,7 +176,7 @@ Tout le reste du document explique ce qui va se passer et ce que vous devez vér
 
 Construire, avec le skill VibeCoding Copilote, un agent IA autonome en Python qui dialogue avec vous, démarre sans qu'on lui parle, déclenché par cron et par webhook, utilise un outil MCP et une API externe, garde une mémoire, et tourne en production sur un VPS.
 
-Cet agent IA s'appelle **GoodVibe**. C'est un assistant personnel du matin : il apprend qui vous êtes en discutant, prépare chaque jour un brief (horoscope réécrit pour vous, image du jour, météo de votre ville, pense-bêtes), et répond à vos questions depuis un terminal ou une page web privée. Le domaine est volontairement léger. L'architecture, elle, est celle d'un vrai agent IA en production : remplacez horoscope et météo par veille concurrentielle et boîte mail, rien ne change.
+Cet agent IA s'appelle **GoodVibe**. C'est un assistant personnel du matin : il apprend qui vous êtes en discutant, prépare chaque jour un brief (horoscope réécrit pour vous, image du jour, météo de votre ville, pense-bêtes), et répond à vos questions depuis un terminal ou une page web privée. Le domaine est volontairement léger. Les briques apprises dans GoodVibe sont réutilisables pour d'autres agents IA. Chaque nouvel usage demande cependant de réexaminer les données accessibles, les actions autorisées, les validations humaines et les exigences de fiabilité.
 
 ### 1.2 Le principe qui traverse tout le tuto
 
@@ -2104,6 +2104,8 @@ Le post-mortem se termine par une section **« Ce que j'ai appris »**. L'agent 
 
 <!-- AGENT : tu poses cette question après le post-mortem et avant de proposer les évolutions, seule dans ton message. Éléments attendus, que le pilote a tous déjà vécus. Ce qu'il demande : un nouvel outil pour la source, sur le modèle de la météo (un appel direct) ou de l'horoscope (un serveur MCP) ; la consigne qui dit au modèle quand s'en servir ; un message d'erreur si la source ne répond pas, sans contenu de remplacement. Ce qu'il fait réexaminer : quelles données partent vers la source et vers Gemini ; si ce que rend la source est un contenu extérieur, à traiter comme une donnée ; si l'outil doit figurer parmi les outils en lecture seule du brief. Comment il vérifie : le plan lu avant le GO, la lecture guidée du code, un CHECK avec la source qui marche puis en panne, les tests, et les scénarios avec le vrai modèle. Retour bref, puis tu enchaînes. Cet exercice ne bloque pas la clôture.
 -->
+
+**Et pour un autre usage ?** Les briques apprises dans GoodVibe sont réutilisables pour d'autres agents IA. Chaque nouvel usage demande cependant de réexaminer les données accessibles, les actions autorisées, les validations humaines et les exigences de fiabilité. Vous avez déjà rencontré ces questions dans GoodVibe : qui confirme une suppression, quels outils l'agent IA reçoit, où partent les données.
 
 **Les évolutions.** Le skill propose les quatre évolutions de la section 1.3, dans leur ordre, avec valeur et effort : le bac à sable d'exécution de code, les skills, les sous-agents, la base de connaissances hybride. Il peut en ajouter d'autres, tirées de la section 7.2. S'il ne propose pas les quatre, demandez-les. Elles sont consignées dans la section « Pour aller plus loin » du `plan-action.md`, dans cet ordre.
 
