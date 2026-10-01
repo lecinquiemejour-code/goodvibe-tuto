@@ -15,25 +15,32 @@
 
 Pour apprendre tout cela sur du concret, vous construisez un agent complet : **GoodVibe**. Ce n'est qu'un prétexte, un fil rouge. Ce qui compte, ce sont les briques que vous apprenez à assembler, réutilisables pour n'importe quel autre agent.
 
-**Un agent, c'est un modèle qui décide lui-même de l'étape suivante.** À chaque tour, il choisit : répondre, ou demander un outil. Exemple avec une question météo :
+**Un agent, c'est un modèle qui décide lui-même de l'étape suivante.** Exemple : le brief du matin de GoodVibe, de bout en bout.
 
 ```mermaid
 flowchart TD
-    Q["1. Une demande arrive<br/>« Quel temps à Lyon demain ? »"] --> P
-    P["2. Notre code prépare l'appel<br/>consignes + liste des outils + conversation + réglages<br/>(le modèle n'a aucune mémoire : on lui renvoie tout à chaque tour)"] --> M
-    M{"3. Le modèle décide"}
-    M -- "il lui manque une information" --> D["4a. Il demande un outil<br/>« meteo, ville = Lyon »"]
-    D --> X["5. Notre code exécute l'outil<br/>(le modèle n'exécute jamais rien lui-même)"]
-    X --> R["6. Le résultat rejoint la conversation<br/>« Lyon : 18 °C, éclaircies »"]
-    R --> T{"Nombre maximal<br/>de tours atteint ?"}
-    T -- "non : nouveau tour" --> P
-    T -- "oui" --> S["Arrêt forcé<br/>(garde-fou contre la boucle infinie)"]
-    M -- "il a tout ce qu'il faut" --> F["4b. Il rédige la réponse finale"]
-    F --> J["7. Le journal note les tokens,<br/>la durée et le coût"]
-    S --> J
+    D["1. Un déclencheur<br/>le bouton « Brief », l'horloge à 7 h (cron)<br/>ou un pense-bête reçu (webhook)"] --> P
+    P["2. Notre code prépare la demande<br/>date et heure du jour + pense-bêtes en attente<br/>+ consignes, profil, liste des outils, réglages"] --> M
+    subgraph A["Partie agent : le modèle décide à chaque tour"]
+        M{"3. Le modèle décide"}
+        M -- "il lui manque la météo" --> O1["4. Il demande l'outil météo<br/>notre code appelle Open-Meteo"]
+        M -- "il lui manque l'horoscope" --> O2["4. Il demande l'outil fetch<br/>notre code passe par le serveur MCP"]
+        O1 --> R["5. Le résultat rejoint la conversation<br/>et un nouveau tour commence (au plus N tours)"]
+        O2 --> R
+        R --> M
+        M -- "il a tout ce qu'il faut" --> T["6. Il rédige le texte du brief"]
+    end
+    T --> I1
+    subgraph S["Partie script : des étapes fixes, sans décision"]
+        I1["7. Le modèle texte compose le prompt visuel<br/>consigne + météo, ville, horoscope, centres d'intérêt"]
+        I1 --> I2["8. Le modèle image dessine l'illustration"]
+        I2 --> E["9. Brief et image enregistrés,<br/>pense-bêtes marqués « intégrés »"]
+        E --> J["10. Le journal note les tokens, la durée et le coût"]
+    end
+    J --> V["Vous lisez le brief et son image<br/>dans l'onglet Brief"]
 ```
 
-Un script suit des étapes fixées à l'avance ; un agent choisit la suivante à chaque tour. Le détail est en section 2.1 du tuto.
+La partie agent choisit ses étapes, la partie script les suit dans l'ordre : un vrai agent combine souvent les deux. Si une source ne répond pas, le brief sort quand même, avec un message d'erreur à sa place. Le détail est en section 2.1 du tuto.
 
 **GoodVibe, c'est cette boucle, avec quatre portes d'entrée et trois appuis :**
 
