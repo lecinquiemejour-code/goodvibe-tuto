@@ -2,6 +2,9 @@
 # Fiche Caddy de l'agent IA {{NOM_AGENT}} (fiche 12) : installée dans /etc/caddy/sites/{{NOM_AGENT}}.caddy.
 # Caddy, le concierge commun du serveur, lit une fiche par agent IA : en ajouter une ne touche jamais les autres.
 # Il obtient seul le certificat HTTPS de l'adresse, puis relaie vers les deux ports de cet agent IA.
+# {{ADRESSE}} ne se remplace JAMAIS dans le dépôt : l'adresse contient l'IP du serveur, qui reste hors de Git.
+# On le remplace seulement en écrivant la fiche sur le serveur, par exemple :
+#   sed "s/{{ADRESSE}}/$ADRESSE/" deploy/site.caddy | sudo tee /etc/caddy/sites/{{NOM_AGENT}}.caddy
 
 {{ADRESSE}} {
     encode zstd gzip
