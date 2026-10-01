@@ -1,0 +1,2 @@
+# Espace de travail VS Code : propre à chaque machine, il n'a pas sa place dans le kit
+*.code-workspace
