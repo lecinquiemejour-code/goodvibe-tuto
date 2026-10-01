@@ -1,0 +1,9 @@
+# Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
+# Configuration du serveur web Caddy pour GoodVibe (Feature 12)
+# Gestion automatique du certificat HTTPS Let's Encrypt et relais inverse vers Gradio
+
+{$DOMAINE} {
+    encode zstd gzip
+    reverse_proxy /pense-bete* 127.0.0.1:8000
+    reverse_proxy 127.0.0.1:7860
+}

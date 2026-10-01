@@ -1,0 +1,12 @@
+# Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
+# Crontab de l'utilisateur {{UTILISATEUR}} (Fiche 12 du tutoriel)
+#
+# Syntaxe des 5 champs temporels :
+# minute (0-59) | heure (0-23) | jour du mois (1-31) | mois (1-12) | jour de la semaine (0-7, 0 ou 7 = dimanche)
+
+# 1. Brief matinal personnalisé chaque jour à 7h00 (heure du serveur, {{FUSEAU}})
+0 7 * * * /home/{{UTILISATEUR}}/app/venv/bin/python /home/{{UTILISATEUR}}/app/cron_brief.py >> /home/{{UTILISATEUR}}/cron_brief.log 2>&1
+
+
+# 2. Sauvegarde nocturne de la base SQLite chaque nuit à 3h00
+0 3 * * * /bin/bash /home/{{UTILISATEUR}}/app/deploy/sauvegarde.sh >> /home/{{UTILISATEUR}}/sauvegarde.log 2>&1

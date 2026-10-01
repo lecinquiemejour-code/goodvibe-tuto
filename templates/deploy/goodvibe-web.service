@@ -1,0 +1,22 @@
+# Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
+[Unit]
+Description=Service Web GoodVibe (Gradio)
+After=network.target
+
+[Service]
+Type=simple
+User={{UTILISATEUR}}
+Group={{UTILISATEUR}}
+WorkingDirectory=/home/{{UTILISATEUR}}/app
+ExecStart=/home/{{UTILISATEUR}}/app/venv/bin/python interface.py
+Restart=always
+RestartSec=5
+EnvironmentFile=/home/{{UTILISATEUR}}/app/.env
+
+# Sécurisation du processus
+PrivateTmp=true
+ProtectSystem=full
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

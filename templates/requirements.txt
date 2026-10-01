@@ -1,0 +1,8 @@
+# Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
+google-genai>=1.0.0
+python-dotenv>=1.0.0
+httpx>=0.27.0
+gradio>=5.0.0
+mcp>=1.0.0
+fastapi>=0.115.0
+uvicorn>=0.30.0

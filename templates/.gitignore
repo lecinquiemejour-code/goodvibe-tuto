@@ -1,0 +1,31 @@
+# Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
+# Environnements virtuels Python
+venv/
+.venv/
+env/
+
+# Variables d'environnement et secrets
+.env
+
+# Données locales et base SQLite
+data/
+data/images/
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Compétences et agents IDE
+.agent/
+.agents/
+
+# IDE et OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
