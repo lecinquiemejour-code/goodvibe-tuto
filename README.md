@@ -49,7 +49,7 @@ En vibe codant GoodVibe vous-même :
 
 - **vous voyez ce que cachent toutes les plateformes** : la boucle, les outils, la mémoire, les tokens. Vous comprendrez ensuite n'importe laquelle en une heure ;
 - **vous voyez tout** : chaque appel, chaque token, chaque centime ;
-- **vos données restent sur votre serveur**, et « Oublie-moi » efface vraiment tout ;
+- **vos données restent sur votre serveur**, et « Oublie-moi » efface ce que GoodVibe garde de vous : profil, notes, conversations, pense-bêtes, briefs et images ;
 - **le coût reste de quelques euros par mois**, sans abonnement par utilisateur ;
 - **le code est à vous**, et vous apprenez le métier de la production : cron, webhook, HTTPS, CI/CD ;
 - **vous maîtrisez le vibe coding** : GoodVibe devient un point de départ, que vous adaptez et faites évoluer, avec votre agent de codage, vers la solution agentique dont **vous** avez besoin.
