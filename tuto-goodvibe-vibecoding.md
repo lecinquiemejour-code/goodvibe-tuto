@@ -680,6 +680,11 @@ Chaque feature a sa fiche, toujours construite pareil. Elle s'ouvre par **Pourqu
 8. **Pièges classiques**.
 9. **Où on en est** : ce que GoodVibe sait faire, et l'architecture qui se remplit.
 
+**Les exercices.** Six fois dans le parcours, l'agent de codage vous pose une question avant de vous donner la réponse : prédire ce qui va se passer juste avant une panne provoquée, expliquer avec vos mots un concept qui prête à confusion, ou, à la clôture, dire comment vous vous y prendriez pour un cas nouveau. Répondez d'abord, même par « je ne sais pas » : il n'y a ni note ni piège, et la suite ne dépend jamais de votre réponse. Ces exercices ne portent pas sur l'écriture du code, mais sur votre capacité à piloter l'agent de codage : savoir quoi lui demander, et comment vérifier.
+
+<!-- AGENT : les exercices. Quand une fiche contient une ligne « Exercice », tu poses la question au moment indiqué, seule dans ton message, et tu attends la réponse du pilote avant toute explication. Tu ne donnes pas la réponse d'abord. Ensuite, un retour bref : ce qui est juste, ce qui manque, puis tu reprends l'explication nécessaire en t'appuyant sur les éléments attendus, donnés dans le commentaire qui suit chaque exercice. Ni note, ni jugement, ni seconde tentative exigée. Si le pilote répond « je ne sais pas » ou veut passer, tu donnes l'explication et tu enchaînes : un exercice ne bloque jamais la suite, et ce qui est construit ne dépend jamais de la réponse. Un seul exercice par fiche. Sur les fiches 12, 13 et 14, il n'y a pas d'exercice de ce type.
+-->
+
 L'ordre des quatorze features est celui du `plan-action.md` :
 
 | # | Feature | Onglet ou canal du CHECK |
@@ -1010,6 +1015,11 @@ GoodVibe change de ton, ou invente un prénom, juste après avoir appelé un out
 
 </details>
 
+**Exercice, en fin de fiche (expliquer)** : avec vos mots, quelle différence entre la mémoire de GoodVibe et l'historique de la conversation ?
+
+<!-- AGENT : éléments attendus. La mémoire (le profil, les notes) est rangée dans la base par des outils : elle dure d'une conversation à l'autre, et le code la réinjecte dans le prompt système à chaque appel. L'historique est le dialogue en cours, renvoyé au modèle à chaque appel parce qu'il ne se souvient de rien : il ne contient que les messages du pilote et le texte des réponses. Dans la page web, ce dialogue est aussi enregistré, dans la table conversations, pour reprendre le fil. L'erreur fréquente : croire que le modèle se souvient. Tu renvoies à la section 2.4.
+-->
+
 **Où on en est** : GoodVibe parle, raconte, et retient. Fichiers ajoutés : `outils.py`.
 
 ```mermaid
@@ -1091,6 +1101,11 @@ sequenceDiagram
 outil qui supprime dès qu'il est appelé (la confirmation n'est alors qu'une consigne : un modèle qui passe outre supprime) ; confirmation demandée par le modèle dans le chat, et exécutée sur un « oui » qu'il interprète (c'est encore lui qui décide) ; cadre qui affiche un autre élément que celui qui sera supprimé (le libellé et l'identifiant doivent venir de la même demande) ; demande restée en attente d'un message à l'autre, et confirmée plus tard par erreur ; second clic qui supprime une autre ligne ; GoodVibe qui annonce « c'est fait » alors que rien n'est confirmé (la consigne manque dans `prompt_systeme.md`) ; mauvaise note proposée quand deux se ressemblent (GoodVibe a choisi au lieu de demander) ; note présente dans la table mais introuvable par GoodVibe (`lire_notes` ne rend que les dernières) ; texte de la note dans le journal ; oubli de `conversations` ; profil encore dans le prompt système jusqu'au redémarrage ; conversation effacée de la base mais toujours affichée dans la page (elle repart au modèle au message suivant) ; conversation effacée qui réapparaît au rechargement de la page (voir la fiche 4).
 
 </details>
+
+**Exercice, en fin de fiche (expliquer)** : avec vos mots, quelle différence entre une consigne donnée au modèle et une règle codée dans le programme ? Où est chacune dans ce qu'on vient de construire ?
+
+<!-- AGENT : éléments attendus. Une consigne est une phrase de prompt_systeme.md : le modèle la suit le plus souvent, mais rien ne l'y oblige. Une règle codée est dans le programme : elle s'applique quoi que le modèle demande. Dans cette fiche, la consigne dit de proposer une seule fois et de ne pas annoncer la suppression comme faite ; la règle codée est dans confirmation.py, où la suppression ne s'exécute qu'après le geste du pilote. L'épreuve du CHECK qui le prouve : l'outil appelé directement ne supprime rien.
+-->
 
 **Où on en est** : GoodVibe parle, raconte, retient, et oublie sur demande : une note, ou tout, et jamais sans votre confirmation. Fichiers ajoutés : `confirmation.py`, `oubli.py`.
 
@@ -1197,6 +1212,11 @@ sequenceDiagram
 **La solution du tuto** : Open-Meteo appelé directement avec `httpx` : sans clé, deux appels HTTP, aucune dépendance. C'est le chemin direct : la description de l'outil, la requête et la mise en forme du résultat sont écrites par nous. La fiche 8 prendra l'autre chemin, le MCP, pour comparer. **Pourquoi pas autrement** : une bibliothèque météo tierce cache les appels qu'on veut voir ; un autre fournisseur demanderait une clé.
 
 **À relire** : timeout sur les deux appels ; en cas d'échec, l'outil renvoie un message d'erreur qui dit ce qui a échoué et pourquoi (« Erreur : météo non récupérée, Open-Meteo n'a pas répondu en 5 secondes »), pas une exception qui remonte ; `prompt_systeme.md` demande au modèle d'écrire ce message tel quel à la place de la météo : il n'invente aucune prévision, et ne remplace pas l'erreur par une phrase rassurante ; le journal note l'échec et sa cause ; l'outil renvoie une phrase, pas le JSON brut (le modèle n'a pas à le décoder, et ça économise des tokens).
+
+**Exercice, juste avant la panne du CHECK (prédire)** : si la météo ne répond pas, que doit-il se passer dans le brief ?
+
+<!-- AGENT : tu poses cette question après la première partie du CHECK, quand la météo fonctionne, et avant de mettre la mauvaise adresse dans la config. Éléments attendus. Le brief sort quand même. À la place de la météo, un message d'erreur dit ce qui a échoué et pourquoi. Aucune prévision n'est inventée, aucun contenu ne la remplace. Le journal note l'échec et sa cause. Puis tu provoques la panne, et le pilote compare avec sa prédiction.
+-->
 
 **CHECK** : « quel temps à Lyon ? » dans le chat, coulisses ouvertes : l'appel à `meteo` apparaît avec ses JSON, sans qu'on ait touché à l'affichage. Puis un brief généré depuis la page : l'appel à `meteo` y défile aussi, et le brief contient la météo. Puis la panne : l'agent de codage met une mauvaise adresse d'Open-Meteo dans la config, et vous générez un brief. Il sort, avec à la place de la météo un message d'erreur qui dit ce qui a échoué et pourquoi ; aucune prévision n'est inventée ; dans les coulisses, le résultat de `meteo` est ce même message ; dans DB Browser, la table `journal` porte une ligne qui note l'échec et sa cause. L'agent de codage remet la bonne adresse, vous générez un brief : la météo est revenue.
 
@@ -1359,6 +1379,11 @@ Dans les deux cas : aucun horoscope n'est inventé, le journal note l'échec et 
 serveur MCP non démarré (`uvx` absent : l'agent de codage l'installe) ; description de `fetch` recopiée à la main dans `outils.py` (l'outil marche, mais ne vient plus du serveur) ; schémas d'outils mal convertis (le modèle ne « voit » pas l'outil) ; message d'erreur de `fetch` pris pour le texte de l'horoscope, et réécrit en prédiction par le modèle ; horoscope inventé par le modèle quand la source est en panne (la consigne de la fiche 7 manque dans `prompt_systeme.md`) ; refus lié à `robots.txt` (l'agent de codage lit l'erreur et vous l'explique avant de toucher aux options du serveur) ; réponse coupée à 5 000 caractères sur une source plus longue qu'un horoscope ; bonne valeur non remise dans la config après un test de panne ; outil `fetch` qui disparaît du catalogue sans message quand le serveur ne démarre pas (le modèle n'a plus l'outil, et personne ne le sait) ; oubli de fermer la connexion MCP à la fin du brief.
 
 </details>
+
+**Exercice, en fin de fiche (expliquer)** : avec vos mots, quelle différence entre un outil et un serveur MCP ?
+
+<!-- AGENT : éléments attendus. Un outil est une action que le modèle peut demander : un nom, une description, des paramètres. Un serveur MCP est un programme qui apporte des outils tout faits, par une prise standard : il annonce lui-même leur description. meteo est un outil écrit par nous ; fetch est un outil apporté par le serveur mcp-server-fetch. Pour la boucle d'agent IA, les deux s'appellent de la même façon. Les erreurs fréquentes : croire que le MCP est une source de données, ou que le serveur est une machine lointaine. Tu renvoies à la section 2.3.
+-->
 
 **Où on en est** : le brief est complet en texte : accueil, horoscope personnalisé, météo, notes. Fichiers ajoutés : `mcp_client.py`, `horoscope.py`.
 
@@ -1528,6 +1553,11 @@ flowchart LR
 **La leçon** : un modèle ne répond pas deux fois de la même façon. On mesure un taux de réussite, pas un succès unique.
 
 **À relire** : **aucun test ne fait un vrai appel réseau** ; un test vérifie que le prompt système et les outils sont renvoyés à chaque appel, y compris après un outil ; un test vérifie que le profil de la mémoire part bien vers le modèle, et qu'aucun prénom ne part quand la mémoire est vide ; un test joue deux messages de suite, coulisses ouvertes, et vérifie que les messages du second appel ne contiennent que le dialogue : ni réflexion, ni JSON d'outil, ni relevé, ni copie du prompt système ; il part de ce que la boucle produit vraiment au premier message, pas d'un historique écrit à la main ; le même test est rejoué avec un premier message qui appelle un outil, et avec un historique au format de Gradio (liste de morceaux) ; un test vérifie que la table `conversations` ne reçoit que le texte de la réponse ; un test vérifie que chaque événement reçu du modèle ressort tel quel, avec le numéro de son tour, et qu'aucun ne sort quand personne ne le demande ; un test vérifie que le flux brut arrive au panneau sans entrer dans le chat, dans `conversations`, dans l'historique du message suivant, ni dans le brief enregistré ; un test vérifie qu'après un effacement la page rend un historique vide, et que l'échange suivant est bien enregistré ; un test appelle un outil de suppression directement, sans confirmation, et vérifie que rien n'est supprimé ; un autre vérifie que la confirmation ne supprime que l'élément affiché, qu'une nouvelle proposition remplace l'ancienne, et qu'un refus ou un second clic ne supprime rien ; le test du brief couvre l'anti-doublon ; un test met chaque source en panne (météo, serveur `fetch`, API horoscope, modèle image) et vérifie que l'outil rend un message d'erreur qui nomme la cause, jamais un contenu de remplacement ; un test vérifie, sans appel au modèle, que la ville et les centres d'intérêt du profil figurent dans la consigne du prompt visuel, et qu'un profil vide n'y ajoute aucune valeur par défaut ; le serveur MCP est simulé pour tous les tests : aucun test ne lance `uvx` ; un test vérifie que, si le serveur ne démarre pas, l'erreur arrive au modèle au lieu d'un outil qui disparaît ; la base de test est en mémoire et n'écrase jamais `data/agent.db` ; `pytest` seul ne déclenche aucun appel réel : `scenarios_modele.py` n'est pas dans `tests/`, et ne se lance qu'à la main ; les scénarios travaillent eux aussi sur une base jetable, jamais sur `data/agent.db` ; le critère de réussite de chaque scénario est écrit dans le code, lisible, et c'est le programme qui le mesure, pas le modèle ; les scénarios se rejouent à chaque changement de modèle (section 2.7).
+
+**Exercice, juste avant l'épreuve du test cassé (prédire)** : si on casse la fonction qui calcule le signe, que va-t-il se passer quand on lancera les tests ?
+
+<!-- AGENT : tu poses cette question quand pytest est vert, avant de casser signe_depuis_date(). Éléments attendus. Un test au moins devient rouge. Le compte rendu nomme ce test, et montre la valeur attendue et la valeur obtenue. Les autres tests restent verts. L'application, elle, ne dit rien tant qu'on ne tombe pas sur le cas : c'est le test qui prévient. Dans le pipeline de la fiche 13, ce rouge empêchera le déploiement.
+-->
 
 **CHECK** : `pytest` vert, `ruff` sans erreur. Demandez à l'agent de codage de casser volontairement `signe_depuis_date()` : un test rougit. Il répare, tout revient au vert. Même épreuve sur la mémoire : demandez-lui de faire repartir le relevé dans l'historique. Le test de l'historique rougit ; il répare, tout revient au vert. Puis les scénarios : l'agent de codage vous annonce le coût (une vingtaine d'appels au modèle, quelques centimes) et lance `python scenarios_modele.py`. Vous lisez les quatre scores et, pour chaque essai, l'extrait de la réponse. Cinq sur cinq partout est le cas idéal. Un score plus bas n'est pas une panne du programme : c'est une mesure du modèle du jour. Lisez les extraits des essais ratés, puis faites noter les scores dans `archi-stack.md`, avec la date et le nom du modèle : ils serviront de référence le jour où vous en changerez. Relancez enfin `pytest` : il ne fait toujours aucun appel réel.
 
@@ -2061,6 +2091,11 @@ flowchart LR
 **`post-mortem.md`** : prévu contre réalisé, ce qui a bien marché, les frictions (déploiement compris), les décisions revues en route, les leçons pour le prochain projet. Ajoutez-y **vos propres chiffres** lus dans l'onglet Activité : tokens du premier jour, latence moyenne, coût estimé. Ils serviront de première référence. Avant chaque évolution, remesurez-les : le bac à sable et les skills auront changé les chiffres.
 
 Le post-mortem se termine par une section **« Ce que j'ai appris »**. L'agent de codage y pose un tableau des briques promises par le README (boucle d'agent IA, prompt système, cron, webhook, outil sur mesure, MCP, pannes visibles, mémoire, observabilité, CI/CD, production), avec trois colonnes : *je sais le refaire en vibe coding*, *je comprends*, *encore flou*, plus une ligne libre. « Le refaire en vibe coding », c'est savoir le demander à votre agent de codage, relire son plan et vérifier le résultat, pas l'écrire à la main. **C'est vous qui cochez, pas l'agent de codage** : il sait ce qui a été construit, pas ce que vous avez compris.
+
+**L'exercice de transfert.** C'est le seul de ce type, et il se fait ici. L'agent de codage vous demande : pour ajouter une nouvelle source au brief, que lui demanderiez-vous, et comment vérifieriez-vous le résultat ? Répondez avec vos mots, sans chercher le nom des fichiers : c'est votre façon de piloter qui compte.
+
+<!-- AGENT : tu poses cette question après le post-mortem et avant de proposer les évolutions, seule dans ton message. Éléments attendus, que le pilote a tous déjà vécus. Ce qu'il demande : un nouvel outil pour la source, sur le modèle de la météo (un appel direct) ou de l'horoscope (un serveur MCP) ; la consigne qui dit au modèle quand s'en servir ; un message d'erreur si la source ne répond pas, sans contenu de remplacement. Ce qu'il fait réexaminer : quelles données partent vers la source et vers Gemini ; si ce que rend la source est un contenu extérieur, à traiter comme une donnée ; si l'outil doit figurer parmi les outils en lecture seule du brief. Comment il vérifie : le plan lu avant le GO, la lecture guidée du code, un CHECK avec la source qui marche puis en panne, les tests, et les scénarios avec le vrai modèle. Retour bref, puis tu enchaînes. Cet exercice ne bloque pas la clôture.
+-->
 
 **Les évolutions.** Le skill propose les quatre évolutions de la section 1.3, dans leur ordre, avec valeur et effort : le bac à sable d'exécution de code, les skills, les sous-agents, la base de connaissances hybride. Il peut en ajouter d'autres, tirées de la section 7.2. S'il ne propose pas les quatre, demandez-les. Elles sont consignées dans la section « Pour aller plus loin » du `plan-action.md`, dans cet ordre.
 
