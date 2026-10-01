@@ -47,7 +47,7 @@ Des plateformes permettent de créer un agent IA sans écrire de code, ou presqu
 
 En vibe codant GoodVibe vous-même :
 
-- **vous voyez ce que cachent toutes les plateformes** : la boucle, les outils, la mémoire, les tokens. Vous comprendrez ensuite n'importe laquelle en une heure ;
+- **vous voyez ce que cachent toutes les plateformes** : la boucle, les outils, la mémoire, les tokens. Vous comprendrez ensuite n'importe laquelle ;
 - **vous voyez tout** : chaque appel, chaque token, chaque centime ;
 - **GoodVibe range ses données sur votre serveur**. Pour réfléchir, il envoie vos messages à Gemini, qui en conserve une trace. « Oublie-moi » efface ce que GoodVibe garde de vous : profil, notes, conversations, pense-bêtes, briefs et images ;
 - **le coût reste de quelques euros par mois**, sans abonnement par utilisateur ;

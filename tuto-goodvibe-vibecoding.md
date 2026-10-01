@@ -161,7 +161,7 @@ Tout le reste du document explique ce qui va se passer et ce que vous devez vér
 ## Sommaire
 
 1. [Objectif, prérequis, installation](#1-objectif-prérequis-installation)
-2. [Les concepts en une heure](#2-les-concepts-en-une-heure)
+2. [Les concepts](#2-les-concepts)
 3. [Le PRD de GoodVibe et les règles du projet](#3-le-prd-de-goodvibe-et-les-règles-du-projet)
 4. [Lancer le skill et cadrer](#4-lancer-le-skill-et-cadrer)
 5. [Guide feature par feature, version 1](#5-guide-feature-par-feature-version-1)
@@ -267,7 +267,7 @@ Python de base, Git, et la méthode PDCA elle-même : elle est portée par le sk
 
 ---
 
-## 2. Les concepts en une heure
+## 2. Les concepts
 
 ### 2.1 La boucle d'agent IA
 
