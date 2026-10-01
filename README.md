@@ -208,7 +208,7 @@ Sur la page d'accueil du dépôt, cliquez sur le bouton vert **`<> Code`** → *
 
 ### 3. Collez ce prompt dans votre agent de codage
 
-Complétez d'abord la ligne « Profil de calibrage », à la fin du prompt : c'est elle qui règle le niveau des explications. Si vous débutez, écrivez « (1) je débute » : l'agent de codage expliquera chaque mot technique.
+Collez-le tel quel : il n'y a rien à y compléter. L'agent de codage vous posera trois questions simples, le diagnostic d'entrée, pour régler le niveau de ses explications. Vos réponses changent la quantité d'explications, jamais ce que vous construisez.
 
 ```
 Nous démarrons le projet GoodVibe dans ce répertoire vierge. Si une étape ci-dessous est déjà faite, dis-le-moi et passe à la suivante.
@@ -220,14 +220,14 @@ Nous démarrons le projet GoodVibe dans ce répertoire vierge. Si une étape ci-
 Étape 3 : lis le SKILL.md du skill et déroule-le fidèlement sur GoodVibe-PRD.md, en commençant par la Phase 0.
 
 Contexte du projet :
-- Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les huit règles de la note d'en-tête du tuto, qui priment sur lui.
+- Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, diagnostic d'entrée à la place de la question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les huit règles de la note d'en-tête du tuto, qui priment sur lui.
 - Fichier de règles : quand le skill dépose son gabarit CLAUDE.md à la racine, ajoute-y les huit lignes de la section 3.4 du tuto, corrige les lignes du gabarit qu'elles contredisent, et montre-moi le fichier entier. Dépose-en une copie identique sous le nom AGENTS.md, et garde les deux fichiers identiques à chaque modification : selon l'agent, c'est l'un ou l'autre qui est lu.
 - Document de reprise : tiens REPRISE.md à jour, comme l'indique la section 4.2 du tuto.
 - Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis-le tel qu'il est dans le dépôt, en fichier brut, jamais dans un aperçu Markdown. Sa note d'en-tête et ses huit règles sont dans un commentaire HTML (<!-- AGENT : ... -->), invisible à l'affichage : lis-les et applique-les. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, commence par la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis dis-moi ce que tu vas faire, étape par étape, et pourquoi. Ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. N'affiche jamais un secret dans la discussion : ni clé, ni mot de passe, ni jeton. Au CHECK, fais une seule action à la fois et arrête-toi pour que je constate. Dis-moi toujours quand quelque chose échoue, et pourquoi. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs) en expliquant ce que tu fais et pourquoi. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
 - Erreurs : dans le code que tu écris, aucune erreur n'est masquée : ni contenu de remplacement, ni valeur par défaut à la place d'une donnée manquante, ni erreur interceptée en silence. Quand quelque chose échoue, le programme l'affiche là où je regarde, en disant ce qui a échoué et pourquoi, et le journal le note.
-- Profil de calibrage : [écrivez ici « (1) je débute » ou « (2) je code déjà, je découvre le vibe coding »]. Inscris ce profil dans le fichier de règles du projet, et calibre toutes tes explications dessus.
+- Diagnostic d'entrée : à la place de la question de calibrage du skill, pose-moi les trois questions de la règle 2 de la note d'en-tête du tuto, une à la fois. Inscris mes réponses et l'accompagnement qui en découle dans le fichier de règles du projet, et calibre toutes tes explications dessus. Le diagnostic change la quantité d'explications, jamais ce qui est construit.
 
 Commence par l'étape 1.
 ```
@@ -245,7 +245,7 @@ Commence par l'étape 1.
 
 ### 4. Vérifiez que l'agent de codage suit le skill
 
-L'agent de codage doit **se présenter**, résumer la méthode PDCA en une phrase et poser **une seule question** de calibrage. S'il écrit du code d'emblée ou saute la présentation, il ne suit pas le skill : passez à l'étape 5.
+L'agent de codage doit **se présenter**, résumer la méthode PDCA en une phrase et poser **la première des trois questions** du diagnostic d'entrée, une seule à la fois : savez-vous lire une fonction Python simple, à quoi sert un commit Git, et distinguer une application sur votre ordinateur d'une application hébergée sur un serveur. S'il écrit du code d'emblée ou saute la présentation, il ne suit pas le skill : passez à l'étape 5.
 
 ### 5. Si l'agent de codage ne suit pas le skill
 
@@ -267,7 +267,7 @@ La ceinture est attachée si l'agent de codage :
 - nomme le bon fichier : `AGENTS.md` pour Gemini dans Antigravity, Codex et GitHub Copilot ; `CLAUDE.md` pour Claude Code ;
 - cite la **Règle 0** : jamais de code ni de publication sans votre GO ;
 - cite les **huit lignes** propres à GoodVibe : la mise en ligne sur un VPS et non sur Netlify, le CHECK, le modèle Gemini choisi aux fiches 1 et 10, aucune donnée personnelle, le tuto comme référence, la pédagogie, les secrets, les erreurs jamais masquées ;
-- donne **votre profil**.
+- donne **le résultat de votre diagnostic d'entrée** : vos trois réponses et l'accompagnement retenu.
 
 S'il hésite, s'il invente, ou s'il va lire des fichiers pour répondre, il ne charge pas ses règles. Vérifiez que `AGENTS.md` existe à la racine du projet et qu'il est identique à `CLAUDE.md`, puis recommencez dans une nouvelle conversation. Ne lancez pas la première feature sans cette ceinture, et refaites ce contrôle chaque fois que vous changez d'agent de codage. Le détail est dans le tuto, section 4.3.
 
@@ -285,7 +285,7 @@ Reprends le vibecoding sur GoodVibe. Ce projet est déjà en cours et suit la m�
 
 | Symptôme | Que faire |
 |---|---|
-| L'agent de codage écrit du code d'emblée, sans se présenter ni poser la question de calibrage | Il ne suit pas le skill : suivez l'étape 5 du démarrage rapide (dossier du skill, nouvelle conversation, prompt recollé). |
+| L'agent de codage écrit du code d'emblée, sans se présenter ni poser le diagnostic d'entrée | Il ne suit pas le skill : suivez l'étape 5 du démarrage rapide (dossier du skill, nouvelle conversation, prompt recollé). |
 | L'agent de codage n'arrive pas à télécharger le skill | Téléchargez vous-même son ZIP et déposez-le à la racine du projet : étape 5 du démarrage rapide. |
 | L'agent de codage code ou modifie des fichiers sans attendre votre GO | Rappelez-lui la **Règle 0** du fichier de règles (`CLAUDE.md` et sa copie `AGENTS.md`) : jamais de code sans GO. S'il récidive, ouvrez une nouvelle conversation : le fichier de règles est relu. Vérifiez que `AGENTS.md` existe : c'est lui que lisent l'agent de codage Gemini d'Antigravity, Codex et GitHub Copilot. |
 | « Quota exceeded », l'agent de codage s'arrête : son quota gratuit, celui de Gemini dans Antigravity, est épuisé | Attendez le renouvellement, ou passez le relais à **Claude Code** avec le prompt de reprise. |
