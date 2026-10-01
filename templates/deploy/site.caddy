@@ -1,0 +1,10 @@
+# Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
+# Fiche Caddy de l'agent IA {{NOM_AGENT}} (fiche 12) : installée dans /etc/caddy/sites/{{NOM_AGENT}}.caddy.
+# Caddy, le concierge commun du serveur, lit une fiche par agent IA : en ajouter une ne touche jamais les autres.
+# Il obtient seul le certificat HTTPS de l'adresse, puis relaie vers les deux ports de cet agent IA.
+
+{{ADRESSE}} {
+    encode zstd gzip
+    reverse_proxy /pense-bete* 127.0.0.1:{{PORT_WEBHOOK}}
+    reverse_proxy 127.0.0.1:{{PORT_WEB}}
+}

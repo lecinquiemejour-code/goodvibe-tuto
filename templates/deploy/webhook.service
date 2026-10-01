@@ -1,0 +1,23 @@
+# Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
+[Unit]
+Description=Service Webhook de l'agent IA {{NOM_AGENT}} (FastAPI / Uvicorn)
+# Installé sous le nom /etc/systemd/system/{{NOM_AGENT}}-webhook.service (fiche 14)
+After=network.target
+
+[Service]
+Type=simple
+User={{NOM_AGENT}}
+Group={{NOM_AGENT}}
+WorkingDirectory=/home/{{NOM_AGENT}}/app
+ExecStart=/home/{{NOM_AGENT}}/app/venv/bin/uvicorn webhook:app --host 127.0.0.1 --port {{PORT_WEBHOOK}}
+Restart=always
+RestartSec=5
+EnvironmentFile=/home/{{NOM_AGENT}}/app/.env
+
+# Sécurisation du processus
+PrivateTmp=true
+ProtectSystem=full
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

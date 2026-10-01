@@ -5,13 +5,13 @@
 set -e
 
 echo "=== 1. Navigation vers le répertoire de l'application ==="
-cd /home/{{UTILISATEUR}}/app
+cd /home/{{NOM_AGENT}}/app
 
 echo "=== 2. Récupération des dernières modifications depuis GitHub ==="
 git pull origin main
 
 echo "=== 3. Mise à jour des dépendances dans l'environnement virtuel ==="
-/home/{{UTILISATEUR}}/app/venv/bin/pip install -r requirements.txt
+/home/{{NOM_AGENT}}/app/venv/bin/pip install -r requirements.txt
 
 echo "=== 4. Actualisation de la crontab utilisateur ==="
 # Toute modification dans deploy/crontab est ainsi immédiatement prise en compte
@@ -23,7 +23,7 @@ echo "=== 4 bis. Chemin complet de uvx pour le serveur MCP fetch ==="
 # Ni le service ni le cron ne connaissent le dossier où uvx est installé : GoodVibe lit
 # son chemin complet dans le .env (MCP_FETCH_COMMAND). On l'y inscrit s'il manque.
 # Aucun contenu du .env n'est affiché.
-UVX=/home/{{UTILISATEUR}}/.local/bin/uvx
+UVX=/home/{{NOM_AGENT}}/.local/bin/uvx
 if [ ! -x "$UVX" ]; then
     echo "ATTENTION : uvx est introuvable à $UVX. L'horoscope affichera une erreur tant qu'il n'est pas installé."
 elif [ ! -f .env ]; then
@@ -40,9 +40,9 @@ else
     echo "Chemin de uvx inscrit dans le .env"
 fi
 
-echo "=== 5. Redémarrage des services GoodVibe ==="
+echo "=== 5. Redémarrage des services de l'agent IA {{NOM_AGENT}} ==="
 # Redémarrage propre sans mot de passe grâce à la règle sudoers configurée aux fiches 12 et 14
-sudo systemctl restart goodvibe-web
-sudo systemctl restart goodvibe-webhook
+sudo systemctl restart {{NOM_AGENT}}-web
+sudo systemctl restart {{NOM_AGENT}}-webhook
 
 echo "=== Déploiement terminé avec succès ==="

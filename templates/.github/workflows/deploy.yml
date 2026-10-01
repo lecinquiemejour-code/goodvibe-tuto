@@ -42,4 +42,4 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script: bash /home/{{UTILISATEUR}}/app/deploy/deployer.sh
+          script: bash /home/{{NOM_AGENT}}/app/deploy/deployer.sh

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
 # Script de sauvegarde nocturne de la base SQLite GoodVibe (Feature 12)
-# Exécuté chaque nuit à 3h00 par la crontab de l'utilisateur {{UTILISATEUR}}
+# Exécuté chaque nuit à 3h00 par la crontab de l'utilisateur {{NOM_AGENT}}
 
 set -euo pipefail
-cd /home/{{UTILISATEUR}}
+cd /home/{{NOM_AGENT}}
 
 DATE=$(date +"%Y%m%d_%H%M%S")
-APP_DIR="/home/{{UTILISATEUR}}/app"
-BACKUP_DIR="/home/{{UTILISATEUR}}/backups"
+APP_DIR="/home/{{NOM_AGENT}}/app"
+BACKUP_DIR="/home/{{NOM_AGENT}}/backups"
 DB_SRC="$APP_DIR/data/agent.db"
 DB_DEST="$BACKUP_DIR/agent_${DATE}.db"
 

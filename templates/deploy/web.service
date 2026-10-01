@@ -1,0 +1,23 @@
+# Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
+[Unit]
+Description=Service Web de l'agent IA {{NOM_AGENT}} (Gradio)
+# Installé sous le nom /etc/systemd/system/{{NOM_AGENT}}-web.service (fiche 12)
+After=network.target
+
+[Service]
+Type=simple
+User={{NOM_AGENT}}
+Group={{NOM_AGENT}}
+WorkingDirectory=/home/{{NOM_AGENT}}/app
+ExecStart=/home/{{NOM_AGENT}}/app/venv/bin/python interface.py
+Restart=always
+RestartSec=5
+EnvironmentFile=/home/{{NOM_AGENT}}/app/.env
+
+# Sécurisation du processus
+PrivateTmp=true
+ProtectSystem=full
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
