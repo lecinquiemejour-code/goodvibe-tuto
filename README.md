@@ -9,7 +9,7 @@
 
 À la fin de ce parcours, vous saurez :
 
-- **créer** un agent IA autonome en Python : un programme qui raisonne avec un modèle d'IA, appelle des outils, garde une mémoire et se déclenche tout seul (cron, webhook) ;
+- **créer** un agent IA autonome en Python : un programme qui raisonne avec un modèle d'IA, appelle des outils, garde une mémoire et démarre sans qu'on lui parle, déclenché par une horloge (cron) ou par un message venu de l'extérieur (webhook) ;
 - **l'observer** : voir ce qu'il fait, ce qu'il sait et ce qu'il coûte ;
 - **l'héberger** : le déployer sur votre propre serveur (VPS), en HTTPS, mis à jour automatiquement à chaque modification.
 

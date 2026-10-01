@@ -159,7 +159,7 @@ Tout le reste du document explique ce qui va se passer et ce que vous devez vér
 
 ### 1.1 L'objectif
 
-Construire, avec le skill VibeCoding Copilote, un agent IA autonome en Python qui dialogue avec vous, se déclenche seul par cron et par webhook, utilise un outil MCP et une API externe, garde une mémoire, délègue à des sous-agents, et tourne en production sur un VPS.
+Construire, avec le skill VibeCoding Copilote, un agent IA autonome en Python qui dialogue avec vous, démarre sans qu'on lui parle, déclenché par cron et par webhook, utilise un outil MCP et une API externe, garde une mémoire, délègue à des sous-agents, et tourne en production sur un VPS.
 
 Cet agent IA s'appelle **GoodVibe**. C'est un assistant personnel du matin : il apprend qui vous êtes en discutant, prépare chaque jour un brief (horoscope réécrit pour vous, image du jour, météo de votre ville, pense-bêtes), et répond à vos questions depuis un terminal ou une page web privée. Le domaine est volontairement léger. L'architecture, elle, est celle d'un vrai agent IA en production : remplacez horoscope et météo par veille concurrentielle et boîte mail, rien ne change.
 
