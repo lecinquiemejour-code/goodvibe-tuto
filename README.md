@@ -314,7 +314,7 @@ flowchart TD
     H3 --> H4["Évolution 4 : base<br/>de connaissances hybride"]
 ```
 
-**Après la V1, quatre évolutions**, chacune dans son propre cycle PDCA, du plus petit changement au plus grand. D'abord un outil de plus, le bac à sable d'exécution de code, sans toucher à l'architecture. Puis les skills, qui allègent le prompt système. Puis les sous-agents, qui changent l'architecture une fois l'agent IA unique stabilisé. Enfin la base de connaissances, la plus lourde, qui prend place comme un spécialiste de plus. L'argumentation complète est dans le tuto, section 1.3.
+**Après la V1, quatre évolutions**, chacune dans son propre cycle PDCA, du plus petit changement au plus grand. D'abord un outil de plus, le bac à sable d'exécution de code, sans toucher à l'architecture. Puis les skills, qui allègent le prompt système. Puis les sous-agents, qui changent l'architecture une fois l'agent IA unique stabilisé. Enfin la base de connaissances, la plus lourde. L'argumentation complète est dans le tuto, section 1.3.
 
 Chaque feature suit la même boucle **PDCA** : l'agent de codage vous fait la leçon (le problème, l'idée, les mots nouveaux), puis présente son **PLAN** (ce qu'il va faire, et pourquoi) → vous donnez le **GO #1** → l'agent de codage **code**, puis vous montre et vous explique les extraits qui comptent → vous faites le **CHECK** → **GO #2** → commit.
 

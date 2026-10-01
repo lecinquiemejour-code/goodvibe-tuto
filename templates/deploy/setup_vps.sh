@@ -33,7 +33,8 @@ CADDYEOF
 else
     # Une configuration existe déjà (celle d'un autre agent IA ?) : on ne l'écrase jamais
     echo "ERREUR : /etc/caddy/Caddyfile contient déjà une configuration, et elle n'est pas écrasée."
-    echo "Déplacez d'abord son contenu dans une fiche de /etc/caddy/sites/ (tuto, section 7.2)."
+    echo "Déplacez d'abord son contenu dans une fiche /etc/caddy/sites/<nom>.caddy, puis ne laissez dans le Caddyfile que la ligne : $IMPORT"
+    echo "Vérifiez avec : caddy validate --config /etc/caddy/Caddyfile. Puis relancez ce script."
     exit 1
 fi
 
