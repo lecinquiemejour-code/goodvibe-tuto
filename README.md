@@ -15,6 +15,42 @@
 
 Pour apprendre tout cela sur du concret, vous construisez un agent complet : **GoodVibe**. Ce n'est qu'un prétexte, un fil rouge. Ce qui compte, ce sont les briques que vous apprenez à assembler, réutilisables pour n'importe quel autre agent.
 
+**Un agent, c'est un modèle qui décide lui-même de l'étape suivante.** À chaque tour, il choisit : répondre, ou demander un outil. Exemple avec une question météo :
+
+```mermaid
+flowchart TD
+    Q["1. Une demande arrive<br/>« Quel temps à Lyon demain ? »"] --> P
+    P["2. Notre code prépare l'appel<br/>consignes + liste des outils + conversation + réglages<br/>(le modèle n'a aucune mémoire : on lui renvoie tout à chaque tour)"] --> M
+    M{"3. Le modèle décide"}
+    M -- "il lui manque une information" --> D["4a. Il demande un outil<br/>« meteo, ville = Lyon »"]
+    D --> X["5. Notre code exécute l'outil<br/>(le modèle n'exécute jamais rien lui-même)"]
+    X --> R["6. Le résultat rejoint la conversation<br/>« Lyon : 18 °C, éclaircies »"]
+    R --> T{"Nombre maximal<br/>de tours atteint ?"}
+    T -- "non : nouveau tour" --> P
+    T -- "oui" --> S["Arrêt forcé<br/>(garde-fou contre la boucle infinie)"]
+    M -- "il a tout ce qu'il faut" --> F["4b. Il rédige la réponse finale"]
+    F --> J["7. Le journal note les tokens,<br/>la durée et le coût"]
+    S --> J
+```
+
+Un script suit des étapes fixées à l'avance ; un agent choisit la suivante à chaque tour. Le détail est en section 2.1 du tuto.
+
+**GoodVibe, c'est cette boucle, avec quatre portes d'entrée et trois appuis :**
+
+```mermaid
+flowchart TD
+    subgraph E["Les quatre portes d'entrée"]
+        T1["Vous, au terminal"]
+        T2["Vous, sur la page web"]
+        T3["L'horloge, à 7 h<br/>(cron)"]
+        T4["Un message venu de l'extérieur<br/>(webhook)"]
+    end
+    E --> C["Le cœur<br/>consignes + boucle d'agent + modèle Gemini"]
+    C --> O["Les outils<br/>météo, horoscope, image"]
+    C --> MEM["La mémoire<br/>profil, notes, pense-bêtes"]
+    C --> JR["Le journal<br/>ce que fait l'agent, ce que ça coûte"]
+```
+
 ## 🧭 Le moteur du tuto : le skill VibeCoding Copilote
 
 Ce tuto est l'application pratique du skill **[VibeCoding Copilote](https://github.com/lecinquiemejour-code/vibecoding-copilote)** (Le Cinquième Jour). **Il est indispensable : sans lui, le tuto ne fonctionne pas.**
