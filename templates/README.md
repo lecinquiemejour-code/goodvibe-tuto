@@ -18,7 +18,7 @@ C'est le code de référence de GoodVibe V1 : l'état final du projet, validé e
 
 | Fiche | Fichiers |
 |---|---|
-| 1. Squelette et chat terminal | `config.py`, `prompt_systeme.md`, `agent.py`, `chat_terminal.py`, `requirements.txt`, `.env.example`, `.gitignore` |
+| 1. Squelette et chat terminal | `config.py`, `prompt_systeme.md`, `agent.py`, `chat_terminal.py`, `requirements.txt`, `.env.example`, `.gitignore`, `.gitattributes` |
 | 2. Page web | `interface.py` |
 | 3. Journal d'activité | `db.py` (table `journal`), `journal.py`, `fragments.py` (1) |
 | 4. Base et profil | `db.py`, `outils.py`, `agent.py`, `prompt_systeme.md`, `interface.py` |

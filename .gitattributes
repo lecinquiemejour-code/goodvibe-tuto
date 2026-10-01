@@ -1,0 +1,4 @@
+# Tous les fichiers texte sont en fins de ligne LF (format Linux), dans le dépôt comme sur la machine :
+# les scripts du serveur (.sh) ne cassent jamais, quel que soit le système de celui qui les écrit.
+# Les fichiers binaires (images, bases) sont détectés et laissés tels quels.
+* text=auto eol=lf
