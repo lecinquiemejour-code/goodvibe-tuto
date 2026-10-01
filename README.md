@@ -15,6 +15,25 @@
 
 Pour apprendre tout cela sur du concret, vous construisez un agent complet : **GoodVibe**. Ce n'est qu'un prétexte, un fil rouge. Ce qui compte, ce sont les briques que vous apprenez à assembler, réutilisables pour n'importe quel autre agent.
 
+### Pourquoi vibe coder son agent soi-même ?
+
+Des plateformes permettent de créer un agent sans écrire de code, ou presque : outils sans code (Dust, n8n), kits des fournisseurs de modèles (Anthropic, OpenAI, Microsoft Azure AI Foundry, Google), frameworks d'agents (LangGraph, CrewAI). Elles sont souvent le bon choix pour aller vite. Ce tuto poursuit un autre but : **comprendre et maîtriser**.
+
+En vibe codant GoodVibe vous-même :
+
+- **vous voyez ce que cachent toutes les plateformes** : la boucle, les outils, la mémoire, les tokens. Vous comprendrez ensuite n'importe laquelle en une heure ;
+- **vous voyez tout** : chaque appel, chaque token, chaque centime ;
+- **vos données restent sur votre serveur**, et « Oublie-moi » efface vraiment tout ;
+- **le coût reste de quelques euros par mois**, sans abonnement par utilisateur ;
+- **le code est à vous**, et vous apprenez le métier de la production : cron, webhook, HTTPS, CI/CD ;
+- **vous maîtrisez le vibe coding** : GoodVibe devient un point de départ, que vous adaptez et faites évoluer, avec votre agent de codage, vers la solution agentique dont **vous** avez besoin.
+
+**Une plateforme, c'est un costume ou une robe de prêt-à-porter** : vite enfilé, mais coupé pour tout le monde. **Ce tuto vous apprend la couture sur mesure** : c'est plus long qu'un assemblage de blocs, et c'est voulu. Une fois le métier acquis, vous taillez le costume ou la robe qui vous va parfaitement, et vous le retouchez à l'infini, au fil de vos besoins. Ou vous choisissez votre prêt-à-porter en connaissance de cause.
+
+*Exemples cités en octobre 2026 : les noms et les offres évoluent vite.*
+
+### Ce qu'est un agent
+
 **Un agent, c'est un modèle qui décide lui-même de l'étape suivante.** Exemple : le brief du matin de GoodVibe, de bout en bout.
 
 ```mermaid
@@ -57,23 +76,6 @@ flowchart TD
     C --> MEM["La mémoire<br/>profil, notes, pense-bêtes"]
     C --> JR["Le journal<br/>ce que fait l'agent, ce que ça coûte"]
 ```
-
-## Pourquoi vibe coder son agent soi-même ?
-
-Des plateformes permettent de créer un agent sans écrire de code, ou presque : outils sans code (Dust, n8n), kits des fournisseurs de modèles (Anthropic, OpenAI, Microsoft Azure AI Foundry, Google), frameworks d'agents (LangGraph, CrewAI). Elles sont souvent le bon choix pour aller vite. Ce tuto poursuit un autre but : **comprendre et maîtriser**.
-
-En vibe codant GoodVibe vous-même :
-
-- **vous voyez ce que cachent toutes les plateformes** : la boucle, les outils, la mémoire, les tokens. Vous comprendrez ensuite n'importe laquelle en une heure ;
-- **vous voyez tout** : chaque appel, chaque token, chaque centime ;
-- **vos données restent sur votre serveur**, et « Oublie-moi » efface vraiment tout ;
-- **le coût reste de quelques euros par mois**, sans abonnement par utilisateur ;
-- **le code est à vous**, et vous apprenez le métier de la production : cron, webhook, HTTPS, CI/CD ;
-- **vous maîtrisez le vibe coding** : GoodVibe devient un point de départ, que vous adaptez et faites évoluer, avec votre agent de codage, vers la solution agentique dont **vous** avez besoin.
-
-**Une plateforme, c'est un costume ou une robe de prêt-à-porter** : vite enfilé, mais coupé pour tout le monde. **Ce tuto vous apprend la couture sur mesure** : c'est plus long qu'un assemblage de blocs, et c'est voulu. Une fois le métier acquis, vous taillez le costume ou la robe qui vous va parfaitement, et vous le retouchez à l'infini, au fil de vos besoins. Ou vous choisissez votre prêt-à-porter en connaissance de cause.
-
-*Exemples cités en octobre 2026 : les noms et les offres évoluent vite.*
 
 ## 🧭 Le moteur du tuto : le skill VibeCoding Copilote
 
