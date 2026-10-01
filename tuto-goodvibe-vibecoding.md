@@ -79,7 +79,7 @@
 >
 > Puis tu demandes le GO #1 : « (A) GO ; (B) j'ai une question ». De même au cadrage : l'organisation du code est « un fichier par responsabilité » ; tu l'expliques, tu ne proposes pas de variantes.
 >
-> **Règle 4. Les modèles : au moment du besoin, et c'est toi qui cherches.** Ce tuto ne fixe aucun modèle, et tu n'en choisis aucun au cadrage : dans `archi-stack.md`, tu écris « modèle texte : choisi à la fiche 1 ; modèle image : choisi à la fiche 10 ». Au PLAN de la fiche 1, puis au PLAN de la fiche 10, tu consultes toi-même la documentation officielle de Google (<https://ai.google.dev/gemini-api/docs/models>, <https://ai.google.dev/gemini-api/docs/interactions>, <https://ai.google.dev/gemini-api/docs/pricing>) et tu présentes ta recommandation au pilote. Tes critères : pour le texte, le modèle **Gemini Flash stable le plus récent** que Google recommande pour les agents IA, compatible avec l'API Interactions, les appels d'outils, le streaming et la réflexion ; pour l'image, le modèle **stable le moins coûteux**. Jamais de modèle « preview » ou « experimental ». Tu vérifies de la même façon la syntaxe de l'API et les noms de champs. Avec le modèle texte, tu vérifies les réglages qu'il accepte (température, longueur maximale de réponse, niveau de réflexion) et tu recommandes des valeurs, expliquées en langage courant ; si la documentation conseille de garder une valeur par défaut, tu le dis et tu la gardes.
+> **Règle 4. Les modèles : au moment du besoin, et c'est toi qui cherches.** Ce tuto ne fixe aucun modèle, et tu n'en choisis aucun au cadrage : dans `archi-stack.md`, tu écris « modèle texte : choisi à la fiche 1 ; modèle image : choisi à la fiche 10 ». Au PLAN de la fiche 1, puis au PLAN de la fiche 10, tu consultes toi-même la documentation officielle de Google (<https://ai.google.dev/gemini-api/docs/models>, <https://ai.google.dev/gemini-api/docs/interactions>, <https://ai.google.dev/gemini-api/docs/pricing>) et tu présentes ta recommandation au pilote. Tes critères : pour le texte, le modèle **Gemini Flash stable le plus récent** que Google recommande pour les agents IA, compatible avec l'API Interactions, les appels d'outils, le streaming et la réflexion ; pour l'image, le modèle **stable le moins coûteux**. Jamais de modèle « preview » ou « experimental ». Tu vérifies de la même façon la syntaxe de l'API et les noms de champs. Tu revérifies aussi ce que Google dit de la conservation des interactions et de l'usage des données envoyées (<https://ai.google.dev/gemini-api/docs/interactions-overview#data-storage-and-retention>, <https://ai.google.dev/gemini-api/terms>), et tu signales au pilote tout écart avec la section 2.5. Avec le modèle texte, tu vérifies les réglages qu'il accepte (température, longueur maximale de réponse, niveau de réflexion) et tu recommandes des valeurs, expliquées en langage courant ; si la documentation conseille de garder une valeur par défaut, tu le dis et tu la gardes.
 >
 > **Comment tu présentes ta recommandation de modèle.** Tu la poses seule, avant la solution de la fiche, jamais fusionnée avec elle. En trois temps :
 >
@@ -219,7 +219,7 @@ Les autres pistes de la section 7.2 sont libres : chacun les prend quand il veut
 ### 1.4 Prérequis
 
 - **Antigravity** installé, avec Gemini intégré. Ce tuto est conçu et validé pour Antigravity IDE. Il doit fonctionner aussi dans **VS Code** ou l'un de ses forks, avec Claude Code, Codex ou GitHub Copilot : le prompt de démarrage et les fichiers de règles sont prévus pour eux (section 1.5), mais ce parcours n'a pas été validé.
-- Un compte **Google AI Studio**. La clé API Gemini se crée **le moment venu**, à la fiche 1, quand l'agent de codage prépare le `.env` : inutile de l'anticiper. Les appels de GoodVibe à cette clé se paient à l'usage. **Activez la facturation dès la fiche 1**, sur le projet Google de la clé, avec un plafond de dépense de quelques euros : il faut donc une carte bancaire dès le départ. Le modèle texte a bien un niveau gratuit, mais le modèle image de la fiche 10 n'en a pas, et en plan payant Google n'utilise pas vos données pour améliorer ses modèles (section 2.5). Comptez un à deux euros par mois (section 2.7).
+- Un compte **Google AI Studio**. La clé API Gemini se crée **le moment venu**, à la fiche 1, quand l'agent de codage prépare le `.env` : inutile de l'anticiper. Les appels de GoodVibe à cette clé se paient à l'usage. **Activez la facturation dès la fiche 1**, sur le projet Google de la clé, avec un plafond de dépense de quelques euros : il faut donc une carte bancaire dès le départ. Le modèle texte a bien un niveau gratuit, mais le modèle image de la fiche 10 n'en a pas, et en plan payant Google n'utilise pas vos données pour améliorer ses modèles, même s'il conserve vos échanges un temps (section 2.5). Comptez un à deux euros par mois (section 2.7).
 - Un compte **GitHub**. Python 3.12 et Git ne sont pas des prérequis : **l'agent de codage les installe** s'ils manquent, puis gère l'environnement virtuel et les dépendances. « Intermédiaire » signifie ici savoir **lire** le code généré pour le juger au CHECK.
 - Pour la section déploiement uniquement : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
 - Recommandé : **Claude Code dans Antigravity** pour ceux qui ont un abonnement Claude. Antigravity est un fork de VS Code : Claude Code s'y installe comme l'**extension VS Code « Claude Code »**, depuis la marketplace de l'éditeur (l'agent de codage Gemini peut lancer cette installation, vous n'aurez qu'à vous connecter à votre compte Claude). Avec un plan Google AI gratuit, les quotas limitent l'agent de codage ; Claude Code prend alors le relais et l'atelier ne s'arrête pas.
@@ -468,13 +468,28 @@ flowchart LR
     H["Horloge"] --> K["Cron"]
     G & W & K --> A["GoodVibe"]
     A --> DB["SQLite<br/>chmod 600"]
-    A -- "prénom, ville, horoscope<br/>partent chez Google" --> GEM["API Gemini"]
+    A -- "messages, profil, résultats d'outils<br/>partent chez Google" --> GEM["API Gemini"]
     A --> LOG["Journal<br/>sans donnée personnelle"]
 ```
 
 Ce qu'on construit : HTTPS partout (Caddy), mot de passe sur la page web, jeton sur le webhook, contenu reçu traité comme **donnée non fiable** (jamais comme instruction), base en lecture seule pour l'utilisateur de l'agent IA, secrets en variables d'environnement, clés dédiées et révocables.
 
-Ce qu'on explique : à chaque appel, le prénom, la ville et l'horoscope **quittent le VPS** vers l'API Gemini. Vérifiez les conditions de votre plan Google AI : un plan gratuit peut autoriser Google à utiliser les données envoyées pour améliorer ses modèles, contrairement à un plan payant. Pour une démo avec un profil fictif, c'est acceptable. Pour un vrai usage, il faut le savoir.
+Ce qu'on explique : où vont vos données. GoodVibe tourne sur votre serveur, mais il ne réfléchit pas chez vous : chaque appel au modèle envoie des données à Google.
+
+| Question | Réponse |
+|---|---|
+| Où l'application range-t-elle ses données ? | Sur votre serveur, dans la base GoodVibe |
+| Qu'est-ce qui sort du serveur ? | Chaque message, le profil utile et les résultats d'outils sont envoyés à Gemini |
+| Le fournisseur garde-t-il quelque chose ? | Oui, les interactions sont conservées par Google pour permettre la reprise de conversation |
+| Que peut-on effacer ? | Les données locales, par « Oublie-moi ». Côté Google, selon ses règles de conservation |
+
+Trois précisions, tirées de la documentation de Google consultée le 1er octobre 2026 (<https://ai.google.dev/gemini-api/docs/interactions-overview#data-storage-and-retention>, <https://ai.google.dev/gemini-api/terms>). Ces règles changent : l'agent de codage les revérifie au PLAN de la fiche 1.
+
+- **La conservation.** Par défaut, Google garde chaque interaction : 55 jours en formule payante, 1 jour en formule gratuite. GoodVibe s'appuie sur cette conservation : quand il rend au modèle le résultat d'un outil, il enchaîne sur l'interaction précédente au lieu de tout renvoyer. On peut la désactiver, mais GoodVibe ne pourrait plus enchaîner ses tours.
+- **L'usage.** En formule gratuite, Google peut utiliser ce que vous envoyez pour améliorer ses produits, et des relecteurs humains peuvent le lire. En formule payante, non. Dans l'Espace économique européen, en Suisse et au Royaume-Uni, c'est le régime payant qui s'applique, même à l'accès gratuit.
+- **L'effacement.** « Oublie-moi » efface ce que GoodVibe garde chez vous. Il n'efface rien chez Google : les interactions déjà transmises y restent jusqu'à leur expiration. Son message le dit.
+
+**La leçon** : héberger soi-même une application ne signifie pas que ses données restent chez soi dès qu'elle appelle un modèle distant. Pour une démo avec un profil fictif, c'est acceptable. Pour un vrai usage, c'est un choix à faire en connaissance de cause.
 
 ### 2.6 Le CI/CD
 
@@ -495,7 +510,7 @@ Deux jobs : **test** à chaque push (le code est installé, vérifié par `ruff`
 
 Le modèle est le « cerveau » que GoodVibe interroge à chaque message. Google en propose plusieurs familles : **Flash-Lite**, le plus économique ; **Flash**, l'équilibre entre prix et capacité ; **Pro**, le plus puissant et le plus cher. Un modèle « stable » ne changera pas sous vos pieds ; un modèle « preview » est un essai que Google peut retirer sans délai.
 
-On paie à l'usage, au **token** : un morceau de mot. Google propose un niveau gratuit pour ses modèles texte, avec des quotas ; en contrepartie, il peut utiliser les données envoyées pour améliorer ses produits (section 2.5). Les modèles image n'avaient pas de niveau gratuit en septembre 2026, et chaque image se paie : c'est pour cela que le tuto fait activer la facturation dès la fiche 1, avec un plafond de dépense. Pour un agent IA personnel comme GoodVibe (un brief et une image par jour, quelques échanges), la facture est de l'ordre d'un à deux euros par mois au tarif payant, dont l'essentiel pour les images ; l'agent de codage vous donnera le chiffre du jour.
+On paie à l'usage, au **token** : un morceau de mot. Google propose un niveau gratuit pour ses modèles texte, avec des quotas ; en contrepartie, il peut utiliser les données envoyées pour améliorer ses produits, sauf dans l'Espace économique européen, en Suisse et au Royaume-Uni (section 2.5). Les modèles image n'avaient pas de niveau gratuit en septembre 2026, et chaque image se paie : c'est pour cela que le tuto fait activer la facturation dès la fiche 1, avec un plafond de dépense. Pour un agent IA personnel comme GoodVibe (un brief et une image par jour, quelques échanges), la facture est de l'ordre d'un à deux euros par mois au tarif payant, dont l'essentiel pour les images ; l'agent de codage vous donnera le chiffre du jour.
 
 Google renouvelle ses modèles plusieurs fois par an et retire les anciens. **Ce tuto ne vous en impose donc aucun** : à la fiche 1 pour le texte, à la fiche 10 pour l'image, l'agent de codage consulte la documentation du jour, vous explique ce qu'il faut savoir et vous recommande un modèle. Vous validez. Ce choix tient en une ligne de `config.py` et se change à tout moment. Changer se fait en une ligne ; vérifier demande de rejouer les scénarios de la fiche 11, parce qu'un autre modèle ne se comporte pas comme le précédent.
 
@@ -2150,7 +2165,7 @@ flowchart LR
     S8 --> S9["Le serveur installe<br/>le commit testé"]
 ```
 
-Et une dernière fois : à chaque appel, prénom, ville et horoscope partent vers l'API Gemini. Vérifiez les conditions de votre plan Google AI, notamment l'usage des données envoyées en plan gratuit. Avec un profil fictif, c'est acceptable. Avec vos vraies données, c'est un choix informé.
+Et une dernière fois : GoodVibe range ses données sur votre serveur, mais chaque message, le profil utile et les résultats d'outils partent vers Gemini, qui en conserve une trace (section 2.5). Avec un profil fictif, c'est acceptable. Avec vos vraies données, c'est un choix informé.
 
 ### 7.2 Pour aller plus loin
 
