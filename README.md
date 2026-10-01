@@ -54,7 +54,7 @@ Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai ag
 | Observabilité | Un journal d'activité : tokens, latence, coût en euros. Et les coulisses, en direct : la requête envoyée au modèle, sa réflexion, puis chaque appel d'outil avec ses JSON, dans le chat comme dans le brief, et un relevé des tokens sous chaque réponse. Et le flux brut : ce que le modèle envoie vraiment en streaming, événement par événement, dans un panneau à côté du chat et du brief. Coulisses, flux brut et relevé s'affichent à l'écran, sans être enregistrés ni renvoyés au modèle |
 | CI/CD | Déploiement automatique par GitHub Actions à chaque push |
 | Production | Un VPS Ubuntu, `systemd`, Caddy en HTTPS |
-| Sous-agents | La version 2 : horoscope et météo délégués à des agents spécialisés |
+| Sous-agents | La troisième évolution après la V1 : horoscope et météo délégués à des agents spécialisés |
 
 ## Contenu de ce dépôt
 
@@ -199,8 +199,13 @@ flowchart TD
     F --> E["Features 12 et 13 : dépôt GitHub, VPS, CI/CD<br/>(l'agent configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
     E --> F2["Feature 14 : le webhook,<br/>déployé par le pipeline"]
     F2 --> G["Walkthrough, post-mortem, pistes<br/>(l'agent rédige, vous relisez)"]
-    G --> H["Version 2 : sous-agents<br/>(nouveau cycle PDCA)"]
+    G --> H1["Évolution 1 : bac à sable<br/>d'exécution de code"]
+    H1 --> H2["Évolution 2 : skills"]
+    H2 --> H3["Évolution 3 : sous-agents"]
+    H3 --> H4["Évolution 4 : base de connaissances<br/>hybride"]
 ```
+
+**Après la V1, quatre évolutions**, chacune dans son propre cycle PDCA, du plus petit changement au plus grand. D'abord un outil de plus, le bac à sable d'exécution de code, sans toucher à l'architecture. Puis les skills, qui allègent le prompt système. Puis les sous-agents, qui changent l'architecture une fois l'agent unique stabilisé. Enfin la base de connaissances, la plus lourde, qui prend place comme un spécialiste de plus. L'argumentation complète est dans le tuto, section 1.3.
 
 Chaque feature suit la même boucle **PDCA** : l'agent vous fait la leçon (le problème, l'idée, les mots nouveaux), puis présente son **PLAN** (ce qu'il va faire, et pourquoi) → vous donnez le **GO #1** → l'agent **code**, puis vous montre et vous explique les extraits qui comptent → vous faites le **CHECK** → **GO #2** → commit.
 

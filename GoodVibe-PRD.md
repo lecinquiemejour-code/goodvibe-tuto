@@ -10,7 +10,7 @@ GoodVibe est un assistant personnel du matin : il apprend qui vous êtes en disc
 
 **Objectifs :**
 - Servir de fil rouge à l'apprentissage des agents autonomes : un seul projet qui gagne, feature après feature, un déclencheur (chat, cron, webhook), une mémoire, un outil MCP et une observabilité complète.
-- Être un vrai produit en production sur un VPS, mis à jour par un pipeline GitHub Actions, avant d'évoluer en version 2 vers une architecture à sous-agents.
+- Être un vrai produit en production sur un VPS, mis à jour par un pipeline GitHub Actions, avant d'évoluer, une étape après l'autre : un bac à sable d'exécution de code, des skills, une architecture à sous-agents, puis une base de connaissances.
 - Rendre visible ce que fait et ce que sait l'agent : tout ce qu'il mémorise et chaque décision qu'il prend doivent pouvoir être observés par le pilote.
 
 ## 2. Non-objectifs
@@ -56,7 +56,7 @@ Ce que ce produit ne cherche **pas** à être :
   - Générer une image du jour inspirée de quatre éléments : la météo du jour, le lieu de résidence, la prévision d'horoscope et les centres d'intérêt de l'utilisateur ; l'afficher au-dessus du brief et sur demande dans le chat.
   - Expliquer dans le chat ce que l'agent vient de faire, outil par outil, à partir de son journal.
 - **Could have** :
-  - Version 2 : déléguer l'horoscope et la météo à des sous-agents spécialisés, avec comparaison mesurée V1 / V2 (tokens, latence, comportement en panne).
+  - Sous-agents : déléguer l'horoscope et la météo à des sous-agents spécialisés, avec comparaison mesurée avant / après (tokens, latence, comportement en panne). C'est la troisième des quatre évolutions prévues après la V1, après le bac à sable d'exécution de code et les skills, avant la base de connaissances.
 - **Won't have (pour l'instant)** :
   - Page web adaptée au téléphone, budget quotidien de tokens et mode économe, plusieurs utilisateurs, notifications sortantes, base de connaissances où l'on dépose des fichiers (recherche hybride, par mots-clés et par le sens), chiffrement de la base au repos, authentification à deux facteurs.
 
@@ -109,4 +109,4 @@ Ce que ce produit ne cherche **pas** à être :
 ## 9. Hypothèses & Questions ouvertes
 
 - **Hypothèses retenues :** la source d'horoscope est une API publique gratuite en anglais (freehoroscopeapi.com), lue via le serveur MCP officiel `fetch` ; si elle ne répond pas, le brief l'indique par un message d'erreur, sans horoscope de remplacement ; la météo vient de l'API Open-Meteo (sans clé), appelée directement, sans MCP ; l'utilisateur unique est identifié par la session, sans compte.
-- **À trancher plus tard :** aucune pour la version 1. La version 2 (sous-agents) sera cadrée dans un second cycle à partir de la section « Pour aller plus loin » du plan d'action.
+- **À trancher plus tard :** aucune pour la version 1. Les quatre évolutions qui suivent la V1 (bac à sable d'exécution de code, skills, sous-agents, base de connaissances, dans cet ordre) seront cadrées chacune dans son propre cycle, à partir de la section « Pour aller plus loin » du plan d'action.
