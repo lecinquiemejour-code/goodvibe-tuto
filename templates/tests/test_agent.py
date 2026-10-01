@@ -201,6 +201,46 @@ def test_agent_garde_fou_max_tours(faux_gemini, monkeypatch):
     assert "[Arrêt de sécurité : nombre maximal de tours atteint]" in texte_de(fragments)
 
 
+def test_conversation_recoit_tous_les_outils(faux_gemini):
+    """Vérifie qu'en conversation, sans liste d'outils autorisés, le catalogue complet part au modèle."""
+    faux_gemini.interactions.scenarios = [fabriquer_flux_texte("Bonjour !")]
+
+    list(repondre("Bonjour"))
+
+    noms = [o["name"] for o in faux_gemini.interactions.appels[0]["tools"]]
+    for attendu in ("enregistrer_profil", "ecrire_note", "supprimer_note", "oublier_utilisateur", "meteo", "fetch"):
+        assert attendu in noms
+
+
+def test_liste_autorisee_filtre_le_catalogue_et_refuse_l_execution(faux_gemini):
+    """Vérifie les deux barrières : l'outil hors liste ne part pas, et ne s'exécute pas s'il est demandé."""
+    import confirmation
+    import journal
+
+    id_note = db.ajouter_note("Note à protéger")
+    tour1, tour2 = fabriquer_flux_outil(
+        nom_outil="supprimer_note",
+        arguments={"id_note": id_note},
+        reponse_finale="Je n'ai pas pu supprimer.",
+    )
+    faux_gemini.interactions.scenarios = [tour1, tour2]
+
+    fragments = list(repondre("Prépare mon brief", voir_reflexion=True, outils_autorises=["meteo", "lire_notes"]))
+
+    # Première barrière : le catalogue transmis ne contient que la liste
+    noms = sorted(o["name"] for o in faux_gemini.interactions.appels[0]["tools"])
+    assert noms == ["lire_notes", "meteo"]
+    # Seconde barrière : l'outil demandé quand même n'est pas exécuté
+    assert len(db.get_notes()) == 1
+    assert confirmation.en_attente() is None
+    resultat = faux_gemini.interactions.appels[1]["input"][0]["result"]
+    assert resultat["message"].startswith("Erreur : l'outil supprimer_note n'est pas disponible")
+    # Le refus se voit dans les coulisses et dans le journal
+    assert any(f.nature == COULISSES and "n'est pas disponible" in f.texte for f in fragments)
+    refus = [e for e in journal.get_dernieres_activites() if e["etape"] == "outil:supprimer_note"]
+    assert refus and refus[0]["detail"].startswith("Appel refusé")
+
+
 def test_prompt_systeme_introuvable_rend_un_message_d_erreur(faux_gemini, monkeypatch, tmp_path):
     """Vérifie que, sans sa fiche de poste, GoodVibe le dit et n'appelle pas le modèle.
 

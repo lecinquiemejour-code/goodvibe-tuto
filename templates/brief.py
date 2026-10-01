@@ -29,6 +29,12 @@ from tarifs import calculer_cout_usd, formater_cout_usd
 
 logger = logging.getLogger("goodvibe.brief")
 
+# Les seuls outils donnés au modèle pendant la rédaction du brief : il lit des contenus
+# venus de l'extérieur (pense-bêtes, horoscope), qui peuvent contenir des ordres. Aucun
+# outil de suppression ni de modification n'est transmis : une injection qui demande
+# d'effacer échoue parce que la capacité est absente, pas parce que le modèle a résisté.
+OUTILS_DU_BRIEF = ("meteo", "fetch", "lire_notes")
+
 JOURS_FR = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 MOIS_FR = [
     "janvier", "février", "mars", "avril", "mai", "juin",
@@ -189,13 +195,14 @@ def _etapes_du_brief(
     horoscope_image = ""
 
     # Les coulisses restent ouvertes pendant le brief : ce sont leurs fragments qui
-    # portent le résultat des outils.
+    # portent le résultat des outils. Le catalogue d'outils est réduit à la lecture seule.
     flux = repondre(
         prompt_brief,
         voir_reflexion=True,
         etape="brief",
         detail="Génération du brief matinal",
         voir_flux=voir_flux,
+        outils_autorises=list(OUTILS_DU_BRIEF),
     )
     for fragment, texte_affiche in avec_markdown(flux):
         if fragment.nature == FLUX:

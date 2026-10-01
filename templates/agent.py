@@ -51,6 +51,7 @@ def repondre(
     etape: str = "chat",
     detail: str = "Échange conversationnel",
     voir_flux: bool = False,
+    outils_autorises: Optional[List[str]] = None,
 ) -> Generator[Fragment, None, None]:
     """Exécute la boucle d'agent avec gestion autonome des outils et streaming.
 
@@ -62,6 +63,11 @@ def repondre(
         voir_reflexion: Si True, émet aussi les fragments de coulisses.
         voir_flux: Si True, émet aussi un fragment par événement brut reçu de Gemini.
             Seul un appelant qui a un panneau pour l'afficher le demande.
+        outils_autorises: Les noms des seuls outils donnés au modèle pour cette tâche.
+            None (la conversation) : tous les outils. Une liste (le brief, qui lit des
+            contenus venus de l'extérieur) : les autres outils ne sont pas transmis au
+            modèle, et la boucle refuse de les exécuter s'il les demandait quand même.
+            La sécurité se joue d'abord sur ce que l'agent peut faire.
 
     Yields:
         Des fragments étiquetés (coulisses, réponse, relevé, flux), au fil de l'eau.
@@ -108,6 +114,15 @@ def repondre(
     # Les outils sont demandés une fois par réponse : les fonctions locales, puis ceux que
     # le serveur MCP annonce. La même liste repart ensuite à chaque tour de la boucle.
     outils_disponibles, erreurs_outils = obtenir_specifications_outils()
+    if outils_autorises is not None:
+        # Lecture seule : seuls les outils de la liste partent vers le modèle. Un outil
+        # absent du catalogue ne peut pas être demandé, quoi que disent les contenus lus.
+        outils_disponibles = [o for o in outils_disponibles if o["name"] in outils_autorises]
+        logger.info(
+            "Catalogue restreint pour cette tâche : %d outil(s) autorisé(s) %s",
+            len(outils_disponibles),
+            sorted(outils_autorises),
+        )
     if erreurs_outils:
         # Le serveur MCP n'a pas démarré : son outil manque au catalogue. Le modèle reçoit
         # l'erreur, pour l'écrire telle quelle au lieu d'inventer le contenu attendu.
@@ -341,8 +356,20 @@ def repondre(
                 for call in appels_outils:
                     nom = call["name"]
                     args = call["arguments"]
-                    logger.info("Exécution de l'outil autonome: %s (args: %s)", nom, list(args.keys()))
-                    res = executer_outil(nom, args)
+                    if outils_autorises is not None and nom not in outils_autorises:
+                        # Seconde barrière : même demandé, un outil hors liste ne s'exécute pas
+                        logger.warning("Outil refusé, hors de la liste autorisée : %s", nom)
+                        consigner_activite(
+                            etape=f"outil:{nom}",
+                            detail="Appel refusé : outil absent de la liste autorisée pour cette tâche",
+                        )
+                        res = (
+                            f"Erreur : l'outil {nom} n'est pas disponible pendant cette tâche. "
+                            "Rien n'a été exécuté."
+                        )
+                    else:
+                        logger.info("Exécution de l'outil autonome: %s (args: %s)", nom, list(args.keys()))
+                        res = executer_outil(nom, args)
 
                     # Si l'utilisateur a activé la visualisation des coulisses, on affiche le JSON
                     if voir_reflexion:
