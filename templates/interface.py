@@ -415,7 +415,7 @@ def creer_barre_separation() -> gr.HTML:
 
 def creer_interface() -> gr.Blocks:
     """Construit la structure de l'interface Gradio avec ses onglets."""
-    with gr.Blocks(title="GoodVibe — Assistant personnel", css=CSS_INTERFACE) as demo:
+    with gr.Blocks(title="GoodVibe — Assistant personnel") as demo:
         # Composant invisible stockant le fuseau horaire réel du navigateur client
         txt_client_tz = gr.Textbox(value="Europe/Paris", visible=False, elem_id="client_timezone")
 
@@ -569,6 +569,9 @@ def main():
         auth=(WEB_USER, WEB_PASSWORD),
         allowed_paths=[str(DOSSIER_IMAGES)],
         show_error=True,
+        # Depuis Gradio 6, la mise en forme se passe au lancement, et non plus à gr.Blocks() :
+        # l'ancienne place est périmée et disparaîtra (d'où gradio>=6.0.0 dans requirements.txt).
+        css=CSS_INTERFACE,
     )
 
 
