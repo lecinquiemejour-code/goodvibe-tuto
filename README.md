@@ -29,7 +29,7 @@ flowchart LR
         M -- "il demande un outil" --> O["Outils<br/>notre code les exécute"]
         O -- "il observe le résultat" --> M
     end
-    M -- "objectif atteint,<br/>ou nombre maximal de tours" --> R["Résultat<br/>une réponse, un brief, une action"]
+    M -- "objectif atteint,<br/>ou nombre maximal de tours" --> R["Résultat<br/>une réponse, un<br/>brief, une action"]
 ```
 
 Cinq ingrédients : un **modèle** (le cerveau), des **consignes** (sa fiche de poste), des **outils** (ses mains), une **boucle** (il observe le résultat et décide de la suite) et une **condition d'arrêt** (l'objectif atteint, ou un nombre maximal de tours).
@@ -64,25 +64,25 @@ Le brief du matin de GoodVibe, de bout en bout : l'agent IA rédige le texte en 
 
 ```mermaid
 flowchart TD
-    D["1. Un déclencheur<br/>le bouton « Brief », l'horloge à 7 h (cron)<br/>ou un pense-bête reçu (webhook)"] --> P
-    P["2. Notre code prépare la demande<br/>date et heure du jour + pense-bêtes en attente<br/>+ consignes, profil, liste des outils, réglages"] --> M
+    D["1. Un déclencheur<br/>le bouton « Brief »,<br/>l'horloge à 7 h (cron)<br/>ou un pense-bête<br/>reçu (webhook)"] --> P
+    P["2. Notre code<br/>prépare la demande<br/>date et heure du jour<br/>+ pense-bêtes en attente<br/>+ consignes, profil,<br/>liste des outils, réglages"] --> M
     subgraph A["Partie agent IA : le modèle décide à chaque tour"]
         M{"3. Le modèle décide"}
-        M -- "il lui manque la météo" --> O1["4. Il demande l'outil météo<br/>notre code appelle Open-Meteo"]
-        M -- "il lui manque l'horoscope" --> O2["4. Il demande l'outil fetch<br/>notre code passe par le serveur MCP"]
-        O1 --> R["5. Le résultat rejoint la conversation<br/>et un nouveau tour commence (au plus N tours)"]
+        M -- "il lui manque la météo" --> O1["4. Il demande<br/>l'outil météo<br/>notre code<br/>appelle Open-Meteo"]
+        M -- "il lui manque l'horoscope" --> O2["4. Il demande<br/>l'outil fetch<br/>notre code passe<br/>par le serveur MCP"]
+        O1 --> R["5. Le résultat rejoint<br/>la conversation<br/>et un nouveau tour<br/>commence (au plus N tours)"]
         O2 --> R
         R --> M
-        M -- "il a tout ce qu'il faut" --> T["6. Il rédige le texte du brief"]
+        M -- "il a tout ce qu'il faut" --> T["6. Il rédige le<br/>texte du brief"]
     end
     T --> I1
     subgraph S["Partie script : des étapes fixes, sans décision"]
-        I1["7. Le modèle texte compose le prompt visuel<br/>consigne + météo, ville, horoscope, centres d'intérêt"]
-        I1 --> I2["8. Le modèle image dessine l'illustration"]
-        I2 --> E["9. Brief et image enregistrés,<br/>pense-bêtes marqués « intégrés »"]
-        E --> J["10. Le journal note les tokens, la durée et le coût"]
+        I1["7. Le modèle texte<br/>compose le prompt visuel<br/>consigne + météo,<br/>ville, horoscope,<br/>centres d'intérêt"]
+        I1 --> I2["8. Le modèle image<br/>dessine l'illustration"]
+        I2 --> E["9. Brief et image<br/>enregistrés,<br/>pense-bêtes marqués<br/>« intégrés »"]
+        E --> J["10. Le journal<br/>note les tokens,<br/>la durée et le coût"]
     end
-    J --> V["Vous lisez le brief et son image<br/>dans l'onglet Brief"]
+    J --> V["Vous lisez le<br/>brief et son image<br/>dans l'onglet Brief"]
 ```
 
 Si une source ne répond pas, le brief sort quand même, avec un message d'erreur à sa place. Le détail est en section 2.1 du tuto.
@@ -95,12 +95,12 @@ flowchart TD
         T1["Vous, au terminal"]
         T2["Vous, sur la page web"]
         T3["L'horloge, à 7 h<br/>(cron)"]
-        T4["Un message venu de l'extérieur<br/>(webhook)"]
+        T4["Un message venu<br/>de l'extérieur<br/>(webhook)"]
     end
-    E --> C["Le cœur<br/>consignes + boucle d'agent IA + modèle Gemini"]
+    E --> C["Le cœur<br/>consignes + boucle<br/>d'agent IA + modèle Gemini"]
     C --> O["Les outils<br/>météo, horoscope, image"]
     C --> MEM["La mémoire<br/>profil, notes, pense-bêtes"]
-    C --> JR["Le journal<br/>ce que fait l'agent IA, ce que ça coûte"]
+    C --> JR["Le journal<br/>ce que fait l'agent<br/>IA, ce que ça coûte"]
 ```
 
 ## 🧭 Le moteur du tuto : le skill VibeCoding Copilote

@@ -369,18 +369,18 @@ Chaque outil branché à un agent IA demande du code sur mesure : décrire l'out
 flowchart LR
     subgraph M["La machine : votre ordinateur en local, le VPS en ligne"]
         C["GoodVibe<br/>(client MCP)"]
-        S["Serveur MCP fetch<br/>programme lancé par GoodVibe"]
-        C -- "quels outils ? puis : fetch(url)" --> S
-        S -- "la description de fetch, puis : le texte lu" --> C
+        S["Serveur MCP fetch<br/>programme lancé<br/>par GoodVibe"]
+        C -- "quels outils ?<br/>puis : fetch(url)" --> S
+        S -- "la description de fetch,<br/>puis : le texte lu" --> C
     end
     subgraph I["Internet"]
         OM["API Open-Meteo"]
         API["API horoscope<br/>freehoroscopeapi.com"]
         G["Gemini"]
     end
-    C -- "météo : appel direct, écrit par nous" --> OM
+    C -- "météo : appel direct,<br/>écrit par nous" --> OM
     S -- "horoscope : lit l'adresse" --> API
-    C -- "consignes, outils, messages" --> G
+    C -- "consignes,<br/>outils, messages" --> G
 ```
 
 | | Météo | Horoscope |
@@ -420,17 +420,17 @@ Le modèle n'a **aucune mémoire**. Tout ce dont l'agent IA « se souvient » es
 ```mermaid
 flowchart TD
     subgraph Une exécution
-        T["Mémoire de travail<br/>historique des messages du tour"]
+        T["Mémoire de travail<br/>historique des<br/>messages du tour"]
     end
     subgraph SQLite data/agent.db
-        E["Mémoire d'état<br/>table traites : un brief par jour"]
+        E["Mémoire d'état<br/>table traites :<br/>un brief par jour"]
         L["Mémoire longue<br/>tables profil et notes"]
         C["Mémoire de conversation<br/>table conversations"]
-        J["Journal<br/>table journal : ce que l'agent IA a fait"]
+        J["Journal<br/>table journal : ce<br/>que l'agent IA a fait"]
     end
     T -. "disparaît à la fin du tour" .-> X((" "))
-    L -- "réinjectée dans le prompt système" --> T
-    C -- "rechargée à l'ouverture du chat" --> T
+    L -- "réinjectée dans<br/>le prompt système" --> T
+    C -- "rechargée à<br/>l'ouverture du chat" --> T
 ```
 
 - **Mémoire de travail** : l'historique des messages pendant une exécution. Elle vit dans la boucle et disparaît à la fin. Elle ne contient que le dialogue, en texte simple.
@@ -468,7 +468,7 @@ flowchart LR
     P["push sur main"] --> T["Job test<br/>ruff + pytest"]
     T -- "vert" --> D["Job deploy<br/>SSH vers le VPS"]
     T -- "rouge" --> STOP["Rien n'est déployé"]
-    D --> V["VPS : git pull,<br/>dépendances, systemctl restart"]
+    D --> V["VPS : git pull,<br/>dépendances,<br/>systemctl restart"]
     V --> OK["Page publique à jour"]
 ```
 
@@ -492,11 +492,11 @@ Le skill part toujours d'un **PRD** (Product Requirements Document) : le cahier 
 
 ```mermaid
 flowchart LR
-    PRD["GoodVibe-PRD.md<br/>le quoi (fourni par le tuto)"] --> AS["archi-stack.md<br/>le comment technique"]
+    PRD["GoodVibe-PRD.md<br/>le quoi (fourni<br/>par le tuto)"] --> AS["archi-stack.md<br/>le comment technique"]
     AS --> FDD["fdd.md<br/>la liste des features"]
     FDD --> PA["plan-action.md<br/>l'ordre et le suivi"]
     CL["CLAUDE.md<br/>les règles du jeu"] -.-> AS & FDD & PA
-    PA --> BUILD["Construction feature par feature"]
+    PA --> BUILD["Construction<br/>feature par feature"]
 ```
 
 ### 3.2 Le PRD fourni
@@ -560,11 +560,11 @@ Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le p
 
 ```mermaid
 flowchart TD
-    P["PLAN<br/>la leçon, puis le plan :<br/>ce que l'agent de codage va faire, et pourquoi"] --> G1{"GO #1<br/>(A) GO ou (B) question"}
+    P["PLAN<br/>la leçon, puis le plan :<br/>ce que l'agent de codage<br/>va faire, et pourquoi"] --> G1{"GO #1<br/>(A) GO ou (B) question"}
     G1 -- "B : question" --> P
-    G1 -- "A : GO" --> DO["DO<br/>l'agent de codage code, explique au fil de l'eau"]
-    DO --> LG["LECTURE GUIDÉE<br/>l'agent de codage montre le schéma de séquence,<br/>puis le code qui compte, et l'explique"]
-    LG --> CK["CHECK<br/>l'agent de codage lance, VOUS testez"]
+    G1 -- "A : GO" --> DO["DO<br/>l'agent de codage code,<br/>explique au fil de l'eau"]
+    DO --> LG["LECTURE GUIDÉE<br/>l'agent de codage montre<br/>le schéma de séquence,<br/>puis le code qui<br/>compte, et l'explique"]
+    LG --> CK["CHECK<br/>l'agent de codage<br/>lance, VOUS testez"]
     CK -- "KO" --> P
     CK -- "OK" --> G2{"GO #2"}
     G2 -- "oui" --> CM["commit local<br/>plan-action mis à jour"]
@@ -847,10 +847,10 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    A["agent.py"] -- "log(étape, tokens, latence)" --> J["journal.py<br/>handler logging"]
+    A["agent.py"] -- "log(étape,<br/>tokens, latence)" --> J["journal.py<br/>handler logging"]
     J --> T["Terminal"]
     J --> D["SQLite : table journal"]
-    G["Gemini"] -- "usage : total_input_tokens,<br/>total_output_tokens,<br/>total_thought_tokens" --> A
+    G["Gemini"] -- "usage :<br/>total_input_tokens,<br/>total_output_tokens,<br/>total_thought_tokens" --> A
     G -- "steps de type thought<br/>(thinking_summaries: auto)" --> A
     A -- "chaque événement reçu,<br/>tel quel" --> P["Page web<br/>panneau du flux brut"]
 ```
@@ -1236,7 +1236,7 @@ flowchart TB
     end
     subgraph F8["Fiche 8 : l'horoscope, le serveur apporte l'outil"]
         direction LR
-        D2["mcp_client.py<br/>un adaptateur,<br/>écrit une fois"] --> R2["Serveur fetch<br/>la description, la requête,<br/>la mise en forme"] --> S2["API horoscope"]
+        D2["mcp_client.py<br/>un adaptateur,<br/>écrit une fois"] --> R2["Serveur fetch<br/>la description,<br/>la requête,<br/>la mise en forme"] --> S2["API horoscope"]
     end
     F7 ~~~ F8
 ```
@@ -1266,7 +1266,7 @@ Ces points viennent de la documentation du serveur, consultée en septembre 2026
 flowchart LR
     S["Serveur fetch<br/>annonce son outil : nom,<br/>description, paramètres"] -- "list_tools" --> C["mcp_client.py<br/>reçoit, puis convertit<br/>au format de Gemini"]
     C --> L["La liste des outils<br/>de GoodVibe"]
-    O["outils.py<br/>meteo, profil, notes :<br/>descriptions écrites par nous"] --> L
+    O["outils.py<br/>meteo, profil, notes :<br/>descriptions<br/>écrites par nous"] --> L
     L -- "envoyée à chaque appel" --> G["Gemini"]
 ```
 
@@ -1276,13 +1276,13 @@ Si on recopie cette description à la main dans `outils.py`, l'outil marche enco
 
 ```mermaid
 flowchart TD
-    D["Le modèle demande fetch(url)"] --> Q1{"Le serveur fetch<br/>a démarré ?"}
-    Q1 -- "non" --> E1["Erreur : horoscope non récupéré,<br/>le serveur fetch n'a pas démarré"]
+    D["Le modèle demande<br/>fetch(url)"] --> Q1{"Le serveur fetch<br/>a démarré ?"}
+    Q1 -- "non" --> E1["Erreur : horoscope<br/>non récupéré,<br/>le serveur fetch<br/>n'a pas démarré"]
     Q1 -- "oui" --> Q2{"L'API horoscope<br/>a répondu ?"}
-    Q2 -- "non" --> E2["Erreur : horoscope non récupéré,<br/>l'API horoscope n'a pas répondu"]
+    Q2 -- "non" --> E2["Erreur : horoscope<br/>non récupéré,<br/>l'API horoscope<br/>n'a pas répondu"]
     Q2 -- "oui" --> OK["Texte anglais,<br/>réécrit pour vous"]
     OK --> B1["Le brief sort<br/>avec l'horoscope"]
-    E1 & E2 --> B2["Le brief sort : le message d'erreur<br/>tient la place de l'horoscope.<br/>Le journal note l'échec et sa cause."]
+    E1 & E2 --> B2["Le brief sort : le<br/>message d'erreur<br/>tient la place<br/>de l'horoscope.<br/>Le journal note<br/>l'échec et sa cause."]
 ```
 
 **Ce que fait l'agent de codage** : `mcp_client.py` (connexion via la bibliothèque `mcp`, transport stdio, `list_tools`, `call_tool`, conversion des schémas d'outils) ; configuration du serveur `fetch` dans `config.py` (commande de lancement, typiquement via `uvx mcp-server-fetch`, que l'agent de codage installe) ; `horoscope.py` (URL de l'API selon le signe, prompt de réécriture, message d'erreur si le serveur ou l'API ne répond pas) ; intégration au brief.
@@ -1356,7 +1356,7 @@ flowchart LR
     DB -- lecture seule --> VA["vue_activite.py<br/>journal filtré<br/>compteurs jour / cumul<br/>coût estimé"]
     TAR["tarifs.py<br/>prix par million de tokens<br/>prix par image"] --> VA
     VM & VA --> G["interface.py"]
-    CH["Chat : explique ce que tu viens de faire"] --> JR["journal (dernière exécution)"] --> AG["agent.py raconte"]
+    CH["Chat : explique ce<br/>que tu viens de faire"] --> JR["journal (dernière<br/>exécution)"] --> AG["agent.py raconte"]
 ```
 
 **Ce que fait l'agent de codage** : `vue_memoire.py`, `vue_activite.py`, `tarifs.py` (une grille de prix par million de tokens et par image, remplie avec les prix que vous avez relevés à la fiche 1, commentée « relevés le [date] sur ai.google.dev/gemini-api/docs/pricing ») ; `gr.Dataframe` avec bouton Rafraîchir ; l'outil `lire_journal(execution)` pour la commande du chat.
@@ -1462,11 +1462,11 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    T["tests/"] --> F1["fixture : base SQLite en mémoire"]
-    T --> F2["fixture : faux client Gemini<br/>réponses préenregistrées"]
+    T["tests/"] --> F1["fixture : base<br/>SQLite en mémoire"]
+    T --> F2["fixture : faux<br/>client Gemini<br/>réponses préenregistrées"]
     T --> F3["fixture : fausses API<br/>météo, horoscope"]
-    T --> X["test_agent : max_tours, outils appelés,<br/>prompt système renvoyé à chaque appel,<br/>historique sans coulisses"]
-    T --> Y["test_brief : anti-doublon,<br/>message d'erreur si une source échoue"]
+    T --> X["test_agent : max_tours,<br/>outils appelés,<br/>prompt système renvoyé<br/>à chaque appel,<br/>historique sans coulisses"]
+    T --> Y["test_brief : anti-doublon,<br/>message d'erreur si<br/>une source échoue"]
     R["ruff"] --> OK["zéro erreur"]
 ```
 
@@ -1522,14 +1522,14 @@ tests qui dépendent de la vraie clé API (ils échoueront dans la CI) ; base de
 
 ```mermaid
 flowchart TD
-    I["Internet"] -- "443 HTTPS" --> CD["Caddy, concierge commun<br/>lit sites/goodvibe.caddy<br/>certificat Let's Encrypt auto"]
+    I["Internet"] -- "443 HTTPS" --> CD["Caddy, concierge commun<br/>lit sites/goodvibe.caddy<br/>certificat Let's<br/>Encrypt auto"]
     CD -- "/  " --> GR["goodvibe-web.service<br/>Gradio :7860"]
-    CR["crontab de l'utilisateur goodvibe<br/>7h00 : cron_brief.py<br/>3h00 : sauvegarde de la base"] --> BR["brief.py"]
-    GR & BR --> DB["/home/goodvibe/app/data/agent.db<br/>chmod 600, hors Git"]
-    GR & BR -- "lancent, le temps d'un appel" --> MF["mcp-server-fetch (uvx)<br/>sur le VPS, aucun port ouvert"]
+    CR["crontab de<br/>l'utilisateur goodvibe<br/>7h00 : cron_brief.py<br/>3h00 : sauvegarde<br/>de la base"] --> BR["brief.py"]
+    GR & BR --> DB["/home/goodvibe/app/<br/>data/agent.db<br/>chmod 600, hors Git"]
+    GR & BR -- "lancent, le<br/>temps d'un appel" --> MF["mcp-server-fetch (uvx)<br/>sur le VPS,<br/>aucun port ouvert"]
     MF -- "sort lire" --> HO["API horoscope"]
-    UFW["ufw : 22, 80, 443 seulement"] -.-> I
-    SSH["SSH par clé uniquement<br/>utilisateur goodvibe, sudo limité"] -.-> GR
+    UFW["ufw : 22, 80,<br/>443 seulement"] -.-> I
+    SSH["SSH par clé uniquement<br/>utilisateur<br/>goodvibe, sudo limité"] -.-> GR
 ```
 
 **Ce que fait l'agent de codage** : vérifie l'historique Git avant le premier push ; relie le projet à votre dépôt GitHub et y pousse les commits locaux ; installe `hcloud` (CLI Hetzner) et l'utilise, ou à défaut travaille en SSH sur un serveur que vous avez créé : création du serveur (Ubuntu LTS, plus petite taille), durcissement (SSH par clé seule, `ufw`, mises à jour de sécurité automatiques), utilisateur `goodvibe`, création d'une clé de lecture du dépôt (« deploy key », en lecture seule), clone du dépôt avec cette clé, venv, installation de `uvx` pour le serveur MCP et réglage de son chemin complet pour GoodVibe, fichiers `deploy/web.service` (installé sous le nom `goodvibe-web.service`) et `deploy/site.caddy` (la fiche Caddy de l'agent IA, installée dans `/etc/caddy/sites/goodvibe.caddy` : son marqueur `{{ADRESSE}}` reste tel quel dans le dépôt, et l'adresse n'est écrite que dans la fiche installée sur le serveur) versionnés dans le dépôt, le `Caddyfile` principal, commun à tous les agents IA du serveur, écrit par `deploy/setup_vps.sh`, règle `sudoers` limitée au `systemctl restart` des services de cet agent IA, le fichier `deploy/crontab` (7 h pour le brief, 3 h pour la sauvegarde, **chemin absolu** du Python du venv, compte rendu redirigé vers un fichier), que le script d'installation recopie dans la table du cron de l'utilisateur `goodvibe` ; réglage du fuseau horaire du serveur ; script de sauvegarde ; adresse publique construite à partir de l'adresse IP du serveur, ou votre nom de domaine si vous en avez un ; `.env` du serveur créé avec un identifiant et un mot de passe de départ, et les deux ports de l'agent IA (`PORT_GRADIO=7860`, `PORT_WEBHOOK=8000`), les mêmes que dans sa fiche Caddy.
@@ -1808,14 +1808,14 @@ Pour lire une panne : cliquez sur la ligne rouge, puis sur le travail rouge, et 
 flowchart LR
     subgraph GitHub
         R["Votre dépôt"]
-        S["Secret VPS_SSH_KEY :<br/>partie privée de la clé de déploiement"]
+        S["Secret VPS_SSH_KEY :<br/>partie privée de la<br/>clé de déploiement"]
     end
     subgraph Serveur
-        A["Liste des clés autorisées :<br/>partie publique de la clé de déploiement"]
-        L["Partie privée de la clé de lecture"]
+        A["Liste des clés<br/>autorisées :<br/>partie publique de<br/>la clé de déploiement"]
+        L["Partie privée de<br/>la clé de lecture"]
     end
-    S -- "fiche 13 : le robot entre sur le serveur" --> A
-    L -- "fiche 12 : le serveur lit le code" --> R
+    S -- "fiche 13 : le robot<br/>entre sur le serveur" --> A
+    L -- "fiche 12 : le<br/>serveur lit le code" --> R
 ```
 
 **Deux clés, deux directions**, à ne pas confondre :
@@ -1978,9 +1978,9 @@ Une fois la page publique vérifiée et le webhook déployé par le pipeline (fi
 
 ```mermaid
 flowchart LR
-    A["1. V1 en ligne<br/>les 14 features sont faites"] --> B["2. walkthrough.md<br/>visite du code"]
+    A["1. V1 en ligne<br/>les 14 features<br/>sont faites"] --> B["2. walkthrough.md<br/>visite du code"]
     B --> C["3. post-mortem.md<br/>prévu / réalisé, leçons,<br/>ce que j'ai appris"]
-    C --> D["4. Les évolutions,<br/>dans l'ordre de la section 1.3"]
+    C --> D["4. Les évolutions,<br/>dans l'ordre de<br/>la section 1.3"]
     D --> R["5. Retour à l'auteur<br/>mail ou Issue"]
     R --> E["6. Checklist à sept cases<br/>toutes cochées"]
 ```
@@ -2023,12 +2023,12 @@ Objet : Retour tuto GoodVibe
 ```mermaid
 flowchart LR
     S1["Secrets hors du code,<br/>.env en chmod 600"] --> S2["HTTPS partout (Caddy)"]
-    S2 --> S3["Mot de passe sur la page web,<br/>jeton sur le webhook"]
+    S2 --> S3["Mot de passe<br/>sur la page web,<br/>jeton sur le webhook"]
     S3 --> S4["Contenu externe = donnée,<br/>jamais instruction"]
-    S4 --> S5["Aucune donnée personnelle<br/>dans logs, journal, tests, Git"]
-    S5 --> S6["Nombre max de tours,<br/>plafond de dépense chez Google"]
+    S4 --> S5["Aucune donnée personnelle<br/>dans logs,<br/>journal, tests, Git"]
+    S5 --> S6["Nombre max de tours,<br/>plafond de dépense<br/>chez Google"]
     S6 --> S7["Sauvegarde nocturne<br/>de la base"]
-    S7 --> S8["Clés dédiées et révocables :<br/>Gemini, Hetzner, déploiement"]
+    S7 --> S8["Clés dédiées<br/>et révocables :<br/>Gemini, Hetzner,<br/>déploiement"]
 ```
 
 Et une dernière fois : à chaque appel, prénom, ville et horoscope partent vers l'API Gemini. Vérifiez les conditions de votre plan Google AI, notamment l'usage des données envoyées en plan gratuit. Avec un profil fictif, c'est acceptable. Avec vos vraies données, c'est un choix informé.
