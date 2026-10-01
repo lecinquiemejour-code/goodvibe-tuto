@@ -34,7 +34,13 @@ En vibe codant GoodVibe vous-même :
 
 ### Ce qu'est un agent
 
-**Un agent, c'est un modèle qui décide lui-même de l'étape suivante.** Exemple : le brief du matin de GoodVibe, de bout en bout.
+**Un agent est un programme qui confie à un modèle d'IA un objectif et des outils, puis le fait tourner en boucle.** À chaque tour, le modèle choisit l'action suivante : appeler un outil, ou répondre. Notre code exécute l'outil, le résultat revient au modèle, et il décide de la suite. La boucle s'arrête quand l'objectif est atteint, ou quand un garde-fou l'arrête.
+
+Cinq ingrédients : un **modèle** (le cerveau), des **consignes** (sa fiche de poste), des **outils** (ses mains), une **boucle** (il observe le résultat et décide de la suite) et une **condition d'arrêt** (l'objectif atteint, ou un nombre maximal de tours).
+
+**La différence avec un programme classique, appelé aussi *workflow*** : dans un workflow, le développeur fixe l'ordre des étapes à l'avance. Dans un agent, c'est le modèle qui le décide, d'après ce qu'il observe. Le mot « agent » est partout dans le marketing : cette définition est celle sur laquelle s'accordent les praticiens.
+
+Exemple : le brief du matin de GoodVibe, de bout en bout. Il combine les deux : la rédaction est la partie agent, l'image la partie workflow.
 
 ```mermaid
 flowchart TD
