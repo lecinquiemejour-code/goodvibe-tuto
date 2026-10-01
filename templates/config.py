@@ -31,7 +31,11 @@ DOSSIER_IMAGES = BASE_DIR / "data" / "images"
 MAX_TOURS = int(os.getenv("MAX_TOURS", "5"))
 
 # Réglages du modèle (validés d'après la doc Google)
-MAX_OUTPUT_TOKENS = int(os.getenv("MAX_OUTPUT_TOKENS", "1000"))
+# La limite de longueur couvre la réflexion du modèle ET le texte qu'il écrit : trop basse,
+# la réflexion la consomme et la réponse est coupée (agent.py le signale). À 1000, deux
+# briefs sur cinq étaient coupés avec une réflexion « medium » ; 4000 laisse de la marge
+# et reste un garde-fou de dépense. C'est un plafond : seuls les tokens produits se paient.
+MAX_OUTPUT_TOKENS = int(os.getenv("MAX_OUTPUT_TOKENS", "4000"))
 THINKING_LEVEL = os.getenv("THINKING_LEVEL", "medium")
 
 # Paramètres de l'interface web Gradio. Aucune valeur par défaut : un oubli dans le .env

@@ -39,6 +39,9 @@ STATS_SANS_IMAGE = {"tokens_entree": 0, "tokens_sortie": 0, "nb_images": 0, "dej
 # sur le texte, l'extrait affiché permet à l'apprenant de juger lui-même
 MARQUEURS_NE_SAIT_PAS = ("ne sais", "sais pas", "rien", "pas encore", "aucune information", "ne connais", "présent")
 
+# Le début du message qu'agent.py ajoute à une réponse coupée par la limite de longueur
+MARQUEUR_REPONSE_COUPEE = "[Réponse coupée"
+
 logger = logging.getLogger("goodvibe.scenarios")
 
 
@@ -282,6 +285,11 @@ def jouer(noms: List[str], repetitions: int) -> Dict[str, int]:
                 reussi, reponse = False, f"[Erreur : {type(e).__name__} : {e}]"
             finally:
                 gardienne.close()
+            # Une réponse coupée par la limite de longueur est un échec, quel que soit le
+            # scénario : ses premières lignes peuvent contenir ce qu'on attend, par hasard
+            if MARQUEUR_REPONSE_COUPEE in reponse:
+                logger.warning("[SCENARIO] %s, essai %d : réponse coupée, comptée comme un échec", libelle, i)
+                reussi = False
             reussites += int(reussi)
             # La réponse s'affiche en entier : le pilote juge sur pièces, pas sur un extrait
             print(f"\n--- essai {i} : {'OK' if reussi else 'KO'} ---")

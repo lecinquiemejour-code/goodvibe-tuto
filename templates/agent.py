@@ -324,6 +324,25 @@ def repondre(
                         if hasattr(u, "total_thought_tokens") and u.total_thought_tokens:
                             total_tokens_reflexion += u.total_thought_tokens
 
+                    # Une réponse coupée ne se cache pas. Le statut « incomplete » signale que
+                    # la limite de longueur a été atteinte avant la fin : la réflexion du modèle
+                    # compte dans cette limite, elle peut donc la consommer à elle seule. On le
+                    # dit dans la réponse, là où l'utilisateur lit, et on le note au journal.
+                    if getattr(interaction, "status", None) == "incomplete":
+                        logger.warning(
+                            "Tour %d : réponse coupée, limite de longueur atteinte (MAX_OUTPUT_TOKENS=%d)",
+                            tour_actuel,
+                            MAX_OUTPUT_TOKENS,
+                        )
+                        consigner_activite(
+                            etape=etape,
+                            detail=f"Réponse coupée : limite de longueur atteinte (MAX_OUTPUT_TOKENS={MAX_OUTPUT_TOKENS})",
+                        )
+                        yield Fragment(
+                            nature=REPONSE,
+                            texte="\n[Réponse coupée : la limite de longueur (MAX_OUTPUT_TOKENS) a été atteinte avant la fin]",
+                        )
+
                 elif event_type == "error":
                     logger.error("Événement d'erreur reçu : %s", event)
                     yield Fragment(

@@ -257,3 +257,39 @@ def test_prompt_systeme_introuvable_rend_un_message_d_erreur(faux_gemini, monkey
     assert faux_gemini.interactions.appels == []
     echecs = [a for a in db.get_connection().execute("SELECT detail FROM journal").fetchall()]
     assert any("prompt_systeme.md est introuvable" in ligne["detail"] for ligne in echecs)
+
+
+def test_reponse_coupee_par_la_limite_se_dit_et_se_note(faux_gemini):
+    """Vérifie qu'une réponse coupée par la limite de longueur est signalée, jamais cachée.
+
+    Gemini termine alors l'interaction avec le statut « incomplete » : le texte déjà reçu
+    reste affiché, suivi d'un message qui dit la coupure, et le journal la note.
+    """
+    interaction_coupee = MockInteraction("inter_coupee", MockUsage(80, 5, 141))
+    interaction_coupee.status = "incomplete"
+    faux_gemini.interactions.scenarios = [[
+        MockEvent(delta=MockDelta(delta_type="text", text="Bonjour Marc ! Tu es prêt à")),
+        MockEvent(event_type="interaction.completed", interaction=interaction_coupee),
+    ]]
+
+    fragments = list(repondre("Bonjour"))
+
+    texte = texte_de(fragments)
+    assert texte.startswith("Bonjour Marc ! Tu es prêt à")
+    assert "[Réponse coupée : la limite de longueur (MAX_OUTPUT_TOKENS) a été atteinte avant la fin]" in texte
+    lignes = db.get_connection().execute("SELECT detail FROM journal").fetchall()
+    assert any(ligne["detail"].startswith("Réponse coupée") for ligne in lignes)
+
+
+def test_reponse_terminee_normalement_sans_message_de_coupure(faux_gemini):
+    """Vérifie qu'une réponse terminée normalement (statut « completed ») n'affiche aucun message de coupure."""
+    interaction_finie = MockInteraction("inter_finie", MockUsage(80, 35, 10))
+    interaction_finie.status = "completed"
+    faux_gemini.interactions.scenarios = [[
+        MockEvent(delta=MockDelta(delta_type="text", text="Bonjour Marc !")),
+        MockEvent(event_type="interaction.completed", interaction=interaction_finie),
+    ]]
+
+    fragments = list(repondre("Bonjour"))
+
+    assert texte_de(fragments) == "Bonjour Marc !"
