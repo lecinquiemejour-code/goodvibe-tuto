@@ -36,10 +36,12 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main'
     steps:
+      # Le script reçoit l'identifiant du commit que le job test vient de valider :
+      # c'est cette version précise qui est installée, pas la dernière de main.
       - name: Connexion SSH et exécution du déploiement
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script: bash /home/{{NOM_AGENT}}/app/deploy/deployer.sh
+          script: bash /home/{{NOM_AGENT}}/app/deploy/deployer.sh ${{ github.sha }}

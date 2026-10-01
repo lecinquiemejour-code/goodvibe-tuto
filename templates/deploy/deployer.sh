@@ -2,13 +2,34 @@
 # Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
 # deploy/deployer.sh - Script de déploiement automatique GoodVibe sur le VPS
 # Idempotent : peut être exécuté plusieurs fois d'affilée sans effet de bord indésirable.
+#
+# Usage : bash deploy/deployer.sh <identifiant du commit testé>
+# Le pipeline (.github/workflows/deploy.yml) passe l'identifiant du commit que ses tests
+# viennent de valider. Le script installe cette version précise, jamais « la dernière de
+# main » : une version poussée pendant les tests n'est pas celle qui a été validée.
 set -e
+
+COMMIT="${1:-}"
+if [ -z "$COMMIT" ]; then
+    echo "ERREUR : aucun identifiant de commit reçu. Le déploiement s'arrête."
+    echo "Usage : bash deploy/deployer.sh <identifiant du commit testé>"
+    exit 1
+fi
 
 echo "=== 1. Navigation vers le répertoire de l'application ==="
 cd /home/{{NOM_AGENT}}/app
 
-echo "=== 2. Récupération des dernières modifications depuis GitHub ==="
-git pull origin main
+echo "=== 2. Installation de la version testée : $COMMIT ==="
+# On va chercher les nouveautés, puis on se place exactement sur le commit demandé.
+# Un fichier modifié à la main sur le serveur bloque toujours cette étape : rien ne se
+# modifie sur le serveur, on corrige dans le dépôt, puis on déploie.
+git fetch origin
+git checkout --detach "$COMMIT"
+INSTALLE=$(git rev-parse HEAD)
+if [ "$INSTALLE" != "$(git rev-parse "$COMMIT")" ]; then
+    echo "ERREUR : la version installée ($INSTALLE) n'est pas celle demandée ($COMMIT)."
+    exit 1
+fi
 
 echo "=== 3. Mise à jour des dépendances dans l'environnement virtuel ==="
 /home/{{NOM_AGENT}}/app/venv/bin/pip install -r requirements.txt
@@ -45,4 +66,5 @@ echo "=== 5. Redémarrage des services de l'agent IA {{NOM_AGENT}} ==="
 sudo systemctl restart {{NOM_AGENT}}-web
 sudo systemctl restart {{NOM_AGENT}}-webhook
 
-echo "=== Déploiement terminé avec succès ==="
+# L'identifiant réellement installé, à comparer avec celui affiché par le pipeline
+echo "=== Déploiement terminé avec succès : version installée $(git rev-parse --short HEAD) ($INSTALLE) ==="
