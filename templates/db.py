@@ -15,6 +15,19 @@ from config import BASE_DIR
 DATA_DIR = BASE_DIR / "data"
 DB_PATH = DATA_DIR / "agent.db"
 
+# Les trois états d'un pense-bête reçu par webhook (Feature 14). « Enregistré » ne veut
+# pas dire « traité » : le brief qui l'intègre vient après, et peut échouer.
+STATUT_EN_ATTENTE = "en_attente"
+STATUT_INTEGRE = "integre"
+STATUT_ECHEC = "echec"
+
+# Ce que l'utilisateur lit pour chaque état, dans la réponse du webhook et l'onglet Mémoire
+LIBELLES_STATUT_PENSE_BETE = {
+    STATUT_EN_ATTENTE: "Pense-bête enregistré. Génération du brief en attente.",
+    STATUT_INTEGRE: "Pense-bête intégré au brief.",
+    STATUT_ECHEC: "Pense-bête enregistré, mais la préparation du brief a échoué.",
+}
+
 
 def get_connection() -> sqlite3.Connection:
     """Retourne une connexion à la base de données SQLite locale."""
@@ -129,13 +142,29 @@ def initialiser() -> None:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 date TEXT NOT NULL,
                 texte TEXT NOT NULL,
-                integre INTEGER NOT NULL DEFAULT 0
+                statut TEXT NOT NULL DEFAULT 'en_attente'
             )
             """
         )
+        _migrer_statut_pense_betes(conn)
         # La table démarre vide : aucun prix n'est écrit d'avance dans le code. C'est le pilote
         # qui relève les prix de ses modèles sur la page de Google et les saisit dans l'onglet Activité.
         conn.commit()
+
+
+def _migrer_statut_pense_betes(conn: sqlite3.Connection) -> None:
+    """Ajoute la colonne statut aux bases créées avant elle, et y recopie l'ancien oui/non.
+
+    CREATE TABLE IF NOT EXISTS ne touche pas une table qui existe déjà : sur le serveur,
+    la base garde l'ancienne colonne integre (0 ou 1). On ajoute statut, et chaque
+    pense-bête déjà intégré le reste. L'ancienne colonne n'est plus lue.
+    """
+    colonnes = [ligne["name"] for ligne in conn.execute("PRAGMA table_info(pense_betes)").fetchall()]
+    if "statut" in colonnes:
+        return
+    conn.execute("ALTER TABLE pense_betes ADD COLUMN statut TEXT NOT NULL DEFAULT 'en_attente'")
+    if "integre" in colonnes:
+        conn.execute("UPDATE pense_betes SET statut = ? WHERE integre = 1", (STATUT_INTEGRE,))
 
 
 # Fonctions d'accès aux tarifs configurables (Feature 9)
@@ -282,13 +311,16 @@ def supprimer_note(id_note: int) -> bool:
 def ajouter_pense_bete(texte: str) -> int:
     """Enregistre un pense-bête reçu par webhook avec horodatage UTC.
 
-    Initialement non intégré dans le brief (integre = 0).
+    Il démarre « en attente » : le brief qui l'intègre vient après.
+
+    Returns:
+        L'identifiant du pense-bête, rendu à l'appelant du webhook.
     """
     maintenant = datetime.now(timezone.utc).isoformat()
     with get_connection() as conn:
         cursor = conn.execute(
-            "INSERT INTO pense_betes (date, texte, integre) VALUES (?, ?, 0)",
-            (maintenant, texte.strip()),
+            "INSERT INTO pense_betes (date, texte, statut) VALUES (?, ?, ?)",
+            (maintenant, texte.strip(), STATUT_EN_ATTENTE),
         )
         conn.commit()
         return cursor.lastrowid
@@ -298,31 +330,46 @@ def get_pense_betes(non_integres_seulement: bool = False) -> List[Dict[str, Any]
     """Récupère les pense-bêtes enregistrés.
 
     Args:
-        non_integres_seulement: Si True, ne renvoie que les pense-bêtes en attente
-            d'intégration dans un brief (integre == 0), par ordre chronologique.
+        non_integres_seulement: Si True, ne renvoie que les pense-bêtes que le prochain
+            brief doit reprendre (en attente, ou en échec), par ordre chronologique.
             Si False, renvoie tous les pense-bêtes par ordre antéchronologique.
     """
     with get_connection() as conn:
         if non_integres_seulement:
             cursor = conn.execute(
-                "SELECT id, date, texte, integre FROM pense_betes WHERE integre = 0 ORDER BY id ASC"
+                "SELECT id, date, texte, statut FROM pense_betes WHERE statut != ? ORDER BY id ASC",
+                (STATUT_INTEGRE,),
             )
         else:
             cursor = conn.execute(
-                "SELECT id, date, texte, integre FROM pense_betes ORDER BY id DESC"
+                "SELECT id, date, texte, statut FROM pense_betes ORDER BY id DESC"
             )
         return [dict(row) for row in cursor.fetchall()]
 
 
 def marquer_pense_betes_integres(ids: List[int]) -> None:
-    """Marque une liste de pense-bêtes comme intégrés dans un brief (integre = 1)."""
+    """Marque une liste de pense-bêtes comme intégrés dans un brief."""
     if not ids:
         return
     with get_connection() as conn:
         placeholders = ",".join("?" for _ in ids)
         conn.execute(
-            f"UPDATE pense_betes SET integre = 1 WHERE id IN ({placeholders})",
-            ids,
+            f"UPDATE pense_betes SET statut = ? WHERE id IN ({placeholders})",
+            [STATUT_INTEGRE, *ids],
+        )
+        conn.commit()
+
+
+def marquer_pense_bete_echec(id_pense_bete: int) -> None:
+    """Note que le brief déclenché par ce pense-bête a échoué.
+
+    Le pense-bête reste en base : le prochain brief le reprendra. Un pense-bête déjà
+    intégré n'est pas touché.
+    """
+    with get_connection() as conn:
+        conn.execute(
+            "UPDATE pense_betes SET statut = ? WHERE id = ? AND statut != ?",
+            (STATUT_ECHEC, id_pense_bete, STATUT_INTEGRE),
         )
         conn.commit()
 

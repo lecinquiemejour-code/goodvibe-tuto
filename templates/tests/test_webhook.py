@@ -2,11 +2,13 @@
 """Tests automatisés du webhook de réception des pense-bêtes (Feature 14).
 
 Vérifie :
-- L'authentification par jeton secret X-Token (200 avec bon jeton, 401 sans ou avec mauvais jeton).
-- La réponse immédiate et l'exécution de la tâche de fond pour l'enregistrement en base SQLite.
+- L'authentification par jeton secret X-Token (202 avec bon jeton, 401 sans ou avec mauvais jeton).
+- L'ordre : le pense-bête est en base avant la réponse, qui est un 202 Accepted avec le
+  statut « enregistre », le message et l'identifiant.
 - Le déclenchement du brief du jour (recette du bouton, forcer=True, déclencheur « webhook »)
-  après l'insertion ; en cas d'échec de la recette, le webhook survit et le pense-bête reste
-  non intégré. L'encadrement de la recette dans le journal est testé dans test_journal_brief.py.
+  en tâche de fond ; en cas d'échec de la recette, le webhook survit, le pense-bête passe en
+  échec et reste repris par le brief suivant. L'encadrement de la recette dans le journal
+  est testé dans test_journal_brief.py.
 - Les restrictions de sécurité CORS pour Hoppscotch.
 - L'effacement complet des pense-bêtes lors de l'action « oublie-moi ».
 - Le cycle d'intégration et de marquage dans le brief matinal.
@@ -30,7 +32,7 @@ def recette_simulee(monkeypatch):
     """Remplace la recette du brief par un simulacre pour tous les tests du webhook.
 
     Le client de test exécute les tâches de fond immédiatement : sans ce simulacre,
-    chaque 200 lancerait un vrai brief (modèle, image), ce que ni le test ni la CI
+    chaque 202 lancerait un vrai brief (modèle, image), ce que ni le test ni la CI
     ne doivent faire. Le simulacre note chaque appel avec ses arguments et l'état
     de la table des pense-bêtes au moment de l'appel.
     """
@@ -50,8 +52,8 @@ def recette_simulee(monkeypatch):
     return appels
 
 
-def test_webhook_declenche_le_brief_apres_insertion(monkeypatch, recette_simulee):
-    """Vérifie que le pense-bête est rangé avant l'appel à la recette, avec forcer=True."""
+def test_webhook_enregistre_puis_repond_202_puis_declenche_le_brief(monkeypatch, recette_simulee):
+    """Vérifie l'ordre : en base, réponse 202 avec l'identifiant, puis la recette avec forcer=True."""
     monkeypatch.setattr(config, "WEBHOOK_TOKEN", "jeton-secret-test-xyz")
 
     reponse = client.post(
@@ -60,7 +62,15 @@ def test_webhook_declenche_le_brief_apres_insertion(monkeypatch, recette_simulee
         json={"texte": "Rappeler le plombier"},
     )
 
-    assert reponse.status_code == 200
+    assert reponse.status_code == 202
+    corps = reponse.json()
+    assert corps["statut"] == "enregistre"
+    assert corps["message"] == "Pense-bête enregistré. Génération du brief en attente."
+    # L'identifiant rendu est celui de la ligne en base
+    enregistres = db.get_pense_betes()
+    assert [pb["id"] for pb in enregistres] == [corps["id"]]
+    assert enregistres[0]["texte"] == "Rappeler le plombier"
+
     assert len(recette_simulee) == 1
     assert recette_simulee[0]["forcer"] is True
     # La recette reçoit le nom de son déclencheur : c'est elle qui l'écrit au journal
@@ -69,10 +79,33 @@ def test_webhook_declenche_le_brief_apres_insertion(monkeypatch, recette_simulee
     textes = [pb["texte"] for pb in recette_simulee[0]["pense_betes_en_attente"]]
     assert textes == ["Rappeler le plombier"]
 
-    # La réception est journalisée, sans le texte du pense-bête
+    # L'enregistrement est journalisé, sans le texte du pense-bête
     lignes = [e for e in journal.get_dernieres_activites(limite=10) if e["etape"] == "webhook"]
     assert len(lignes) == 1
+    assert lignes[0]["detail"] == "pense-bête enregistré"
     assert "plombier" not in lignes[0]["detail"]
+
+
+def test_statut_integre_apres_un_brief_reussi(monkeypatch):
+    """Vérifie que la recette, en marquant le pense-bête, le fait passer à « intégré »."""
+    monkeypatch.setattr(config, "WEBHOOK_TOKEN", "jeton-secret-test-xyz")
+
+    def recette_qui_integre(forcer=False, declencheur=None):
+        en_attente = db.get_pense_betes(non_integres_seulement=True)
+        db.marquer_pense_betes_integres([pb["id"] for pb in en_attente])
+        return "brief simulé"
+
+    monkeypatch.setattr(webhook, "generer_brief", recette_qui_integre)
+
+    reponse = client.post(
+        "/pense-bete",
+        headers={"X-Token": "jeton-secret-test-xyz"},
+        json={"texte": "Dentiste à 10 h"},
+    )
+
+    assert reponse.status_code == 202
+    assert db.get_pense_betes()[0]["statut"] == db.STATUT_INTEGRE
+    assert db.get_pense_betes(non_integres_seulement=True) == []
 
 
 def test_webhook_sans_jeton_ne_declenche_pas_le_brief(monkeypatch, recette_simulee):
@@ -86,11 +119,11 @@ def test_webhook_sans_jeton_ne_declenche_pas_le_brief(monkeypatch, recette_simul
 
 
 def test_webhook_survit_a_un_echec_du_brief(monkeypatch):
-    """Vérifie qu'un échec de la recette ne casse pas le webhook.
+    """Vérifie qu'un échec de la recette ne casse pas le webhook, et laisse le pense-bête en échec.
 
-    L'appelant a déjà reçu son 200. La recette a noté l'échec au journal (voir
+    L'appelant a déjà reçu son 202. La recette a noté l'échec au journal (voir
     test_journal_brief.py) ; ici on vérifie que la tâche de fond ne fait pas tomber
-    le service, et que le pense-bête reste non intégré : le brief suivant le reprendra.
+    le service, que le pense-bête passe en échec, et qu'il reste repris par le brief suivant.
     """
     monkeypatch.setattr(config, "WEBHOOK_TOKEN", "jeton-secret-test-xyz")
 
@@ -105,16 +138,19 @@ def test_webhook_survit_a_un_echec_du_brief(monkeypatch):
         json={"texte": "Dentiste à 10 h"},
     )
 
-    assert reponse.status_code == 200
-    assert reponse.json() == {"statut": "reçu"}
+    assert reponse.status_code == 202
+    assert reponse.json()["statut"] == "enregistre"
 
-    en_attente = db.get_pense_betes(non_integres_seulement=True)
-    assert len(en_attente) == 1
-    assert en_attente[0]["texte"] == "Dentiste à 10 h"
+    tous = db.get_pense_betes()
+    assert len(tous) == 1
+    assert tous[0]["statut"] == db.STATUT_ECHEC
+    # Le brief suivant le reprend
+    a_reprendre = db.get_pense_betes(non_integres_seulement=True)
+    assert [pb["texte"] for pb in a_reprendre] == ["Dentiste à 10 h"]
 
 
 def test_webhook_succes_avec_bon_jeton(monkeypatch):
-    """Vérifie qu'une requête avec le bon jeton renvoie 200 et enregistre le pense-bête."""
+    """Vérifie qu'une requête avec le bon jeton renvoie 202 et que le pense-bête est en base, en attente."""
     monkeypatch.setattr(config, "WEBHOOK_TOKEN", "jeton-secret-test-xyz")
 
     reponse = client.post(
@@ -123,14 +159,13 @@ def test_webhook_succes_avec_bon_jeton(monkeypatch):
         json={"texte": "Dentiste mardi à 10 h"},
     )
 
-    assert reponse.status_code == 200
-    assert reponse.json() == {"statut": "reçu"}
+    assert reponse.status_code == 202
+    assert set(reponse.json()) == {"statut", "message", "id"}
 
-    # Vérification de l'enregistrement en tâche de fond dans la base SQLite
     pense_betes = db.get_pense_betes(non_integres_seulement=True)
     assert len(pense_betes) == 1
     assert pense_betes[0]["texte"] == "Dentiste mardi à 10 h"
-    assert pense_betes[0]["integre"] == 0
+    assert pense_betes[0]["statut"] == db.STATUT_EN_ATTENTE
 
 
 def test_webhook_echec_sans_jeton(monkeypatch):
@@ -196,6 +231,8 @@ def test_webhook_validation_taille_texte(monkeypatch):
         json={"texte": "a" * 1001},
     )
     assert reponse_trop_long.status_code == 422
+    # Le contenu est vérifié avant l'enregistrement : rien n'est en base
+    assert db.get_pense_betes() == []
 
 
 def test_webhook_cors_autorise_hoppscotch(monkeypatch):
@@ -244,6 +281,13 @@ def test_cycle_integration_pense_betes():
     # L'ensemble des pense-bêtes reste présent dans la table complète
     tous = db.get_pense_betes(non_integres_seulement=False)
     assert len(tous) == 2
+    assert {pb["id"]: pb["statut"] for pb in tous} == {id1: db.STATUT_INTEGRE, id2: db.STATUT_EN_ATTENTE}
+
+    # Un pense-bête en échec est repris lui aussi ; un pense-bête intégré ne repasse jamais en échec
+    db.marquer_pense_bete_echec(id2)
+    db.marquer_pense_bete_echec(id1)
+    assert [pb["id"] for pb in db.get_pense_betes(non_integres_seulement=True)] == [id2]
+    assert {pb["id"]: pb["statut"] for pb in db.get_pense_betes()} == {id1: db.STATUT_INTEGRE, id2: db.STATUT_ECHEC}
 
 
 def test_supprimer_pense_bete_succes():

@@ -4,15 +4,20 @@
 Reçoit des messages courts envoyés depuis l'extérieur (Hoppscotch sur mobile ou navigateur,
 curl.exe depuis un terminal, plus tard un raccourci ou une automatisation).
 Protégé par un jeton secret dans l'en-tête X-Token.
-Répond immédiatement 200 {"statut": "reçu"}, puis, en tâche de fond (BackgroundTasks),
-range le pense-bête et refait le brief du jour en cycle complet, texte et image :
-la recette est celle du bouton « Générer le brief maintenant » (forcer=True).
-L'appelant n'attend jamais le brief : il le lit sur la page, onglet Brief.
+
+L'ordre compte : le jeton et le texte sont vérifiés, le pense-bête est enregistré dans
+la base, puis seulement le webhook répond 202 Accepted avec le statut « enregistre »
+et l'identifiant. « Enregistré » ne veut pas dire « traité » : le brief du jour est
+refait ensuite, en tâche de fond (BackgroundTasks), en cycle complet, texte et image,
+par la recette du bouton « Générer le brief maintenant » (forcer=True). L'appelant
+n'attend jamais le brief : il le lit sur la page, onglet Brief, et le statut du
+pense-bête dans l'onglet Mémoire. Si le brief échoue, le pense-bête passe en échec et
+reste en base : le brief suivant le reprend, sans relance automatique.
 CORS est strictement restreint à https://hoppscotch.io.
 """
 
 import logging
-from typing import Dict
+from typing import Any, Dict
 
 from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -68,41 +73,52 @@ def verifier_jeton(x_token: str = Header(None, alias="X-Token")) -> str:
     return x_token
 
 
-def _traiter_pense_bete_en_fond(texte: str) -> None:
-    """Tâche de fond exécutée après l'envoi de la réponse 200 à l'expéditeur.
+def _refaire_le_brief_en_fond(id_pense_bete: int) -> None:
+    """Tâche de fond exécutée après l'envoi de la réponse 202 à l'expéditeur.
 
-    L'ordre compte : on range d'abord le pense-bête, puis on refait le brief du jour,
-    pour que ce brief le contienne. La recette est celle du bouton (forcer=True),
-    texte et image : aucune variante. C'est la recette qui s'encadre dans le journal
-    (ligne `brief` d'ouverture, ligne `webhook:brief` de fermeture, avec l'échec et sa
-    cause le cas échéant) : ici on ne fait que passer son nom. L'appelant a déjà son
-    « reçu » : en cas d'échec, le pense-bête reste non intégré, le brief suivant le
-    reprendra.
+    Le pense-bête est déjà en base : le brief le contiendra. La recette est celle du
+    bouton (forcer=True), texte et image : aucune variante. C'est la recette qui
+    s'encadre dans le journal (ligne `brief` d'ouverture, ligne `webhook:brief` de
+    fermeture, avec l'échec et sa cause le cas échéant) : ici on ne fait que passer son
+    nom. Elle marque elle-même les pense-bêtes intégrés. L'appelant a déjà sa réponse :
+    en cas d'échec, le pense-bête passe en échec et reste en base, le brief suivant le
+    reprendra. Pas de relance automatique immédiate.
     """
-    db.ajouter_pense_bete(texte)
-    consigner_activite("webhook", "pense-bête reçu")
-    logger.info("[WEBHOOK] Pense-bête rangé, lancement du brief du jour (forcer=True)")
-
+    logger.info("[WEBHOOK] Lancement du brief du jour pour le pense-bête %d (forcer=True)", id_pense_bete)
     try:
         generer_brief(forcer=True, declencheur="webhook")
     except Exception as e:
-        # Déjà noté au journal par la recette : on empêche seulement la tâche de fond
-        # de mourir en silence dans son fil d'exécution.
-        logger.error("[WEBHOOK] Le brief déclenché par le webhook a échoué : %s", e)
+        # Déjà noté au journal par la recette : on fixe le statut du pense-bête, et on
+        # empêche la tâche de fond de mourir en silence dans son fil d'exécution.
+        db.marquer_pense_bete_echec(id_pense_bete)
+        logger.error("[WEBHOOK] Le brief déclenché par le pense-bête %d a échoué : %s", id_pense_bete, e)
         return
-    logger.info("[WEBHOOK] Brief du jour refait après un pense-bête")
+    logger.info("[WEBHOOK] Brief du jour refait après le pense-bête %d", id_pense_bete)
 
 
-@app.post("/pense-bete", status_code=status.HTTP_200_OK)
+@app.post("/pense-bete", status_code=status.HTTP_202_ACCEPTED)
 async def recevoir_pense_bete(
     payload: PenseBetePayload,
     background_tasks: BackgroundTasks,
     _: str = Depends(verifier_jeton),
-) -> Dict[str, str]:
-    """Point d'entrée du webhook : valide le jeton, programme la tâche et répond aussitôt."""
-    # Répondre tout de suite (200), traiter ensuite en tâche de fond
-    background_tasks.add_task(_traiter_pense_bete_en_fond, payload.texte)
-    return {"statut": "reçu"}
+) -> Dict[str, Any]:
+    """Point d'entrée du webhook : jeton et texte vérifiés, enregistre, répond, puis traite.
+
+    Le jeton (verifier_jeton) et le texte (PenseBetePayload) sont contrôlés avant
+    d'entrer ici. Le pense-bête est écrit en base avant la réponse : si le serveur
+    tombait juste après, il existerait quand même. 202 Accepted dit « enregistré,
+    traitement à venir », ni plus ni moins.
+    """
+    id_pense_bete = db.ajouter_pense_bete(payload.texte)
+    # Journal sans le texte du pense-bête
+    consigner_activite("webhook", "pense-bête enregistré")
+    logger.info("[WEBHOOK] Pense-bête %d enregistré, réponse 202 envoyée", id_pense_bete)
+    background_tasks.add_task(_refaire_le_brief_en_fond, id_pense_bete)
+    return {
+        "statut": "enregistre",
+        "message": db.LIBELLES_STATUT_PENSE_BETE[db.STATUT_EN_ATTENTE],
+        "id": id_pense_bete,
+    }
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@ from zoneinfo import ZoneInfo
 
 import gradio as gr
 
-from db import get_connection
+from db import LIBELLES_STATUT_PENSE_BETE, get_connection
 from oubli import AVERTISSEMENT_EFFACEMENT, effacer_utilisateur
 
 
@@ -110,7 +110,7 @@ def charger_pense_betes_tableau(fuseau: Optional[str] = None) -> List[List[Any]]
     """Récupère les pense-bêtes reçus par webhook pour gr.Dataframe."""
     with get_connection() as conn:
         cursor = conn.execute(
-            "SELECT id, date, texte, integre FROM pense_betes ORDER BY id DESC LIMIT 50"
+            "SELECT id, date, texte, statut FROM pense_betes ORDER BY id DESC LIMIT 50"
         )
         lignes = []
         for row in cursor.fetchall():
@@ -118,7 +118,8 @@ def charger_pense_betes_tableau(fuseau: Optional[str] = None) -> List[List[Any]]
                 row["id"],
                 convertir_date_client(row["date"], fuseau=fuseau),
                 row["texte"],
-                "Oui" if row["integre"] else "Non",
+                # Le statut en clair : enregistré et en attente, intégré au brief, ou en échec
+                LIBELLES_STATUT_PENSE_BETE.get(row["statut"], row["statut"]),
             ])
         return lignes
 
@@ -178,7 +179,7 @@ def creer_vue_memoire(txt_client_tz: Optional[gr.Textbox] = None):
 
     gr.Markdown("#### 📌 4. Pense-bêtes reçus par webhook (`pense_betes`)")
     df_pense_betes = gr.Dataframe(
-        headers=["ID", "Date (Heure locale)", "Contenu du pense-bête", "Intégré au brief"],
+        headers=["ID", "Date (Heure locale)", "Contenu du pense-bête", "Statut"],
         interactive=False,
     )
 

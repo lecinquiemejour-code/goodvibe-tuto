@@ -84,6 +84,40 @@ def test_tarifs_configurables():
     assert tarifs_maj["prix_image_usd"] == 0.04
 
 
+def test_migration_statut_des_pense_betes(monkeypatch):
+    """Vérifie qu'une base créée avant la colonne statut la reçoit, avec l'ancien oui/non recopié.
+
+    Sur le serveur, la base existe déjà : CREATE TABLE IF NOT EXISTS ne la modifie pas.
+    """
+    import sqlite3
+    import uuid
+
+    uri = f"file:ancienne_{uuid.uuid4().hex}?mode=memory&cache=shared"
+    gardienne = sqlite3.connect(uri, uri=True)
+    gardienne.execute(
+        """
+        CREATE TABLE pense_betes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            texte TEXT NOT NULL,
+            integre INTEGER NOT NULL DEFAULT 0
+        )
+        """
+    )
+    gardienne.execute("INSERT INTO pense_betes (date, texte, integre) VALUES ('d', 'Déjà intégré', 1)")
+    gardienne.execute("INSERT INTO pense_betes (date, texte, integre) VALUES ('d', 'Encore en attente', 0)")
+    gardienne.commit()
+    monkeypatch.setattr(db, "DB_PATH", uri)
+
+    db.initialiser()
+    db.initialiser()  # une seconde fois : la migration ne se refait pas
+
+    statuts = {pb["texte"]: pb["statut"] for pb in db.get_pense_betes()}
+    assert statuts == {"Déjà intégré": db.STATUT_INTEGRE, "Encore en attente": db.STATUT_EN_ATTENTE}
+    assert [pb["texte"] for pb in db.get_pense_betes(non_integres_seulement=True)] == ["Encore en attente"]
+    gardienne.close()
+
+
 def test_db_supprimer_note():
     """Vérifie la suppression d'une note en base SQLite et la détection d'un id inexistant."""
     id1 = db.ajouter_note("Première note")
