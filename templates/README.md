@@ -28,7 +28,7 @@ C'est le code de référence de GoodVibe V1 : l'état final du projet, validé e
 | 8. Horoscope via MCP | `mcp_client.py`, `horoscope.py`, `config.py` |
 | 9. Onglets Mémoire et Activité | `vue_memoire.py`, `vue_activite.py`, `tarifs.py` |
 | 10. Image du jour | `image.py`, `prompt_image.md` |
-| 11. Tests automatisés | `tests/`, `requirements-dev.txt`, `pyproject.toml` |
+| 11. Tests automatisés | `tests/`, `requirements-dev.txt`, `pyproject.toml`, `scenarios_modele.py` (les scénarios avec le vrai modèle ; le cinquième s'ajoute à la fiche 14) |
 | 12. Mise en ligne sur le VPS | `deploy/setup_vps.sh`, `deploy/web.service`, `deploy/site.caddy`, `deploy/crontab`, `deploy/sauvegarde.sh` |
 | 13. CI/CD GitHub Actions | `.github/workflows/deploy.yml`, `deploy/deployer.sh` |
 | 14. Webhook pense-bête | `webhook.py`, `deploy/webhook.service`, `db.py` (table `pense_betes`), `brief.py` (les trois outils en lecture seule), `agent.py` (liste d'outils autorisés), `confirmation.py` (retrait d'un pense-bête) |
