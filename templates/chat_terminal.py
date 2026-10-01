@@ -7,10 +7,35 @@ avec persistance des messages et sortie propre sur la commande 'quitte'.
 
 import sys
 
+import confirmation
 from agent import repondre
 from config import verifier_config
 from db import charger_historique, sauvegarder_message
 from fragments import REPONSE, avec_markdown
+
+
+def demander_confirmation(historique: list) -> None:
+    """Pose la question de confirmation si le modèle a proposé une suppression.
+
+    C'est le programme qui demande, hors de la boucle du modèle, et c'est la réponse
+    tapée par l'utilisateur qui décide : l'équivalent du bouton de la page web.
+
+    Args:
+        historique: La mémoire de travail du chat, vidée si tout a été effacé.
+    """
+    demande = confirmation.en_attente()
+    if demande is None:
+        return
+    try:
+        reponse = input(f"GoodVibe > {confirmation.question(demande)} (oui / non) > ").strip().lower()
+    except (KeyboardInterrupt, EOFError):
+        reponse = "non"
+    if reponse in ("oui", "o", "yes", "y"):
+        print(f"[{confirmation.confirmer()}]\n")
+        if demande.type == confirmation.TOUT:
+            historique.clear()
+    else:
+        print(f"[{confirmation.refuser()}]\n")
 
 
 def lancer_chat() -> None:
@@ -76,6 +101,9 @@ def lancer_chat() -> None:
         # Sauvegarde en base de données SQLite
         sauvegarder_message(role="user", contenu=saisie)
         sauvegarder_message(role="assistant", contenu=texte_reponse)
+
+        # Si le modèle a proposé une suppression, c'est ici que l'utilisateur tranche
+        demander_confirmation(historique)
 
 
 if __name__ == "__main__":

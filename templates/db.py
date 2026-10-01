@@ -342,34 +342,8 @@ def supprimer_pense_bete(id_pense_bete: int) -> bool:
 
 # Fonctions d'accès à l'historique des conversations
 
-_IGNORER_SAUVEGARDE_ECHANGE = False
-
-
-def marquer_oubli_actif(actif: bool = True) -> None:
-    """Demande d'ignorer l'échange en cours à la sauvegarde.
-
-    Réservé à l'effacement demandé dans le chat : l'échange qui contient la demande
-    d'oubli ne doit pas être enregistré juste après l'effacement. Le bouton de la
-    page n'arme pas ce verrou : aucun échange n'est en cours quand on clique.
-    """
-    global _IGNORER_SAUVEGARDE_ECHANGE
-    _IGNORER_SAUVEGARDE_ECHANGE = actif
-
-
-def oubli_en_cours() -> bool:
-    """Indique si un effacement vient d'avoir lieu au milieu de l'échange en cours."""
-    return _IGNORER_SAUVEGARDE_ECHANGE
-
-
 def sauvegarder_message(role: str, contenu: str, session: str = "default") -> None:
     """Enregistre un message dans la table conversations."""
-    global _IGNORER_SAUVEGARDE_ECHANGE
-    if _IGNORER_SAUVEGARDE_ECHANGE:
-        if role == "assistant":
-            # Fin du tour d'effacement : on réactive la persistance pour les prochains échanges
-            _IGNORER_SAUVEGARDE_ECHANGE = False
-        return
-
     maintenant = datetime.now(timezone.utc).isoformat()
     with get_connection() as conn:
         conn.execute(
@@ -406,8 +380,8 @@ def effacer_donnees_utilisateur() -> None:
     """Efface toutes les données privées de l'utilisateur (profil, notes, conversations, pense-bêtes).
 
     Conserve intacte la table journal qui contient uniquement les métriques techniques.
-    N'arme pas le verrou de sauvegarde : c'est à l'appelant de le faire s'il efface
-    au milieu d'un échange (voir marquer_oubli_actif).
+    Appelée uniquement sur un geste de l'utilisateur : le bouton de l'onglet Mémoire,
+    ou la confirmation d'une demande déposée par le modèle (voir confirmation.py).
     """
     with get_connection() as conn:
         conn.execute("DELETE FROM profil")

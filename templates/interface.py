@@ -9,10 +9,11 @@ les futures fonctionnalités (brief, mémoire, activité).
 
 import logging
 import sys
-from typing import Any, Dict, Generator, List, Tuple
+from typing import Any, Dict, Generator, List, Optional, Tuple
 
 import gradio as gr
 
+import confirmation
 from agent import repondre
 from brief import generer_brief_complet_stream
 from config import (
@@ -23,7 +24,7 @@ from config import (
     verifier_acces_web,
     verifier_config,
 )
-from db import charger_historique, get_dernier_brief, oubli_en_cours, sauvegarder_message
+from db import charger_historique, get_dernier_brief, sauvegarder_message
 from fragments import FLUX, REPONSE, Fragment, ajouter_au_flux, copier_flux
 from image import get_image_du_jour
 from vue_activite import creer_vue_activite
@@ -103,7 +104,7 @@ def en_message(fragment: Fragment) -> gr.ChatMessage:
 
 def chat_stream(
     message: str, history: list, voir_reflexion: bool = False
-) -> Generator[Tuple[List[gr.ChatMessage], bool, Dict[str, List[Any]]], None, None]:
+) -> Generator[Tuple[List[gr.ChatMessage], Optional[str], Dict[str, List[Any]]], None, None]:
     """Relaye les fragments de l'agent vers l'interface Gradio.
 
     Args:
@@ -113,10 +114,12 @@ def chat_stream(
             et remplit le panneau du flux brut.
 
     Yields:
-        Un triplet (messages, oubli, flux) :
+        Un triplet (messages, question, flux) :
         - la liste des messages de la réponse en cours : les coulisses et le relevé
           en messages marqués, le texte de la réponse en message simple ;
-        - un signal, vrai en fin de réponse si l'utilisateur vient d'être oublié ;
+        - en fin de réponse, la question à poser si le modèle a proposé une suppression
+          (« Supprimer la note n° 2, « … » ? »), sinon None : c'est l'utilisateur qui
+          confirme, par le bouton, jamais le modèle ;
         - les événements bruts reçus de Gemini pour cette réponse, rangés par tour :
           ils vont dans leur panneau, jamais dans le chat.
     """
@@ -125,6 +128,12 @@ def chat_stream(
     reponse_en_cours = False  # vrai tant que le dernier message est celui de la réponse
     # Le flux repart de zéro à chaque message : le panneau montre la réponse en cours
     flux_recu: Dict[str, List[Any]] = {}
+
+    # Une demande de suppression non confirmée tombe au message suivant : la confirmation
+    # ne vaut que pour ce qui vient d'être affiché, pas pour une proposition passée.
+    if confirmation.en_attente() is not None:
+        logger.info("Nouveau message : la demande de suppression en attente est abandonnée")
+        confirmation.refuser()
 
     dialogue = preparer_historique(history)
     fragments = repondre(
@@ -150,7 +159,7 @@ def chat_stream(
         else:
             messages.append(en_message(fragment))
             reponse_en_cours = False
-        yield list(messages), False, copier_flux(flux_recu)
+        yield list(messages), None, copier_flux(flux_recu)
 
     # Journalisation des quantités uniquement : jamais le contenu des événements
     logger.info(
@@ -158,12 +167,6 @@ def chat_stream(
         sum(len(evenements) for evenements in flux_recu.values()),
         len(flux_recu),
     )
-
-    # L'outil d'oubli a-t-il effacé les données pendant cet échange ? On le lit avant
-    # la sauvegarde, qui désarme le verrou.
-    if oubli_en_cours():
-        logger.info("Oubli demandé dans le chat : la conversation affichée sera vidée")
-        yield list(messages), True, copier_flux(flux_recu)
 
     # Enregistrement de l'échange dans la table conversations : le message et le texte
     # de la réponse, jamais les coulisses ni le relevé.
@@ -173,6 +176,13 @@ def chat_stream(
         logger.info("Échange enregistré (%d caractères de réponse)", len(texte_reponse))
     except Exception as e:
         logger.warning("Échec de sauvegarde du message : %s", e)
+
+    # Le modèle a-t-il proposé une suppression ? La question part vers le cadre de
+    # confirmation, sous le chat : rien n'est supprimé tant que l'utilisateur n'a pas cliqué.
+    demande = confirmation.en_attente()
+    if demande is not None:
+        logger.info("Suppression proposée par le modèle : la question est affichée à l'utilisateur")
+        yield list(messages), confirmation.question(demande), copier_flux(flux_recu)
 
 
 MESSAGE_SANS_BRIEF = (
@@ -212,29 +222,50 @@ def vider_chat() -> tuple:
     return [], [], []
 
 
-def garder_la_confirmation(oubli: bool, affichage: List[Dict[str, Any]]) -> tuple:
-    """Après un oubli demandé dans le chat, ne laisse à l'écran que la confirmation.
-
-    Sans cela, la conversation effacée de la base resterait affichée, et repartirait
-    au modèle au message suivant.
+def afficher_demande(question: Optional[str]) -> tuple:
+    """Montre ou cache le cadre de confirmation, selon qu'une suppression attend.
 
     Args:
-        oubli: Le signal rendu par chat_stream en fin de réponse.
-        affichage: La conversation affichée, au format Gradio.
+        question: La question rendue par chat_stream en fin de réponse, ou None.
 
     Returns:
-        L'affichage du chat, ses deux mémoires internes, et le signal remis à faux.
+        La visibilité du cadre et le texte de la question.
     """
-    if not oubli:
-        return gr.skip(), gr.skip(), gr.skip(), False
-    # La confirmation est la dernière réponse de GoodVibe : un message sans titre
-    reponses = [
-        m for m in affichage
-        if m.get("role") == "assistant" and not (m.get("metadata") or {}).get("title")
-    ]
-    confirmation = reponses[-1:]
-    logger.info("Conversation vidée après oubli : %d message(s) gardé(s)", len(confirmation))
-    return confirmation, confirmation, confirmation, False
+    if not question:
+        return gr.update(visible=False), ""
+    logger.info("Cadre de confirmation affiché")
+    return gr.update(visible=True), f"**{question}**"
+
+
+def confirmer_suppression() -> tuple:
+    """Exécute la suppression en attente, sur le clic « Confirmer » de l'utilisateur.
+
+    C'est ce clic, et lui seul, qui supprime : le programme agit sur l'élément qui a
+    été affiché, quoi que le modèle ait demandé entre-temps.
+
+    Returns:
+        Le cadre caché, la question remise à zéro, et le chat vidé si tout a été effacé
+        (la conversation effacée de la base ne doit pas rester à l'écran, sinon elle
+        repartirait au modèle au message suivant).
+    """
+    demande = confirmation.en_attente()
+    message = confirmation.confirmer()
+    gr.Info(message)
+    logger.info("Suppression confirmée par l'utilisateur")
+    if demande is not None and demande.type == confirmation.TOUT:
+        return gr.update(visible=False), None, [], [], []
+    return gr.update(visible=False), None, gr.skip(), gr.skip(), gr.skip()
+
+
+def annuler_suppression() -> tuple:
+    """Abandonne la suppression en attente, sur le clic « Annuler » de l'utilisateur.
+
+    Returns:
+        Le cadre caché et la question remise à zéro. Rien n'est supprimé.
+    """
+    gr.Info(confirmation.refuser())
+    logger.info("Suppression refusée par l'utilisateur")
+    return gr.update(visible=False), None
 
 
 CSS_INTERFACE = """
@@ -447,23 +478,41 @@ def creer_interface() -> gr.Blocks:
                         # Le chat démarre vide : charger_page() le remplit depuis la base
                         # à chaque ouverture de la page (voir demo.load plus bas).
                         chatbot = gr.Chatbot()
-                        # Signal rendu par chat_stream : vrai quand l'utilisateur vient d'être oublié
-                        signal_oubli = gr.State(False)
+                        # La question rendue par chat_stream quand le modèle propose une
+                        # suppression : elle ouvre le cadre de confirmation ci-dessous
+                        demande_suppression = gr.State(None)
                         chat = gr.ChatInterface(
                             fn=chat_stream,
                             chatbot=chatbot,
                             textbox=gr.Textbox(placeholder="Posez votre question à GoodVibe..."),
                             additional_inputs=[cb_reflexion],
-                            additional_outputs=[signal_oubli, json_flux],
+                            additional_outputs=[demande_suppression, json_flux],
                         )
+                        # Le cadre de confirmation : le modèle propose, l'utilisateur dispose.
+                        # Rien n'est supprimé sans un clic sur « Confirmer ».
+                        with gr.Group(visible=False) as zone_confirmation:
+                            md_question = gr.Markdown("")
+                            with gr.Row():
+                                btn_confirmer = gr.Button("✅ Confirmer la suppression", variant="stop")
+                                btn_annuler = gr.Button("❌ Annuler", variant="secondary")
                     creer_barre_separation()
                     with gr.Column(scale=2, elem_classes=["colonne-droite"]):
                         json_flux.render()
                 suivre_le_flux(json_flux)
-                signal_oubli.change(
-                    fn=garder_la_confirmation,
-                    inputs=[signal_oubli, chatbot],
-                    outputs=[chatbot, chat.chatbot_state, chat.chatbot_value, signal_oubli],
+                demande_suppression.change(
+                    fn=afficher_demande,
+                    inputs=[demande_suppression],
+                    outputs=[zone_confirmation, md_question],
+                )
+                btn_confirmer.click(
+                    fn=confirmer_suppression,
+                    inputs=[],
+                    outputs=[zone_confirmation, demande_suppression, chatbot, chat.chatbot_state, chat.chatbot_value],
+                )
+                btn_annuler.click(
+                    fn=annuler_suppression,
+                    inputs=[],
+                    outputs=[zone_confirmation, demande_suppression],
                 )
 
             with gr.Tab("📰 Brief du jour"):

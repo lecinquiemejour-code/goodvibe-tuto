@@ -5,11 +5,12 @@ Vérifie :
 - Le calcul du signe astrologique occidental sans conservation de la date de naissance.
 - L'enregistrement et la lecture du profil utilisateur.
 - L'enregistrement et la lecture des notes/pense-bêtes.
-- L'action irréversible d'oubli des données privées.
+- Les suppressions (une note, tout) : proposées par l'outil, exécutées par l'utilisateur seul.
 """
 
 import pytest
 
+import confirmation
 import db
 from outils import (
     ecrire_note,
@@ -112,29 +113,28 @@ def test_ajouter_et_consulter_notes():
 
 
 def test_oublier_utilisateur():
-    """Vérifie que l'action d'oubli efface profil, notes et conversations sans toucher au journal."""
+    """Vérifie que l'outil d'oubli propose l'effacement, et que seule la confirmation l'exécute."""
     # Préparation des données
     enregistrer_profil(prenom="Bob", ville="Marseille")
     ecrire_note("Note secrète")
     db.sauvegarder_message("user", "Mon message privé")
 
-    # Vérification présence
+    # L'outil, tel que le modèle l'appelle, n'efface rien : il dépose une demande
+    res = oublier_utilisateur()
+    assert res["statut"] == "confirmation_requise"
     assert db.get_profil() is not None
     assert len(db.get_notes()) == 1
     assert len(db.charger_historique()) == 1
 
-    # Action d'effacement
-    res = oublier_utilisateur()
-    assert "définitivement effacées" in res
-
-    # Vérification de l'amnésie complète
+    # Le geste de l'utilisateur efface profil, notes et conversations, sans toucher au journal
+    confirmation.confirmer()
     assert db.get_profil() is None
     assert len(db.get_notes()) == 0
     assert len(db.charger_historique()) == 0
 
 
 def test_supprimer_note_existant_et_inexistant():
-    """Vérifie la suppression ciblée d'une note et la gestion d'un identifiant inexistant."""
+    """Vérifie la suppression ciblée d'une note, après confirmation, et un identifiant inexistant."""
     db.ajouter_note("Note 1")
     id2 = db.ajouter_note("Note 2")
     db.ajouter_note("Note 3")
@@ -142,24 +142,31 @@ def test_supprimer_note_existant_et_inexistant():
     notes = db.get_notes()
     assert len(notes) == 3
 
-    # Suppression réussie
-    res_succes = supprimer_note(id_note=id2)
-    assert "supprimée avec succès" in res_succes
+    # L'outil propose : rien n'est encore supprimé
+    res_proposition = supprimer_note(id_note=id2)
+    assert res_proposition["statut"] == "confirmation_requise"
+    assert len(db.get_notes()) == 3
+
+    # La confirmation de l'utilisateur ne retire que cette note
+    confirmation.confirmer()
     notes_apres = db.get_notes()
     assert len(notes_apres) == 2
     assert id2 not in [n["id"] for n in notes_apres]
 
-    # Suppression d'un ID qui n'existe pas
+    # Suppression d'un ID qui n'existe pas : aucune demande, et l'outil le dit
     res_inexistant = supprimer_note(id_note=9999)
     assert "Aucune note trouvée" in res_inexistant
+    assert confirmation.en_attente() is None
     assert len(db.get_notes()) == 2
 
 
 def test_executer_outil_supprimer_note():
-    """Vérifie que le routeur d'outils appelle bien supprimer_note."""
+    """Vérifie que le routeur d'outils appelle bien supprimer_note, qui propose sans supprimer."""
     id_note = db.ajouter_note("À supprimer via executer_outil")
     res = executer_outil("supprimer_note", {"id_note": id_note})
-    assert "supprimée avec succès" in res
+    assert res["statut"] == "confirmation_requise"
+    assert len(db.get_notes()) == 1
+    confirmation.confirmer()
     assert len(db.get_notes()) == 0
 
 

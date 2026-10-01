@@ -9,6 +9,7 @@ lecture et écriture de notes, ainsi que les spécifications transmises à Gemin
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
+import confirmation
 import db
 from horoscope import ERREUR_SERVEUR_FETCH, lire_horoscope_du_profil
 from journal import consigner_activite, lire_journal_execution
@@ -143,25 +144,56 @@ def lire_notes() -> List[Dict[str, Any]]:
     return notes
 
 
-def supprimer_note(id_note: Any) -> str:
-    """Supprime une note personnelle par son identifiant numérique unique."""
+def reponse_confirmation_requise(libelle: str) -> Dict[str, str]:
+    """Rédige la réponse rendue au modèle quand une suppression attend l'utilisateur.
+
+    Args:
+        libelle: Ce qui est proposé à la suppression, tel que l'utilisateur le voit.
+
+    Returns:
+        Un résultat qui dit au modèle que rien n'est supprimé pour l'instant.
+    """
+    return {
+        "statut": "confirmation_requise",
+        "message": (
+            f"La suppression ({libelle}) attend la confirmation de l'utilisateur : le programme "
+            "la lui demande par un bouton ou une question. Rien n'est supprimé pour l'instant. "
+            "Invite l'utilisateur à confirmer, et n'annonce jamais la suppression comme faite."
+        ),
+    }
+
+
+def supprimer_note(id_note: Any) -> Any:
+    """Propose la suppression d'une note désignée par son identifiant.
+
+    Rien n'est supprimé ici : la note est retrouvée, affichée à l'utilisateur, et la
+    suppression attend son geste (voir confirmation.py). Un identifiant inconnu ne
+    dépose aucune demande, et l'outil le dit.
+    """
     t0 = time.time()
     try:
         id_int = int(id_note)
-        succes = db.supprimer_note(id_int)
     except (ValueError, TypeError):
-        succes = False
-        id_int = id_note
+        id_int = None
+    note = next((n for n in db.get_notes(limite=None) if n["id"] == id_int), None)
     duree_ms = int((time.time() - t0) * 1000)
 
+    if note is None:
+        consigner_activite(
+            etape="outil:supprimer_note",
+            detail="Suppression d'une note : identifiant inconnu",
+            duree_ms=duree_ms,
+        )
+        return f"Aucune note trouvée avec l'identifiant {id_note}."
+
+    # Journalisation sans le texte de la note
     consigner_activite(
         etape="outil:supprimer_note",
-        detail="Suppression d'une note",
+        detail="Suppression d'une note proposée, en attente de confirmation",
         duree_ms=duree_ms,
     )
-    if succes:
-        return f"Note {id_int} supprimée avec succès."
-    return f"Aucune note trouvée avec l'identifiant {id_int}."
+    demande = confirmation.proposer(confirmation.NOTE, id_int, f"la note n° {id_int}, « {note['texte']} »")
+    return reponse_confirmation_requise(demande.libelle)
 
 
 def lire_pense_betes() -> List[Dict[str, Any]]:
@@ -178,44 +210,54 @@ def lire_pense_betes() -> List[Dict[str, Any]]:
     return pense_betes
 
 
-def supprimer_pense_bete(id_pense_bete: Any) -> str:
-    """Supprime un pense-bête reçu par webhook par son identifiant numérique unique."""
+def supprimer_pense_bete(id_pense_bete: Any) -> Any:
+    """Propose la suppression d'un pense-bête désigné par son identifiant.
+
+    Même règle que pour une note : rien n'est supprimé ici, la suppression attend le
+    geste de l'utilisateur.
+    """
     t0 = time.time()
     try:
         id_int = int(id_pense_bete)
-        succes = db.supprimer_pense_bete(id_int)
     except (ValueError, TypeError):
-        succes = False
-        id_int = id_pense_bete
+        id_int = None
+    pense_bete = next((pb for pb in db.get_pense_betes() if pb["id"] == id_int), None)
     duree_ms = int((time.time() - t0) * 1000)
 
+    if pense_bete is None:
+        consigner_activite(
+            etape="outil:supprimer_pense_bete",
+            detail="Suppression d'un pense-bête : identifiant inconnu",
+            duree_ms=duree_ms,
+        )
+        return f"Aucun pense-bête trouvé avec l'identifiant {id_pense_bete}."
+
+    # Journalisation sans le texte du pense-bête
     consigner_activite(
         etape="outil:supprimer_pense_bete",
-        detail="Suppression d'un pense-bête",
+        detail="Suppression d'un pense-bête proposée, en attente de confirmation",
         duree_ms=duree_ms,
     )
-    if succes:
-        return f"Pense-bête {id_int} supprimé avec succès."
-    return f"Aucun pense-bête trouvé avec l'identifiant {id_int}."
+    demande = confirmation.proposer(
+        confirmation.PENSE_BETE, id_int, f"le pense-bête n° {id_int}, « {pense_bete['texte']} »"
+    )
+    return reponse_confirmation_requise(demande.libelle)
 
 
+def oublier_utilisateur() -> Dict[str, str]:
+    """Propose l'effacement de toutes les données personnelles de l'utilisateur.
 
-def oublier_utilisateur() -> str:
-    """Efface définitivement toutes les données personnelles de l'utilisateur."""
-    t0 = time.time()
-    db.effacer_donnees_utilisateur()
-    # L'effacement a lieu au milieu d'un échange du chat : cet échange, qui contient
-    # la demande d'oubli, ne doit pas être enregistré juste après.
-    db.marquer_oubli_actif(True)
-    duree_ms = int((time.time() - t0) * 1000)
-
-    # Journalisation technique : "profil effacé" sans aucun contenu personnel
+    Rien n'est effacé ici : l'effacement attend le geste de l'utilisateur, exactement
+    comme le bouton « Oublie-moi » de l'onglet Mémoire.
+    """
     consigner_activite(
         etape="outil:oublier_utilisateur",
-        detail="profil effacé",
-        duree_ms=duree_ms,
+        detail="effacement proposé, en attente de confirmation",
     )
-    return "Toutes vos données (profil, notes, conversations et pense-bêtes) ont été définitivement effacées."
+    demande = confirmation.proposer(
+        confirmation.TOUT, None, "toutes tes données : profil, notes, conversations et pense-bêtes"
+    )
+    return reponse_confirmation_requise(demande.libelle)
 
 
 def lire_journal(execution: Optional[str] = None) -> Dict[str, Any]:
@@ -348,10 +390,10 @@ OUTILS_SPEC: List[Dict[str, Any]] = [
         "type": "function",
         "name": "supprimer_note",
         "description": (
-            "Supprime définitivement une note personnelle par son identifiant numérique unique (id_note). "
-            "RÈGLE STRICTE : Ne jamais appeler cet outil sans avoir d'abord cité à l'utilisateur le numéro "
-            "et le texte exact de la note, et avoir obtenu sa confirmation explicite (un 'oui'). "
-            "Si plusieurs notes correspondent ou aucune, poser la question au lieu d'appeler cet outil."
+            "Propose la suppression d'une note personnelle par son identifiant numérique unique (id_note). "
+            "Rien n'est supprimé par cet appel : le programme affiche la note à l'utilisateur et lui "
+            "demande confirmation par un bouton ou une question. Si plusieurs notes correspondent ou "
+            "aucune, poser la question à l'utilisateur au lieu d'appeler cet outil."
         ),
         "parameters": {
             "type": "object",
@@ -379,10 +421,10 @@ OUTILS_SPEC: List[Dict[str, Any]] = [
         "type": "function",
         "name": "supprimer_pense_bete",
         "description": (
-            "Supprime définitivement un pense-bête reçu par webhook par son identifiant numérique unique (id_pense_bete). "
-            "RÈGLE STRICTE : Ne jamais appeler cet outil sans avoir d'abord cité à l'utilisateur le numéro "
-            "et le texte exact du pense-bête, et avoir obtenu sa confirmation explicite (un 'oui'). "
-            "Si plusieurs pense-bêtes correspondent ou aucun, poser la question au lieu d'appeler cet outil."
+            "Propose la suppression d'un pense-bête reçu par webhook par son identifiant numérique unique (id_pense_bete). "
+            "Rien n'est supprimé par cet appel : le programme affiche le pense-bête à l'utilisateur et lui "
+            "demande confirmation par un bouton ou une question. Si plusieurs pense-bêtes correspondent ou "
+            "aucun, poser la question à l'utilisateur au lieu d'appeler cet outil."
         ),
         "parameters": {
             "type": "object",
@@ -399,10 +441,10 @@ OUTILS_SPEC: List[Dict[str, Any]] = [
         "type": "function",
         "name": "oublier_utilisateur",
         "description": (
-            "Efface définitivement toutes les données personnelles de l'utilisateur "
-            "(profil, notes, conversations enregistrées). "
-            "RÈGLE STRICTE : Cet outil ne doit JAMAIS être appelé sans confirmation "
-            "explicite préalable de l'utilisateur."
+            "Propose l'effacement de toutes les données personnelles de l'utilisateur "
+            "(profil, notes, conversations, pense-bêtes). Rien n'est effacé par cet appel : "
+            "le programme demande confirmation à l'utilisateur par un bouton ou une question. "
+            "À appeler quand l'utilisateur demande à être oublié ou à effacer ses données."
         ),
         "parameters": {
             "type": "object",

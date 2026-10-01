@@ -363,13 +363,6 @@ def repondre(
                             resultat=res_dict,
                         )
 
-                    # Règle Fiche 5 : vidage immédiat de la mémoire de travail de la session
-                    if nom == "oublier_utilisateur":
-                        if historique is not None:
-                            historique.clear()
-                        if "### Mémoire actuelle de GoodVibe :" in prompt_actif:
-                            prompt_actif = prompt_actif.split("### Mémoire actuelle de GoodVibe :")[0].strip()
-
                     resultats.append({
                         "type": "function_result",
                         "call_id": call["id"],

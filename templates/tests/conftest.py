@@ -50,9 +50,10 @@ def base_sqlite_memoire(monkeypatch, tmp_path):
     # Initialisation du schéma complet en mémoire
     db.initialiser()
 
-    # Le verrou de sauvegarde est une variable du module : on le désarme pour
-    # qu'un test d'effacement n'empêche pas le test suivant d'enregistrer.
-    db.marquer_oubli_actif(False)
+    # La demande de suppression en attente est une variable du module : on la vide,
+    # pour qu'un test ne trouve pas la demande déposée par un autre.
+    import confirmation
+    monkeypatch.setattr(confirmation, "_demande_en_attente", None)
 
     yield conn_gardienne
 

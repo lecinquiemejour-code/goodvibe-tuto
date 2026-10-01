@@ -11,15 +11,17 @@ Garanties :
 import gradio as gr
 
 import chat_terminal
+import confirmation
 import db
 import outils
 from fragments import COULISSES, RELEVE, REPONSE, Fragment, avec_markdown
 from interface import (
     MESSAGE_SANS_BRIEF,
+    afficher_demande,
     charger_page,
     chat_stream,
+    confirmer_suppression,
     extraire_texte,
-    garder_la_confirmation,
     preparer_historique,
     vider_chat,
 )
@@ -263,24 +265,32 @@ def test_echange_enregistre_apres_oubli_par_le_bouton(faux_gemini):
     assert [m["content"] for m in db.charger_historique()] == ["salut", "Bonjour !"]
 
 
-def test_echange_ignore_apres_oubli_dans_le_chat(faux_gemini):
-    """Vérifie que l'échange qui contient la demande d'oubli n'est pas enregistré.
+def test_oubli_demande_dans_le_chat_attend_la_confirmation(faux_gemini):
+    """Vérifie qu'un oubli demandé dans le chat n'efface rien tant que l'utilisateur n'a pas confirmé.
 
-    L'outil efface au milieu de l'échange : sans verrou, la demande d'oubli et sa
-    réponse seraient réécrites dans la table juste après l'effacement.
+    L'échange est enregistré normalement, comme tout échange ; c'est le clic sur
+    « Confirmer » qui effacera tout, cet échange compris.
     """
-    faux_gemini.interactions.scenarios = [
-        fabriquer_flux_texte("C'est fait, je ne sais plus rien de toi."),
-        fabriquer_flux_texte("Bonjour !"),
+    db.sauvegarder_profil(prenom="Zoe", ville="Lille", signe="Lion")
+    tour1, tour2 = fabriquer_flux_outil(
+        nom_outil="oublier_utilisateur",
+        arguments={},
+        reponse_finale="L'effacement attend ta confirmation.",
+    )
+    faux_gemini.interactions.scenarios = [tour1, tour2]
+
+    list(chat_stream("oublie-moi", [], voir_reflexion=False))
+
+    assert db.get_profil() is not None
+    assert [m["content"] for m in db.charger_historique()] == [
+        "oublie-moi",
+        "L'effacement attend ta confirmation.",
     ]
-    outils.oublier_utilisateur()
 
-    list(chat_stream("oui, efface tout", [], voir_reflexion=False))
+    confirmer_suppression()
+
+    assert db.get_profil() is None
     assert db.charger_historique() == []
-
-    # L'échange suivant est enregistré normalement
-    list(chat_stream("salut", [], voir_reflexion=False))
-    assert [m["content"] for m in db.charger_historique()] == ["salut", "Bonjour !"]
 
 
 def test_page_sans_brief():
@@ -288,49 +298,61 @@ def test_page_sans_brief():
     assert charger_page()[4] == MESSAGE_SANS_BRIEF
 
 
-def test_oubli_dans_le_chat_vide_la_conversation_affichee(faux_gemini):
-    """Vérifie qu'après un oubli demandé dans le chat, seule la confirmation reste à l'écran.
+def test_suppression_proposee_dans_le_chat_ouvre_le_cadre(faux_gemini):
+    """Vérifie qu'une suppression proposée par le modèle pose la question à l'utilisateur.
 
-    Sans cela, la conversation effacée de la base resterait affichée, et repartirait
-    au modèle au message suivant.
+    La question n'arrive qu'en fin de réponse, et rien n'est supprimé tant que
+    l'utilisateur n'a pas cliqué sur « Confirmer ».
     """
-    db.sauvegarder_profil(prenom="Zoe", ville="Lille", signe="Lion")
+    id_note = db.ajouter_note("Acheter du pain")
     tour1, tour2 = fabriquer_flux_outil(
-        nom_outil="oublier_utilisateur",
-        arguments={},
-        reponse_finale="C'est fait, je ne sais plus rien de toi.",
+        nom_outil="supprimer_note",
+        arguments={"id_note": id_note},
+        reponse_finale="Confirme, et je retire cette note.",
     )
     faux_gemini.interactions.scenarios = [tour1, tour2]
-    avant = [
-        {"role": "user", "content": [{"text": "Je m'appelle Zoe", "type": "text"}], "metadata": None},
-        {"role": "assistant", "content": [{"text": "Enchanté Zoe !", "type": "text"}], "metadata": {}},
-    ]
 
-    etapes = list(chat_stream("oui, efface tout", avant, voir_reflexion=True))
+    etapes = list(chat_stream("retire ma note sur le pain", [], voir_reflexion=True))
 
-    # Le signal n'est levé qu'à la fin de la réponse
-    assert [oubli for _, oubli, _ in etapes[:-1]] == [False] * (len(etapes) - 1)
-    messages, oubli, _ = etapes[-1]
-    assert oubli is True
-    assert db.get_profil() is None
+    # La question n'est posée qu'à la fin de la réponse
+    assert [question for _, question, _ in etapes[:-1]] == [None] * (len(etapes) - 1)
+    messages, question, _ = etapes[-1]
+    assert question == f"Supprimer la note n° {id_note}, « Acheter du pain » ?"
+    assert len(db.get_notes()) == 1
 
-    affichage = historique_vu_par_gradio("oui, efface tout", messages)
-    garde, etat, valeur, signal = garder_la_confirmation(True, avant + affichage)
-    assert [extraire_texte(m["content"]) for m in garde] == [
-        "C'est fait, je ne sais plus rien de toi."
-    ]
-    assert etat == garde
-    assert valeur == garde
-    assert signal is False
+    # La question ouvre le cadre de confirmation, avec son texte
+    cadre, texte = afficher_demande(question)
+    assert cadre == {"__type__": "update", "visible": True}
+    assert "Acheter du pain" in texte
+
+    # Le clic de l'utilisateur supprime, et le cadre se referme
+    cadre, question_suivante, _, _, _ = confirmer_suppression()
+    assert cadre == {"__type__": "update", "visible": False}
+    assert question_suivante is None
+    assert db.get_notes() == []
 
 
-def test_echange_ordinaire_ne_leve_pas_le_signal(faux_gemini):
-    """Vérifie qu'un échange sans oubli laisse la conversation affichée intacte."""
+def test_nouveau_message_abandonne_la_demande_en_attente(faux_gemini):
+    """Vérifie qu'une demande non confirmée tombe au message suivant."""
+    id_note = db.ajouter_note("Acheter du pain")
+    outils.supprimer_note(id_note)
+    faux_gemini.interactions.scenarios = [fabriquer_flux_texte("Bonjour !")]
+
+    etapes = list(chat_stream("finalement non, parlons d'autre chose", [], voir_reflexion=False))
+
+    assert all(question is None for _, question, _ in etapes)
+    assert confirmation.en_attente() is None
+    assert len(db.get_notes()) == 1
+
+
+def test_echange_ordinaire_ne_pose_aucune_question(faux_gemini):
+    """Vérifie qu'un échange sans suppression ne pose aucune question."""
     faux_gemini.interactions.scenarios = [fabriquer_flux_texte("Bonjour !")]
 
     etapes = list(chat_stream("salut", [], voir_reflexion=False))
 
-    assert all(oubli is False for _, oubli, _ in etapes)
+    assert all(question is None for _, question, _ in etapes)
+    assert afficher_demande(None) == ({"__type__": "update", "visible": False}, "")
 
 
 def test_tableaux_memoire_relus_a_la_demande():

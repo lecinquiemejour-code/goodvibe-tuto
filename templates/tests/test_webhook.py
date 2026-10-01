@@ -247,14 +247,20 @@ def test_cycle_integration_pense_betes():
 
 
 def test_supprimer_pense_bete_succes():
-    """Vérifie la suppression d'un pense-bête par son identifiant unique."""
+    """Vérifie la suppression d'un pense-bête par son identifiant, après confirmation de l'utilisateur."""
+    import confirmation
     import outils
 
     id_pb = db.ajouter_pense_bete("Pense-bête à supprimer")
     assert len(db.get_pense_betes()) == 1
 
-    message = outils.supprimer_pense_bete(id_pb)
-    assert f"Pense-bête {id_pb} supprimé avec succès." in message
+    # L'outil propose, et ne supprime pas
+    resultat = outils.supprimer_pense_bete(id_pb)
+    assert resultat["statut"] == "confirmation_requise"
+    assert len(db.get_pense_betes()) == 1
+
+    # Le geste de l'utilisateur supprime
+    assert confirmation.confirmer() == f"Pense-bête n° {id_pb} retiré."
     assert len(db.get_pense_betes()) == 0
 
     # Vérification que le journal d'activité ne fait fuiter aucune donnée personnelle
@@ -263,7 +269,7 @@ def test_supprimer_pense_bete_succes():
     entrees = journal.get_dernieres_activites(limite=5)
     dernieres_actions = [e for e in entrees if e["etape"] == "outil:supprimer_pense_bete"]
     assert len(dernieres_actions) >= 1
-    assert dernieres_actions[0]["detail"] == "Suppression d'un pense-bête"
+    assert dernieres_actions[0]["detail"] == "Suppression d'un pense-bête proposée, en attente de confirmation"
     assert "Pense-bête à supprimer" not in dernieres_actions[0]["detail"]
 
 
@@ -290,8 +296,12 @@ def test_lire_pense_betes_outil():
     assert "Mémo A" in textes
     assert "Mémo B" in textes
 
-    # Aiguillage via executer_outil
+    # Aiguillage via executer_outil : la suppression est proposée, puis confirmée
+    import confirmation
+
     rep = outils.executer_outil("supprimer_pense_bete", {"id_pense_bete": id1})
-    assert f"Pense-bête {id1} supprimé avec succès." in rep
-    assert len(db.get_pense_betes()) == 1
+    assert rep["statut"] == "confirmation_requise"
+    assert len(db.get_pense_betes()) == 2
+    confirmation.confirmer()
+    assert [pb["id"] for pb in db.get_pense_betes()] == [id2]
 
