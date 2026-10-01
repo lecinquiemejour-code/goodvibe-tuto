@@ -1,0 +1,50 @@
+name: Retour sur le tuto
+description: Ce qui a marché, là où vous avez bloqué, ce qui manquait. Cinq questions, quelques lignes.
+title: "Retour tuto GoodVibe : "
+labels: ["retour"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre ce temps : chaque retour améliore le tuto.
+        Pour la question 3, relisez vos cases « encore flou » de la section « Ce que j'ai appris » de votre post-mortem.
+        N'écrivez ici ni clé, ni mot de passe, ni donnée personnelle : cette page est publique.
+  - type: textarea
+    id: marche
+    attributes:
+      label: 1. Ce qui a bien marché
+    validations:
+      required: false
+  - type: textarea
+    id: blocage
+    attributes:
+      label: 2. Là où j'ai bloqué (fiche, étape)
+      placeholder: "Exemple : fiche 8, CHECK de l'horoscope, le serveur MCP ne démarrait pas."
+    validations:
+      required: true
+  - type: textarea
+    id: flou
+    attributes:
+      label: 3. Ce qui manquait ou était flou
+    validations:
+      required: false
+  - type: input
+    id: agent
+    attributes:
+      label: 4. Mon agent de codage et mon modèle
+      placeholder: "Exemple : Gemini dans Antigravity, puis Claude Code"
+    validations:
+      required: true
+  - type: dropdown
+    id: note
+    attributes:
+      label: 5. Ma note sur 10
+      options: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+    validations:
+      required: true
+  - type: textarea
+    id: libre
+    attributes:
+      label: Un mot libre
+    validations:
+      required: false

@@ -58,19 +58,22 @@ Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai ag
 
 ## Contenu de ce dépôt
 
-Ce dépôt ne contient **pas de code** : c'est le kit de départ. Le code, c'est vous (et votre agent) qui allez le produire.
+Ce dépôt est le kit de départ. Il contient du code de référence, dans `templates/`, mais votre code, c'est votre agent qui le produira avec vous, fiche par fiche.
 
 | Fichier | Rôle |
 |---|---|
 | [`GoodVibe-PRD.md`](GoodVibe-PRD.md) | Le cahier des charges produit : **quoi** construire (fonctionnalités, contraintes, critères de succès). Fourni prêt à l'emploi. |
 | [`tuto-goodvibe-vibecoding.md`](tuto-goodvibe-vibecoding.md) | Le tuto : **comment** le construire. Sert de référence à l'agent de codage : options de chaque étape, points à relire, tests à faire. |
 | `README.md` | Ce fichier : la présentation du projet. Dans votre dossier de travail, l'agent le renomme en `GoodVibe-presentation.md` et s'en sert pour vous présenter le projet avant de commencer. |
+| [`templates/`](templates/) | Le code de référence de GoodVibe V1, validé en production. L'agent le consulte au PLAN de chaque fiche et n'en reprend que ce que la fiche demande. Mode d'emploi : [`templates/README.md`](templates/README.md). |
+| [`LICENSE.md`](LICENSE.md) | La licence en clair : gratuit pour un usage non commercial, payant pour un usage commercial. |
+| [`LICENSES/`](LICENSES/) | Les textes officiels des deux licences. |
 
 ## Pour qui ?
 
 Pour les **développeurs intermédiaires** qui découvrent les agents et le vibe coding. « Intermédiaire » signifie ici savoir **lire** le code généré pour le juger, pas forcément l'écrire.
 
-Le principe : **l'agent de codage fait, vous pilotez.** L'agent écrit le code, installe les outils, lance les commandes et gère Git, en expliquant ce qu'il fait. Vous :
+Le principe : **vous êtes le pilote, l'agent de codage est votre copilote.** Le *pilote*, c'est la personne qui construit GoodVibe : il décide, valide et teste, et le mot revient tout au long du tuto. L'agent écrit le code, installe les outils, lance les commandes et gère Git, en expliquant ce qu'il fait. Vous :
 
 - créez les comptes en ligne et copiez les clés API ;
 - relevez vous-même les prix des modèles sur la page des tarifs de Google : un prix que vous avez lu est un prix vérifié ;
@@ -80,7 +83,7 @@ Le principe : **l'agent de codage fait, vous pilotez.** L'agent écrit le code, 
 ## Prérequis
 
 - **Antigravity IDE** installé, avec Gemini intégré. Ce tuto est conçu et validé pour Antigravity IDE. Il doit fonctionner aussi dans **VS Code** ou l'un de ses forks, avec Claude Code, Codex ou GitHub Copilot : le prompt de démarrage et les fichiers de règles sont prévus pour eux, mais ce parcours n'a pas été validé.
-- Un compte **Google AI Studio**. La clé API Gemini se crée plus tard, à la fiche 1 : inutile de l'anticiper.
+- Un compte **Google AI Studio**. La clé API Gemini se crée plus tard, à la fiche 1, avec la facturation activée sur son projet (carte bancaire nécessaire) : inutile de l'anticiper.
 - Un compte **GitHub**.
 - *Pour la mise en ligne uniquement (fin de parcours)* : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
 - *Recommandé* : l'extension **Claude Code** dans Antigravity, si vous avez un abonnement Claude. Elle prend le relais quand les quotas de l'agent de codage Gemini, celui d'Antigravity, sont atteints.
@@ -90,9 +93,9 @@ Pas besoin d'installer Python ni Git vous-même : **l'agent les installe** s'ils
 ## Ce qui est gratuit, ce qui coûte
 
 - **Gratuit** : Antigravity et son agent de codage Gemini (avec des quotas : c'est pour cela que Claude Code est recommandé en relais), Open-Meteo et l'API horoscope (sans clé), GitHub et son pipeline GitHub Actions (le quota gratuit suffit largement).
-- **Payant à l'usage : les appels de GoodVibe à l'API Gemini**, avec la clé que vous créez à la fiche 1. Le modèle texte a un niveau gratuit, avec des quotas. Le modèle image de la fiche 10 n'en avait pas en septembre 2026 : il faut alors activer la facturation chez Google. Comptez de l'ordre d'un à deux euros par mois pour un brief et une image par jour, dont l'essentiel pour les images. L'agent vous donne le chiffre du jour quand il vous recommande un modèle, et l'onglet Activité affiche le coût estimé. Fixez un plafond de dépense chez Google.
+- **Payant à l'usage : les appels de GoodVibe à l'API Gemini**, avec la clé que vous créez à la fiche 1. Le modèle texte a un niveau gratuit, avec des quotas. Le modèle image de la fiche 10 n'en avait pas en septembre 2026 : la facturation est à activer chez Google dès la fiche 1, avec un plafond de dépense (une carte bancaire est donc nécessaire dès le départ). Comptez de l'ordre d'un à deux euros par mois pour un brief et une image par jour, dont l'essentiel pour les images. L'agent vous donne le chiffre du jour quand il vous recommande un modèle, et l'onglet Activité affiche le coût estimé. Fixez un plafond de dépense chez Google.
 - **Payant, à partir de la fiche 12** : le VPS, facturé à l'heure chez Hetzner, avec un plafond de quelques euros par mois. Attention : un serveur éteint reste facturé, il faut le supprimer pour arrêter les frais. Aucun nom de domaine à acheter : le tuto utilise une adresse gratuite. Jusque-là, tout tourne sur votre machine.
-- **À surveiller** : la génération d'images (fiche 10). Sans facturation activée, ou si le quota est atteint, le brief sort sans image, avec un message d'erreur qui le dit.
+- **À surveiller** : la génération d'images (fiche 10). Si le plafond de dépense est atteint, le brief sort sans image, avec un message d'erreur qui le dit.
 
 ---
 
@@ -104,11 +107,13 @@ Créez un dossier vide (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity
 
 ### 2. Déposez le ZIP du kit dans le dossier
 
-Ce dépôt est privé : vous avez reçu une **invitation GitHub par mail**. Acceptez-la, connectez-vous à GitHub, puis sur la page d'accueil du dépôt cliquez sur le bouton vert **`<> Code`** → **Download ZIP**. Déposez ce fichier ZIP tel quel dans votre dossier vierge, sans l'ouvrir : c'est l'agent qui le décompressera. Il contient :
+Sur la page d'accueil du dépôt, cliquez sur le bouton vert **`<> Code`** → **Download ZIP**. Déposez ce fichier ZIP tel quel dans votre dossier vierge, sans l'ouvrir : c'est l'agent qui le décompressera. Il contient :
 
 - `GoodVibe-PRD.md`
 - `tuto-goodvibe-vibecoding.md`
 - `README.md` : la présentation du projet, que l'agent renommera en `GoodVibe-presentation.md`
+- `LICENSE.md` et `LICENSES/` : la licence
+- `templates/` : le code de référence, que l'agent consulte fiche par fiche
 
 > ⚠️ Rien d'autre : pas de venv, pas de Git, pas de skill. Ne clonez pas ce dépôt dans votre dossier de travail : l'agent initialisera lui-même **votre** dépôt Git. L'agent s'occupe du reste.
 
@@ -121,7 +126,7 @@ Complétez d'abord la ligne « Profil de calibrage », à la fin du prompt : c'e
 ```
 Nous démarrons le projet GoodVibe dans ce répertoire vierge. Si une étape ci-dessous est déjà faite, dis-le-moi et passe à la suivante.
 
-Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier (celui qui contient GoodVibe-PRD.md), place ses trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md) à la racine, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas).
+Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier (celui qui contient GoodVibe-PRD.md), place son contenu à la racine : les trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md), le fichier LICENSE.md et les dossiers templates/ et LICENSES/, sans rien modifier dans templates/, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas).
 
 Étape 2 : installe le skill VibeCoding Copilote dans .agents/skills/vibecoding-copilote/, dans ce seul dossier. Télécharge le ZIP du dépôt https://github.com/lecinquiemejour-code/vibecoding-copilote et extrais-le là, sans dossier .git. Si un ZIP du skill est déjà présent à la racine du projet, extrais celui-là au lieu de télécharger, puis supprime-le. Vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, et dis-moi ce que tu as installé, et où.
 
@@ -198,7 +203,7 @@ flowchart TD
     D --> F["GO MISE EN LIGNE<br/>(au début de la feature 12, avant tout envoi)"]
     F --> E["Features 12 et 13 : dépôt GitHub, VPS, CI/CD<br/>(l'agent configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
     E --> F2["Feature 14 : le webhook,<br/>déployé par le pipeline"]
-    F2 --> G["Walkthrough, post-mortem, pistes<br/>(l'agent rédige, vous relisez)"]
+    F2 --> G["Walkthrough, post-mortem, bilan, pistes,<br/>retour à l'auteur<br/>(l'agent rédige, vous relisez,<br/>cochez et envoyez)"]
     G --> H1["Évolution 1 : bac à sable<br/>d'exécution de code"]
     H1 --> H2["Évolution 2 : skills"]
     H2 --> H3["Évolution 3 : sous-agents"]
@@ -251,6 +256,10 @@ Imposée par le PRD. C'est l'agent qui l'installe.
 - Skill **VibeCoding Copilote** : https://github.com/lecinquiemejour-code/vibecoding-copilote
 - Le tuto complet : [`tuto-goodvibe-vibecoding.md`](tuto-goodvibe-vibecoding.md)
 - Le PRD : [`GoodVibe-PRD.md`](GoodVibe-PRD.md)
+
+## Licence
+
+Libre pour un usage non commercial : le texte est sous CC BY-NC-SA 4.0, le code sous PolyForm Noncommercial 1.0.0. L'usage commercial (formation payante, revente, projet client) demande une licence payante. Le détail, avec des exemples, est dans [`LICENSE.md`](LICENSE.md).
 
 ---
 

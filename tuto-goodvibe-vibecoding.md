@@ -4,8 +4,10 @@
 > Public : développeurs intermédiaires qui découvrent les agents et le vibe coding. Version 1.0, septembre 2026.
 >
 > Conçu et validé pour **Antigravity IDE**. Il doit fonctionner aussi dans VS Code ou l'un de ses forks, sans que ce parcours ait été validé (section 1.5).
+>
+> **Le pilote, c'est vous.** Dans ce tuto, le *pilote* est la personne qui construit GoodVibe : il décide, valide chaque étape (les « GO ») et teste le résultat (le CHECK). L'agent de codage est son *copilote*, d'où le nom du skill, VibeCoding Copilote : il propose, explique et exécute, mais ne décide jamais à sa place. Le pilote est aussi le premier utilisateur de GoodVibe : c'est son profil, ses notes et son brief.
 
-> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les huit règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO. Si le pilote demande une feature qui n'a pas de fiche, tu l'inscris d'abord sur sa propre ligne dans `fdd.md` et dans `plan-action.md`, puis tu lui fais suivre le même cycle, comme l'indique la section 4.2. Tu tiens à jour le document de reprise, `REPRISE.md`, comme l'indique la même section.
+> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les huit règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO. Si le pilote demande une feature qui n'a pas de fiche, tu l'inscris d'abord sur sa propre ligne dans `fdd.md` et dans `plan-action.md`, puis tu lui fais suivre le même cycle, comme l'indique la section 4.2. Tu tiens à jour le document de reprise, `REPRISE.md`, comme l'indique la même section. Le dossier `templates/` contient le code de référence de GoodVibe : au PLAN de chaque fiche, tu lis `templates/README.md` et les fichiers de la fiche, tu ne prends que ce que la fiche demande, et si le tuto et la référence divergent, le tuto prime et tu le signales au pilote.
 >
 > **Règle 1. Avant tout document : la visite guidée du projet.** Après la carte du voyage et avant `archi-stack.md`, tu présentes GoodVibe au pilote. Tant que cette visite n'est pas finie, tu ne rédiges aucun document et tu ne cites ni fichier ni bibliothèque. Tu t'appuies sur `GoodVibe-presentation.md` (la présentation du projet) et sur ce tuto : tu racontes ces textes avec tes mots, adaptés au profil du pilote, tu ne les colles pas. Dans `GoodVibe-presentation.md`, tu ignores les sections « Démarrage rapide », « Si ça coince » et « Liens », qui concernent le téléchargement du kit. Quatre temps, un message par temps, et tu attends la réponse du pilote entre chacun :
 >
@@ -88,7 +90,7 @@
 ## Démarrage rapide
 
 1. Créez un **répertoire vierge** (par exemple `goodvibe/`) et ouvrez-le avec **Antigravity IDE** (ou, à défaut, VS Code ou l'un de ses forks).
-2. Déposez-y le fichier ZIP du kit, tel quel, sans l'ouvrir : c'est l'agent qui le décompressera. Il contient `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md` et `README.md` (la présentation du projet, que l'agent renommera en `GoodVibe-presentation.md`). Rien d'autre : pas de venv, pas de Git, pas de skill. L'agent s'occupe du reste.
+2. Déposez-y le fichier ZIP du kit, tel quel, sans l'ouvrir : c'est l'agent qui le décompressera. Il contient `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md`, `README.md` (la présentation du projet, que l'agent renommera en `GoodVibe-presentation.md`), `LICENSE.md` et `LICENSES/` (la licence), et `templates/` (le code de référence, que l'agent consulte fiche par fiche). Rien d'autre : pas de venv, pas de Git, pas de skill. L'agent s'occupe du reste.
 
    > Pour lire ce tuto **dans Antigravity** avec ses schémas : ils sont en Mermaid, que l'aperçu Markdown ne dessine pas seul. Ouvrez les extensions (**Ctrl + Maj + X**), tapez **`bierner.markdown-mermaid`** (la marketplace d'Antigravity est Open VSX, et la recherche en clair classe mal cette extension), installez **Markdown Preview Mermaid Support**, puis ouvrez l'aperçu avec **Ctrl + Maj + V**. Sinon, lisez le tuto sur GitHub, qui dessine les schémas nativement.
 
@@ -97,7 +99,7 @@
 ```
 Nous démarrons le projet GoodVibe dans ce répertoire vierge. Si une étape ci-dessous est déjà faite, dis-le-moi et passe à la suivante.
 
-Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier (celui qui contient GoodVibe-PRD.md), place ses trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md) à la racine, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas).
+Étape 1, avant toute autre chose : décompresse le fichier .zip du kit présent dans ce dossier (celui qui contient GoodVibe-PRD.md), place son contenu à la racine : les trois fichiers (GoodVibe-PRD.md, tuto-goodvibe-vibecoding.md, README.md), le fichier LICENSE.md et les dossiers templates/ et LICENSES/, sans rien modifier dans templates/, puis supprime le .zip et le dossier vide issu de la décompression. Renomme README.md en GoodVibe-presentation.md (c'est la présentation du projet : tu t'en serviras pour la visite guidée, ne la modifie pas).
 
 Étape 2 : installe le skill VibeCoding Copilote dans .agents/skills/vibecoding-copilote/, dans ce seul dossier. Télécharge le ZIP du dépôt https://github.com/lecinquiemejour-code/vibecoding-copilote et extrais-le là, sans dossier .git. Si un ZIP du skill est déjà présent à la racine du projet, extrais celui-là au lieu de télécharger, puis supprime-le. Vérifie que SKILL.md, references/ et assets/CLAUDE.md sont présents, et dis-moi ce que tu as installé, et où.
 
@@ -139,7 +141,7 @@ Tout le reste du document explique ce qui va se passer et ce que vous devez vér
 3. [Le PRD de GoodVibe et les règles du projet](#3-le-prd-de-goodvibe-et-les-règles-du-projet)
 4. [Lancer le skill et cadrer](#4-lancer-le-skill-et-cadrer)
 5. [Guide feature par feature, version 1](#5-guide-feature-par-feature-version-1)
-6. [Clôture : mise en ligne, walkthrough, post-mortem](#6-clôture--mise-en-ligne-walkthrough-post-mortem)
+6. [Clôture : mise en ligne, walkthrough, post-mortem, retour](#6-clôture--mise-en-ligne-walkthrough-post-mortem-retour)
 7. [Les sous-agents](#7-les-sous-agents)
 8. [Garde-fous, pour aller plus loin, glossaire](#8-garde-fous-pour-aller-plus-loin-glossaire)
 
@@ -173,7 +175,7 @@ flowchart TD
     D --> F["GO MISE EN LIGNE<br/>(au début de la feature 12, avant tout envoi)"]
     F --> E["Features 12 et 13 : dépôt GitHub, VPS, CI/CD<br/>(l'agent configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
     E --> F2["Feature 14 : le webhook,<br/>déployé par le pipeline"]
-    F2 --> G["Walkthrough, post-mortem, pistes<br/>(l'agent rédige, vous relisez)"]
+    F2 --> G["Walkthrough, post-mortem, bilan, pistes,<br/>retour à l'auteur<br/>(l'agent rédige, vous relisez,<br/>cochez et envoyez)"]
     G --> H1["Évolution 1 : bac à sable<br/>d'exécution de code"]
     H1 --> H2["Évolution 2 : skills"]
     H2 --> H3["Évolution 3 : sous-agents<br/>(section 7)"]
@@ -194,7 +196,7 @@ Les autres pistes de la section 8.2 sont libres : chacun les prend quand il veut
 ### 1.4 Prérequis
 
 - **Antigravity** installé, avec Gemini intégré. Ce tuto est conçu et validé pour Antigravity IDE. Il doit fonctionner aussi dans **VS Code** ou l'un de ses forks, avec Claude Code, Codex ou GitHub Copilot : le prompt de démarrage et les fichiers de règles sont prévus pour eux (section 1.5), mais ce parcours n'a pas été validé.
-- Un compte **Google AI Studio**. La clé API Gemini se crée **le moment venu**, à la fiche 1, quand l'agent prépare le `.env` : inutile de l'anticiper. Les appels de GoodVibe à cette clé se paient à l'usage : le modèle texte a un niveau gratuit, avec des quotas ; le modèle image de la fiche 10 demande d'activer la facturation (section 2.8).
+- Un compte **Google AI Studio**. La clé API Gemini se crée **le moment venu**, à la fiche 1, quand l'agent prépare le `.env` : inutile de l'anticiper. Les appels de GoodVibe à cette clé se paient à l'usage. **Activez la facturation dès la fiche 1**, sur le projet Google de la clé, avec un plafond de dépense de quelques euros : il faut donc une carte bancaire dès le départ. Le modèle texte a bien un niveau gratuit, mais le modèle image de la fiche 10 n'en a pas, et en plan payant Google n'utilise pas vos données pour améliorer ses modèles (section 2.5). Comptez un à deux euros par mois (section 2.8).
 - Un compte **GitHub**. Python 3.12 et Git ne sont pas des prérequis : **l'agent de codage les installe** s'ils manquent, puis gère l'environnement virtuel et les dépendances. « Intermédiaire » signifie ici savoir **lire** le code généré pour le juger au CHECK.
 - Pour la section déploiement uniquement : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
 - Recommandé : **Claude Code dans Antigravity** pour ceux qui ont un abonnement Claude. Antigravity est un fork de VS Code : Claude Code s'y installe comme l'**extension VS Code « Claude Code »**, depuis la marketplace de l'éditeur (l'agent Gemini peut lancer cette installation, vous n'aurez qu'à vous connecter à votre compte Claude). Avec un plan Google AI gratuit, les quotas limitent l'agent de vibe coding ; Claude Code prend alors le relais et l'atelier ne s'arrête pas.
@@ -469,7 +471,7 @@ Un sous-agent est une **seconde boucle d'agent** avec son propre rôle, ses prop
 
 Le modèle est le « cerveau » que GoodVibe interroge à chaque message. Google en propose plusieurs familles : **Flash-Lite**, le plus économique ; **Flash**, l'équilibre entre prix et capacité ; **Pro**, le plus puissant et le plus cher. Un modèle « stable » ne changera pas sous vos pieds ; un modèle « preview » est un essai que Google peut retirer sans délai.
 
-On paie à l'usage, au **token** : un morceau de mot. Google propose un niveau gratuit pour ses modèles texte, avec des quotas ; en contrepartie, il peut utiliser les données envoyées pour améliorer ses produits (section 2.5). Les modèles image n'avaient pas de niveau gratuit en septembre 2026 : à la fiche 10, il faut alors activer la facturation, et chaque image se paie. Pour un agent personnel comme GoodVibe (un brief et une image par jour, quelques échanges), la facture est de l'ordre d'un à deux euros par mois au tarif payant, dont l'essentiel pour les images ; l'agent vous donnera le chiffre du jour.
+On paie à l'usage, au **token** : un morceau de mot. Google propose un niveau gratuit pour ses modèles texte, avec des quotas ; en contrepartie, il peut utiliser les données envoyées pour améliorer ses produits (section 2.5). Les modèles image n'avaient pas de niveau gratuit en septembre 2026, et chaque image se paie : c'est pour cela que le tuto fait activer la facturation dès la fiche 1, avec un plafond de dépense. Pour un agent personnel comme GoodVibe (un brief et une image par jour, quelques échanges), la facture est de l'ordre d'un à deux euros par mois au tarif payant, dont l'essentiel pour les images ; l'agent vous donnera le chiffre du jour.
 
 Google renouvelle ses modèles plusieurs fois par an et retire les anciens. **Ce tuto ne vous en impose donc aucun** : à la fiche 1 pour le texte, à la fiche 10 pour l'image, l'agent consulte la documentation du jour, vous explique ce qu'il faut savoir et vous recommande un modèle. Vous validez. Ce choix tient en une ligne de `config.py` et se change à tout moment.
 
@@ -638,6 +640,8 @@ L'ordre des quatorze features est celui du `plan-action.md` :
 
 Tout tourne en local jusqu'à la feature 11. Le webhook (feature 14) est construit après la mise en ligne et déployé par le pipeline. DB Browser for SQLite (https://sqlitebrowser.org) est utile pour les premiers CHECK, avant que l'onglet Mémoire existe : demandez à l'agent de l'installer à la fiche 3.
 
+**Le code de référence.** Pour chaque fiche, le dossier `templates/` du kit contient les fichiers de GoodVibe V1 tels qu'ils tournent en production. La table « fiche → fichiers » est dans `templates/README.md`. L'agent les lit au PLAN et n'en reprend que ce que la fiche demande : ces fichiers contiennent déjà les fiches suivantes. Si vous bloquez, c'est aussi là qu'on regarde une version qui marche.
+
 Le schéma ci-dessous est **l'architecture cible de la V1**. Il réapparaît en fin de chaque fiche, les briques construites en couleur, les autres en gris.
 
 ```mermaid
@@ -692,7 +696,7 @@ sequenceDiagram
 
 **Ce que fait l'agent** : vérifie que Python 3.12 et Git sont installés, et les installe sinon (gestionnaire de paquets du système : `winget` sur Windows, `brew` sur macOS, `apt` sur Ubuntu) ; crée le venv ; `requirements.txt` (`google-genai`, `python-dotenv`, `httpx`) ; `.env.example` ; `.gitignore` (venv, `.env`, `data/`) ; `config.py` (lecture des variables d'environnement, nom du modèle, réglages : température, longueur maximale de réponse, niveau de réflexion ; une seule source de vérité) ; `prompt_systeme.md` (la fiche de poste de GoodVibe : nom, rôle, ton, langue, limites) ; `agent.py` (la boucle, la lecture du prompt système, l'appel en streaming, le nombre maximal de tours) ; `chat_terminal.py`. Il lance le chat.
 
-**Ce que vous faites** : valider le modèle texte que l'agent vous recommande ; relever vous-même ses prix sur la page des tarifs de Google et les donner à l'agent ; relire le prompt système qu'il vous propose et l'ajuster à votre goût (le ton, le tutoiement) ; valider les réglages ; créer votre clé sur https://aistudio.google.com/apikey et la coller dans `.env` sous `GEMINI_API_KEY`. Le relevé des prix et la clé sont les deux seules actions manuelles de la fiche.
+**Ce que vous faites** : valider le modèle texte que l'agent vous recommande ; relever vous-même ses prix sur la page des tarifs de Google et les donner à l'agent ; relire le prompt système qu'il vous propose et l'ajuster à votre goût (le ton, le tutoiement) ; valider les réglages ; créer votre clé sur https://aistudio.google.com/apikey et la coller dans `.env` sous `GEMINI_API_KEY`, puis activer la facturation sur le projet Google de cette clé et y fixer un plafond de dépense. Il n'y a pas de « clé payante » : c'est la même clé, c'est son projet qui est facturé. Le relevé des prix, la clé et la facturation sont les trois seules actions manuelles de la fiche.
 
 **Le prompt système et les réglages** : au PLAN, après le modèle, l'agent vous montre le texte du prompt système et vous l'explique phrase par phrase. Puis il vous présente les réglages que le modèle accepte, avec les valeurs qu'il recommande et ce que chacune change. Vous ajustez, puis vous validez (section 2.1).
 
@@ -1329,7 +1333,7 @@ sequenceDiagram
 
 **Ce que fait l'agent** : `image.py` ; `prompt_image.md` (la consigne du directeur artistique : son rôle, le style de l'image, les règles ; le code y insère seulement la liste des éléments disponibles) ; appel du modèle image via l'API Interactions (`model=MODELE_IMAGE`, lecture de `interaction.output_image.data` en base64) ; `gr.Image` dans l'onglet Brief et affichage dans le chat sur « montre-moi l'image du jour » ; `allowed_paths=["data/images"]` au lancement de Gradio ; comptage des images à part dans le journal.
 
-**Ce que vous faites** : valider le modèle image que l'agent vous recommande ; relire la consigne de `prompt_image.md` qu'il vous propose, et ajuster le style de l'image à votre goût ; relever vous-même son prix par image sur la page des tarifs de Google et le donner à l'agent, qui l'ajoute à la grille de prix avec la date du relevé ; si ce modèle n'a pas de niveau gratuit, activer la facturation sur votre compte Google AI et y fixer un plafond de dépense ; vérifier dans AI Studio que votre plan donne accès au modèle et connaître son quota.
+**Ce que vous faites** : valider le modèle image que l'agent vous recommande ; relire la consigne de `prompt_image.md` qu'il vous propose, et ajuster le style de l'image à votre goût ; relever vous-même son prix par image sur la page des tarifs de Google et le donner à l'agent, qui l'ajoute à la grille de prix avec la date du relevé ; vérifier que la facturation activée à la fiche 1 l'est toujours, et que le plafond couvre une image par jour ; vérifier dans AI Studio que votre plan donne accès au modèle et connaître son quota.
 
 **Le choix du modèle image** : au PLAN, avant de présenter la solution, l'agent refait pour l'image la recherche de la fiche 1 et vous recommande **un** modèle, avec le prix par image et le coût mensuel pour GoodVibe, à raison d'une image par jour. Vous validez, ou vous posez vos questions. Puis vous relevez le prix par image sur la page des tarifs, comme à la fiche 1 : l'agent le compare à son estimation et vous signale tout écart.
 
@@ -1857,25 +1861,39 @@ flowchart TD
 
 ---
 
-## 6. Clôture : mise en ligne, walkthrough, post-mortem
+## 6. Clôture : mise en ligne, walkthrough, post-mortem, retour
 
-Une fois la page publique vérifiée et le webhook déployé par le pipeline (fiche 14), le skill enchaîne quatre étapes. Il ne dira « terminé » qu'après la dernière. Voici ce que vous devez obtenir de chacune.
+Une fois la page publique vérifiée et le webhook déployé par le pipeline (fiche 14), le skill enchaîne quatre étapes. Il ne dira « terminé » qu'après la dernière. Vous y ajoutez le retour à l'auteur. Voici ce que vous devez obtenir de chacune.
 
 ```mermaid
 flowchart LR
     A["1. V1 en ligne<br/>les 14 features sont faites"] --> B["2. walkthrough.md<br/>visite du code"]
-    B --> C["3. post-mortem.md<br/>prévu / réalisé, leçons"]
+    B --> C["3. post-mortem.md<br/>prévu / réalisé, leçons,<br/>ce que j'ai appris"]
     C --> D["4. Les évolutions,<br/>dans l'ordre de la section 1.3"]
-    D --> E["5. Checklist à cinq cases<br/>toutes cochées"]
+    D --> R["5. Retour à l'auteur<br/>mail ou Issue"]
+    R --> E["6. Checklist à sept cases<br/>toutes cochées"]
 ```
 
-**`walkthrough.md`**, la visite guidée du code, fichier par fichier, écrite pour quelqu'un qui découvre le projet. Vérifiez que chacun des fichiers de GoodVibe y a son paragraphe (rôle, ce qu'il expose, ce qu'il ne fait pas) : `config.py`, `prompt_systeme.md`, `agent.py`, `outils.py`, `outils_meteo.py`, `mcp_client.py`, `horoscope.py`, `image.py`, `prompt_image.md`, `brief.py`, `cron_brief.py`, `webhook.py`, `interface.py`, `vue_memoire.py`, `vue_activite.py`, `tarifs.py`, `journal.py`, `db.py`, `deploy/`, `.github/workflows/`. Il est commité et poussé : le pipeline le déploie comme le reste.
+**`walkthrough.md`**, la visite guidée du code, fichier par fichier, écrite pour quelqu'un qui découvre le projet. Vérifiez que chacun des fichiers de GoodVibe y a son paragraphe (rôle, ce qu'il expose, ce qu'il ne fait pas) : `config.py`, `prompt_systeme.md`, `agent.py`, `fragments.py`, `chat_terminal.py`, `outils.py`, `outils_meteo.py`, `mcp_client.py`, `horoscope.py`, `image.py`, `prompt_image.md`, `brief.py`, `cron_brief.py`, `webhook.py`, `interface.py`, `vue_memoire.py`, `vue_activite.py`, `tarifs.py`, `journal.py`, `db.py`, `deploy/`, `.github/workflows/`. Il est commité et poussé : le pipeline le déploie comme le reste.
 
 **`post-mortem.md`** : prévu contre réalisé, ce qui a bien marché, les frictions (déploiement compris), les décisions revues en route, les leçons pour le prochain projet. Ajoutez-y **vos propres chiffres** lus dans l'onglet Activité : tokens du premier jour, latence moyenne, coût estimé. Ils serviront de première référence. Avant les sous-agents, on la remesure : le bac à sable et les skills auront changé les chiffres (fiche V2-2).
 
+Le post-mortem se termine par une section **« Ce que j'ai appris »**. L'agent y pose un tableau des briques promises par le README (boucle d'agent, prompt système, cron, webhook, outil sur mesure, MCP, pannes visibles, mémoire, observabilité, CI/CD, production), avec trois colonnes : *je sais le refaire en vibe coding*, *je comprends*, *encore flou*, plus une ligne libre. « Le refaire en vibe coding », c'est savoir le demander à votre agent, relire son plan et vérifier le résultat, pas l'écrire à la main. **C'est vous qui cochez, pas l'agent** : il sait ce qui a été construit, pas ce que vous avez compris.
+
 **Les évolutions.** Le skill propose les quatre évolutions de la section 1.3, dans leur ordre, avec valeur et effort : le bac à sable d'exécution de code, les skills, les sous-agents, la base de connaissances hybride. Il peut en ajouter d'autres, tirées de la section 8.2. S'il ne propose pas les quatre, demandez-les. Elles sont consignées dans la section « Pour aller plus loin » du `plan-action.md`, dans cet ordre.
 
-**La checklist de fin de chantier** : toutes les features « fait » ; site déployé et URL vérifiée par vous ; `walkthrough.md` dans le dépôt ; `post-mortem.md` dans le dépôt ; nouvelles features consignées. Cinq cases, puis le skill affiche l'URL publique et rappelle que le plan d'action reste vivant.
+**Votre retour à l'auteur.** Ce tuto s'améliore grâce à vos retours. Envoyez le vôtre à **lecinquiemejour+goodvibe@gmail.com**, ou ouvrez une Issue sur https://github.com/lecinquiemejour-code/goodvibe-tuto/issues. Copiez ce modèle et répondez en quelques lignes. Pour la question 3, relisez vos cases « encore flou » :
+
+```text
+Objet : Retour tuto GoodVibe
+1. Ce qui a bien marché :
+2. Là où j'ai bloqué (fiche, étape) :
+3. Ce qui manquait ou était flou :
+4. Mon agent de codage et mon modèle :
+5. Ma note sur 10, et un mot libre :
+```
+
+**La checklist de fin de chantier** : toutes les features « fait » ; site déployé et URL vérifiée par vous ; `walkthrough.md` dans le dépôt ; `post-mortem.md` dans le dépôt ; nouvelles features consignées. Cinq cases, puis le skill affiche l'URL publique et rappelle que le plan d'action reste vivant. **Deux cases de plus, que le skill ne connaît pas** : la section « Ce que j'ai appris » cochée par vous ; votre retour envoyé à l'auteur. Si le skill ne les propose pas, demandez-les, comme pour les évolutions.
 
 **Garder le serveur, ou le supprimer.** Avant le bilan, l'agent vous repose la question de la fiche 12. Si vous gardez le serveur, il vérifie avec vous les quatre précautions. Si vous le supprimez, il vous guide pour récupérer vos données d'abord.
 
@@ -2058,12 +2076,14 @@ Chaque piste est un nouveau tour de roue PDCA, avec le skill, à partir du `plan
 - **Skill** : un dossier de consignes qu'un agent de codage sait lire pour suivre une méthode. Ici : VibeCoding Copilote, dans `.agents/skills/`. GoodVibe lui-même pourrait en avoir : voir la section 8.2.
 - **Fichier de règles** : le fichier que l'agent lit au début de chaque session. `CLAUDE.md` pour Claude Code, `AGENTS.md` pour l'agent Gemini d'Antigravity, Codex et GitHub Copilot : même contenu dans les deux.
 - **Document de reprise** : `REPRISE.md`, le marque-page du projet : où l'on s'est arrêté, ce qui attend votre décision, et le prompt à coller à la session suivante.
+- **Template de référence** : le code de GoodVibe V1, validé en production, rangé dans `templates/`. L'agent le consulte fiche par fiche et n'en reprend que ce que la fiche demande.
 - **PRD** : Product Requirements Document, le cahier des charges qui dit le quoi, pas le comment.
 - **FDD** : la décomposition en features-unités de construction, nommées « action, résultat, objet ».
+- **Pilote** : vous, la personne qui construit GoodVibe. Il décide, valide (les GO) et teste (le CHECK) ; l'agent de codage est son copilote, d'où le nom du skill. C'est aussi le premier utilisateur de GoodVibe.
 - **GO** : la validation humaine explicite. GO #1 autorise le code, GO #2 le commit local, GO MISE EN LIGNE la publication.
 - **CHECK** : le test par l'humain, jamais par l'agent.
 - **PDCA** : Plan, Do, Check, Act. La boucle du skill, une feature à la fois.
 
 ---
 
-*Ce tuto accompagne le skill VibeCoding Copilote de Le Cinquième Jour. Le PRD de GoodVibe est fourni dans le fichier `GoodVibe-PRD.md`.*
+*Ce tuto accompagne le skill VibeCoding Copilote de Le Cinquième Jour. Le PRD de GoodVibe est fourni dans le fichier `GoodVibe-PRD.md`. Licence : voir `LICENSE.md`.*
