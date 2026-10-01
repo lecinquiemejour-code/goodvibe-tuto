@@ -564,7 +564,9 @@ def main():
     print(f"Identifiant : {WEB_USER}")
 
     demo.launch(
-        server_name="0.0.0.0",
+        # Écoute sur la machine seule : sur le serveur, seul Caddy (même machine) atteint la page,
+        # toujours en HTTPS ; en local, le navigateur est sur la même machine.
+        server_name="127.0.0.1",
         server_port=PORT_GRADIO,
         auth=(WEB_USER, WEB_PASSWORD),
         allowed_paths=[str(DOSSIER_IMAGES)],
