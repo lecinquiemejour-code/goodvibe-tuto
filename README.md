@@ -39,7 +39,7 @@ Cinq ingrédients : un **modèle** (le cerveau), des **consignes** (sa fiche de 
 - **les déclencheurs** : un agent IA ne démarre pas seulement quand on lui parle. Il peut partir d'une horloge (le *cron* : chaque matin à 7 h) ou d'un événement extérieur (le *webhook* : un message reçu). GoodVibe a quatre portes d'entrée : le terminal, la page web, l'horloge et un message venu de l'extérieur ;
 - **la mémoire** : le modèle ne se souvient de rien d'un appel à l'autre. La mémoire est dans notre code. Il y a une mémoire de travail, la conversation en cours, renvoyée à chaque tour. Et il y a une mémoire durable : le profil et les notes, rangés dans une base et relus à chaque démarrage.
 
-**Une autonomie bornée par vous** : les outils que vous lui donnez, ses consignes, son nombre maximal de tours, et les confirmations qu'il vous demande avant une action irréversible, comme « Oublie-moi ».
+**Une autonomie bornée par vous** : les outils que vous lui donnez, ses consignes, son nombre maximal de tours, et les confirmations que le programme exige de vous avant une action irréversible, comme « Oublie-moi » : l'agent IA propose, c'est votre clic qui supprime.
 
 ### Pourquoi vibe coder son agent IA soi-même ?
 

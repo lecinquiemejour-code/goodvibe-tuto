@@ -35,15 +35,15 @@ Ce que ce produit ne cherche **pas** à être :
   - Discuter avec l'utilisateur dans le terminal, réponses affichées en streaming (mot à mot).
   - Retenir le profil donné en conversation : prénom, date de naissance (dont on déduit le signe astrologique), ville de résidence, centres d'intérêt.
   - Restituer ce que l'agent sait de l'utilisateur sur demande (« qu'est-ce que tu sais de moi ? »).
-  - Retirer une note précise sur demande, avec confirmation, sans toucher au reste de la mémoire.
-  - Oublier complètement l'utilisateur sur demande (profil, notes, pense-bêtes reçus, conversations), avec confirmation.
+  - Retirer une note précise sur demande, sans toucher au reste de la mémoire. L'agent propose le retrait ; le programme ne l'exécute qu'après la confirmation de l'utilisateur, par un bouton de la page ou par une question posée au terminal. Sans cette confirmation, rien n'est supprimé, quoi que demande le modèle.
+  - Oublier complètement l'utilisateur sur demande (profil, notes, pense-bêtes reçus, conversations), avec la même confirmation par l'utilisateur.
   - Produire chaque matin à 7 h un brief : horoscope du jour personnalisé (réécrit pour l'utilisateur à partir d'une source externe) et météo de sa ville.
   - Ouvrir le brief par le jour de la semaine, la date et l'heure de sa création, lus sur l'horloge de la machine : le modèle ne les devine jamais.
   - S'adresser à l'utilisateur, dans le brief comme dans le chat, avec le prénom, la ville et le signe lus dans la mémoire au moment de répondre. L'agent n'invente jamais une information de profil : si le prénom manque, il ne salue personne par son nom et invite l'utilisateur à se présenter.
   - Ne produire qu'un brief par jour par le cron, même s'il s'exécute plusieurs fois. Le bouton de la page et le webhook, eux, refont le brief du jour : c'est le dernier produit qui s'affiche.
   - Déclencher la génération du brief à la main depuis la page web (bouton « Générer le brief maintenant »), pour tester sans attendre le cron.
   - Recevoir un pense-bête par webhook sécurisé (jeton secret), répondre « reçu » aussitôt, puis, en tâche de fond, refaire le brief du jour en cycle complet (texte et image), qui l'intègre.
-  - Retirer un pense-bête précis sur demande dans la conversation, avec confirmation, sans toucher au reste de la mémoire.
+  - Retirer un pense-bête précis sur demande dans la conversation, avec la même confirmation par l'utilisateur, sans toucher au reste de la mémoire.
   - Lire le brief du jour et discuter avec l'agent dans une page web protégée par mot de passe.
   - Se déconnecter de la page web par un bouton visible depuis tous les onglets.
   - Afficher dans la page web le contenu de la mémoire de l'agent (profil, notes, conversations), avec un bouton « Oublie-moi ».
@@ -64,12 +64,12 @@ Ce que ce produit ne cherche **pas** à être :
 
 - L'utilisateur se présente en conversation (« Je m'appelle Marc, né le 12 mars 1988, j'habite Lyon, j'aime le vélo ») → l'agent enregistre le profil, calcule le signe, confirme en une phrase.
 - L'utilisateur demande « qu'est-ce que tu sais de moi ? » → l'agent liste prénom, signe, ville, centres d'intérêt et notes, avec ses mots.
-- L'utilisateur dit « retire ma note sur le dentiste » → l'agent cite la note qu'il a trouvée et demande confirmation, puis ne retire que celle-là, et confirme. Si plusieurs notes correspondent, ou aucune, il pose la question au lieu de choisir.
-- L'utilisateur dit « oublie-moi » → l'agent demande confirmation, puis efface profil, notes, pense-bêtes reçus et conversations, et confirme.
+- L'utilisateur dit « retire ma note sur le dentiste » → l'agent trouve la note et propose son retrait ; la page affiche la note et deux boutons, « Confirmer » et « Annuler » (au terminal, le programme pose la question) ; rien n'est retiré sans la confirmation de l'utilisateur, et seule la note affichée l'est. Si plusieurs notes correspondent, ou aucune, l'agent pose la question au lieu de choisir.
+- L'utilisateur dit « oublie-moi » → l'agent propose l'effacement ; la page demande confirmation par un bouton ; après la confirmation de l'utilisateur, le programme efface profil, notes, pense-bêtes reçus et conversations, et l'annonce.
 - Il est 7 h → le brief du jour est généré et enregistré ; s'il existe déjà, rien n'est refait et le journal le mentionne.
 - L'utilisateur clique « Générer le brief maintenant » → même génération, immédiate, avec l'anti-doublon contournable pour les tests. Il voit les étapes défiler en direct (outils, réflexion, texte), puis le relevé.
 - Un service externe envoie un pense-bête sur le webhook avec le bon jeton → réponse immédiate « reçu », enregistrement, puis génération d'un nouveau brief du jour, texte et image, qui l'intègre ; l'utilisateur le lit sur la page. Si la génération échoue, le journal note l'échec et sa cause, et le pense-bête reste en attente du brief suivant. Sans jeton ou avec un mauvais jeton → refus.
-- L'utilisateur dit « retire mon pense-bête sur le dentiste » → l'agent cite le pense-bête qu'il a trouvé et demande confirmation, puis ne retire que celui-là, et confirme. Les notes ne sont pas touchées. Si plusieurs pense-bêtes correspondent, ou aucun, il pose la question au lieu de choisir.
+- L'utilisateur dit « retire mon pense-bête sur le dentiste » → l'agent trouve le pense-bête et propose son retrait ; la page l'affiche avec les deux boutons ; après la confirmation de l'utilisateur, seul celui-là est retiré. Les notes ne sont pas touchées. Si plusieurs pense-bêtes correspondent, ou aucun, il pose la question au lieu de choisir.
 - L'utilisateur ouvre la page web → mot de passe demandé ; puis onglets Chat, Brief du jour, Mémoire, Activité.
 - L'utilisateur clique « Se déconnecter » → la page de connexion réapparaît ; la page n'est plus accessible sans mot de passe.
 - L'utilisateur coche « Voir les coulisses » → avant chaque réponse, les coulisses montrent la requête envoyée au modèle, dans un bloc replié, puis le résumé de raisonnement du modèle, puis chaque appel d'outil avec le JSON de ses arguments et le JSON de son résultat. Si le modèle répond sans outil, elles ne montrent que la requête et la réflexion.

@@ -22,7 +22,7 @@ C'est le code de référence de GoodVibe V1 : l'état final du projet, validé e
 | 2. Page web | `interface.py` |
 | 3. Journal d'activité | `db.py` (table `journal`), `journal.py`, `fragments.py` (1) |
 | 4. Base et profil | `db.py`, `outils.py`, `agent.py`, `prompt_systeme.md`, `interface.py` |
-| 5. Oublier, une note ou tout | `outils.py`, `db.py`, `prompt_systeme.md` |
+| 5. Oublier, une note ou tout | `outils.py`, `db.py`, `confirmation.py`, `interface.py` (cadre de confirmation), `chat_terminal.py` (question oui / non), `prompt_systeme.md` |
 | 6. Brief du matin | `brief.py`, `cron_brief.py`, `interface.py` (onglet Brief) |
 | 7. Météo | `outils_meteo.py`, `outils.py` |
 | 8. Horoscope via MCP | `mcp_client.py`, `horoscope.py`, `config.py` |
