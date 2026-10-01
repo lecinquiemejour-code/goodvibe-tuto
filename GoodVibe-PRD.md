@@ -56,10 +56,9 @@ Ce que ce produit ne cherche **pas** à être :
   - Générer une image du jour inspirée de quatre éléments : la météo du jour, le lieu de résidence, la prévision d'horoscope et les centres d'intérêt de l'utilisateur ; l'afficher au-dessus du brief et sur demande dans le chat.
   - Expliquer dans le chat ce que l'agent vient de faire, outil par outil, à partir de son journal.
 - **Could have** :
-  - Envoyer le pense-bête depuis le téléphone via un raccourci (Raccourcis iOS, HTTP Shortcuts Android).
   - Version 2 : déléguer l'horoscope et la météo à des sous-agents spécialisés, avec comparaison mesurée V1 / V2 (tokens, latence, comportement en panne).
 - **Won't have (pour l'instant)** :
-  - Page web adaptée au téléphone, budget quotidien de tokens et mode économe, plusieurs utilisateurs, notifications sortantes, recherche sémantique dans la mémoire, chiffrement de la base au repos, authentification à deux facteurs.
+  - Page web adaptée au téléphone, budget quotidien de tokens et mode économe, plusieurs utilisateurs, notifications sortantes, base de connaissances où l'on dépose des fichiers (recherche hybride, par mots-clés et par le sens), chiffrement de la base au repos, authentification à deux facteurs.
 
 ## 5. Interactions
 
