@@ -31,7 +31,7 @@ C'est le code de référence de GoodVibe V1 : l'état final du projet, validé e
 | 11. Tests automatisés | `tests/`, `requirements-dev.txt`, `pyproject.toml` |
 | 12. Mise en ligne sur le VPS | `deploy/setup_vps.sh`, `deploy/web.service`, `deploy/site.caddy`, `deploy/crontab`, `deploy/sauvegarde.sh` |
 | 13. CI/CD GitHub Actions | `.github/workflows/deploy.yml`, `deploy/deployer.sh` |
-| 14. Webhook pense-bête | `webhook.py`, `deploy/webhook.service`, `db.py` (table `pense_betes`), `brief.py` |
+| 14. Webhook pense-bête | `webhook.py`, `deploy/webhook.service`, `db.py` (table `pense_betes`), `brief.py` (les trois outils en lecture seule), `agent.py` (liste d'outils autorisés), `confirmation.py` (retrait d'un pense-bête) |
 
 (1) `fragments.py` n'est pas cité par le tuto. Il sépare, dans le flux du modèle, la réponse, les coulisses et le relevé, pour que seuls le message du pilote et le texte de la réponse repartent dans l'historique. Sans lui, les coulisses étaient renvoyées au modèle et la facture de tokens enflait à chaque tour.
 
