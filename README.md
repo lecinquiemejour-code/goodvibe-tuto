@@ -302,17 +302,17 @@ Reprends le vibecoding sur GoodVibe. Ce projet est déjà en cours et suit la m�
 
 ```mermaid
 flowchart TD
-    A["Skill installé par l'agent de codage,<br/>clé Gemini créée par vous"] --> B["PRD et tuto déposés dans le projet<br/>(vous)"]
-    B --> C["Cadrage : architecture et stack, FDD, plan d'action<br/>(l'agent de codage rédige, vous validez)"]
-    C --> D["Features 1 à 11, en local, une par une<br/>(l'agent de codage code, vous testez)"]
-    D --> F["GO MISE EN LIGNE<br/>(au début de la feature 12, avant tout envoi)"]
-    F --> E["Features 12 et 13 : dépôt GitHub, VPS, CI/CD<br/>(l'agent de codage configure, vous fournissez les secrets<br/>et vérifiez l'URL publique)"]
+    A["Skill installé<br/>par l'agent de codage,<br/>clé Gemini créée par vous"] --> B["PRD et tuto déposés<br/>dans le projet<br/>(vous)"]
+    B --> C["Cadrage : architecture<br/>et stack, FDD,<br/>plan d'action<br/>(l'agent de codage rédige,<br/>vous validez)"]
+    C --> D["Features 1 à 11, en local,<br/>une par une<br/>(l'agent de codage code,<br/>vous testez)"]
+    D --> F["GO MISE EN LIGNE<br/>(au début<br/>de la feature 12,<br/>avant tout envoi)"]
+    F --> E["Features 12 et 13 :<br/>dépôt GitHub, VPS, CI/CD<br/>(l'agent de codage<br/>configure, vous fournissez<br/>les secrets et vérifiez<br/>l'URL publique)"]
     E --> F2["Feature 14 : le webhook,<br/>déployé par le pipeline"]
-    F2 --> G["Walkthrough, post-mortem, bilan, pistes,<br/>retour à l'auteur<br/>(l'agent de codage rédige, vous relisez,<br/>cochez et envoyez)"]
+    F2 --> G["Walkthrough, post-mortem,<br/>bilan, pistes,<br/>retour à l'auteur<br/>(l'agent de codage rédige,<br/>vous relisez,<br/>cochez et envoyez)"]
     G --> H1["Évolution 1 : bac à sable<br/>d'exécution de code"]
     H1 --> H2["Évolution 2 : skills"]
     H2 --> H3["Évolution 3 : sous-agents"]
-    H3 --> H4["Évolution 4 : base de connaissances<br/>hybride"]
+    H3 --> H4["Évolution 4 : base<br/>de connaissances hybride"]
 ```
 
 **Après la V1, quatre évolutions**, chacune dans son propre cycle PDCA, du plus petit changement au plus grand. D'abord un outil de plus, le bac à sable d'exécution de code, sans toucher à l'architecture. Puis les skills, qui allègent le prompt système. Puis les sous-agents, qui changent l'architecture une fois l'agent IA unique stabilisé. Enfin la base de connaissances, la plus lourde, qui prend place comme un spécialiste de plus. L'argumentation complète est dans le tuto, section 1.3.
