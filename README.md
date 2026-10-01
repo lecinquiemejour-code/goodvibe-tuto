@@ -255,6 +255,23 @@ L'agent de codage doit **se présenter**, résumer la méthode PDCA en une phras
 3. Ouvrez une **nouvelle conversation** avec l'agent de codage : c'est cela, « redémarrer la session ». Il relit alors ses fichiers de règles et la liste des skills.
 4. Recollez le prompt de l'étape 3, en entier. L'agent de codage constate ce qui est déjà fait et reprend à la bonne étape.
 
+### 6. Avant la première feature : la ceinture
+
+Pendant le cadrage, l'agent de codage écrit le fichier de règles du projet (`CLAUDE.md` et sa copie `AGENTS.md`). Avant de lancer la première feature, vérifiez qu'il le recharge **tout seul** : ouvrez une **nouvelle conversation** et collez cette question, et rien d'autre.
+
+```text
+Sans ouvrir aucun fichier, dis-moi quelles règles tu dois suivre dans ce projet, une ligne par règle, et dans quel fichier tu les as trouvées.
+```
+
+La ceinture est attachée si l'agent de codage :
+
+- nomme le bon fichier : `AGENTS.md` pour Gemini dans Antigravity, Codex et GitHub Copilot ; `CLAUDE.md` pour Claude Code ;
+- cite la **Règle 0** : jamais de code ni de publication sans votre GO ;
+- cite les **huit lignes** propres à GoodVibe : la mise en ligne sur un VPS et non sur Netlify, le CHECK, le modèle Gemini choisi aux fiches 1 et 10, aucune donnée personnelle, le tuto comme référence, la pédagogie, les secrets, les erreurs jamais masquées ;
+- donne **votre profil**.
+
+S'il hésite, s'il invente, ou s'il va lire des fichiers pour répondre, il ne charge pas ses règles. Vérifiez que `AGENTS.md` existe à la racine du projet et qu'il est identique à `CLAUDE.md`, puis recommencez dans une nouvelle conversation. Ne lancez pas la première feature sans cette ceinture, et refaites ce contrôle chaque fois que vous changez d'agent de codage. Le détail est dans le tuto, section 4.3.
+
 ### Pour les sessions suivantes
 
 **À la fin de chaque session**, dites à l'agent de codage : « on s'arrête là ». Il met à jour `REPRISE.md`, le document de reprise du projet : où vous en êtes, ce qui attend votre décision, et le prompt à coller la prochaine fois.

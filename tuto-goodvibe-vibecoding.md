@@ -541,6 +541,8 @@ Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la 
 
 **Deux fichiers, un seul contenu.** L'agent de codage dépose aussi une copie identique du fichier sous le nom `AGENTS.md`. Ce n'est pas une option : Claude Code lit `CLAUDE.md`, mais l'agent de codage Gemini d'Antigravity, Codex et GitHub Copilot lisent `AGENTS.md` (section 1.5). Sans cette copie, l'agent de codage Gemini et Codex travaillent sans la Règle 0 et sans les huit lignes : ils ne lisent pas `CLAUDE.md`. Les deux fichiers restent identiques : toute modification de l'un se reporte dans l'autre, dans le même commit. Le contenu du gabarit est volontairement agnostique.
 
+**Écrites, mais sont-elles chargées ?** Un fichier de règles ne sert que si l'agent de codage le relit de lui-même à chaque nouvelle conversation. Vous le vérifierez une fois le cadrage fini, avant la première feature : c'est le contrôle « La ceinture, avant de démarrer » de la section 4.3. Un détail propre à Antigravity : il tronque tout fichier de règles de plus de 24 000 octets (documentation consultée en octobre 2026, <https://antigravity.google/docs/rules>). Le fichier de GoodVibe en fait environ le tiers : si vous y ajoutez des règles, gardez-le court.
+
 ---
 
 ## 4. Lancer le skill et cadrer
@@ -613,6 +615,31 @@ L'ordre des features et leur **critère de réussite**. L'ordre attendu est celu
 
 **Le sas**
 Avant d'entrer en construction, le skill vous demandera de **citer le critère de réussite de la première feature**, en ouvrant `plan-action.md`. Ce n'est pas un piège : c'est pour garantir que vous avez réellement lu un document de cadrage. Puis il fait un **commit de cadrage** (les quatre documents, le `CLAUDE.md`, sa copie `AGENTS.md` et le document de reprise `REPRISE.md`) : c'est le point de reprise propre du projet.
+
+**La ceinture, avant de démarrer**
+Le cadrage est fini, aucune ligne de code n'est écrite : c'est le moment de vérifier que l'agent de codage charge bien ses règles. Tant qu'il travaille dans la conversation où il a écrit le fichier de règles, il le connaît par cœur : lui demander de le réciter ne prouve rien. Ce qu'il faut savoir, c'est si votre outil recharge ce fichier **tout seul**, dans une conversation neuve. C'est la ceinture : on la vérifie avant de démarrer, pas après le premier virage.
+
+1. Ouvrez une **nouvelle conversation** avec l'agent de codage.
+2. Collez cette question, et rien d'autre :
+
+```text
+Sans ouvrir aucun fichier, dis-moi quelles règles tu dois suivre dans ce projet, une ligne par règle, et dans quel fichier tu les as trouvées.
+```
+
+La ceinture est attachée si l'agent de codage :
+
+- nomme le bon fichier : `AGENTS.md` pour Gemini dans Antigravity, Codex et GitHub Copilot ; `CLAUDE.md` pour Claude Code (section 1.5) ;
+- cite la **Règle 0** : jamais de code ni de publication sans votre GO ;
+- cite les **huit lignes** de la section 3.4 : la mise en ligne sur un VPS et non sur Netlify, le CHECK, le modèle Gemini choisi aux fiches 1 et 10, aucune donnée personnelle, le tuto comme référence, la pédagogie, les secrets, les erreurs jamais masquées ;
+- donne **votre profil**.
+
+S'il hésite, s'il invente, ou s'il va lire des fichiers pour répondre, il ne charge pas ses règles : il travaillerait sans la Règle 0. Vérifiez que `AGENTS.md` existe à la racine du projet et qu'il est identique à `CLAUDE.md`, puis recommencez dans une nouvelle conversation. **Ne lancez pas la première feature sans cette ceinture.**
+
+Une fois la ceinture attachée, collez le prompt de reprise qui figure à la fin de `REPRISE.md` : la construction commence. Refaites ce contrôle chaque fois que vous changez d'agent de codage.
+
+<!-- AGENT : après le commit de cadrage, tu ne lances pas la première feature dans la conversation du cadrage. Tu annonces au pilote le contrôle « La ceinture, avant de démarrer » ci-dessus, tu mets REPRISE.md à jour avec le prompt de reprise, et tu lui demandes d'ouvrir une nouvelle conversation pour faire ce contrôle. Dans cette nouvelle conversation, tu réponds à sa question à partir des règles que ton outil a chargées, sans ouvrir de fichier : si tu ne les as pas, tu le dis.
+-->
+
 
 ---
 
