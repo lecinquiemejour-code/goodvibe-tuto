@@ -1,17 +1,18 @@
 # Template GoodVibe © 2026 Jean-Noël Lefebvre (Le Cinquième Jour) — PolyForm Noncommercial 1.0.0, voir LICENSE.md
 """Vue de la mémoire locale de GoodVibe pour l'interface Gradio.
 
-Affiche en lecture seule les 3 tables qui contiennent ce que l'agent sait de l'utilisateur :
+Affiche en lecture seule les 4 tables qui contiennent ce que l'agent sait de l'utilisateur :
 - profil : informations personnelles retenues par l'agent
 - notes : notes personnelles enregistrées
 - conversations : historique des échanges persistés
+- pense_betes : messages reçus par le webhook
 
 La table traites (verrous anti-doublon) n'est pas affichée : elle ne contient
 aucune information sur l'utilisateur. Elle reste utilisée par le brief et l'image.
 
 Toutes les dates sont affichées à l'heure du navigateur client (détection JS).
-Fournit également un bouton 'Oublie-moi' avec confirmation explicite
-pour purger les données personnelles conformément au RGPD.
+Fournit également un bouton 'Oublie-moi' avec confirmation explicite : l'effacement
+complet est fait par oubli.py, le même que celui confirmé depuis le chat.
 """
 
 from datetime import datetime, timezone
@@ -20,7 +21,8 @@ from zoneinfo import ZoneInfo
 
 import gradio as gr
 
-from db import effacer_donnees_utilisateur, get_connection
+from db import get_connection
+from oubli import AVERTISSEMENT_EFFACEMENT, effacer_utilisateur
 
 
 def obtenir_fuseau(nom_fuseau: Optional[str] = None) -> ZoneInfo:
@@ -186,13 +188,8 @@ def creer_vue_memoire(txt_client_tz: Optional[gr.Textbox] = None):
     btn_demander_oubli = gr.Button("🗑️ Oublie-moi (Effacer mes données privées)", variant="stop")
 
     with gr.Group(visible=False) as zone_confirmation:
-        gr.Markdown(
-            """
-            ⚠️ **Attention : cette action est irréversible !**
-            Elle effacera immédiatement votre profil, vos notes, vos conversations et vos pense-bêtes.
-            Le journal d'activité technique (tokens, durées) sera conservé sans données personnelles.
-            """
-        )
+        # L'avertissement dit le périmètre réel, le même que le message après l'effacement
+        gr.Markdown(f"⚠️ **Attention.** {AVERTISSEMENT_EFFACEMENT}")
         with gr.Row():
             btn_confirmer_oubli = gr.Button("✅ Confirmer la suppression définitive", variant="stop")
             btn_annuler_oubli = gr.Button("❌ Annuler", variant="secondary")
@@ -236,8 +233,8 @@ def creer_vue_memoire(txt_client_tz: Optional[gr.Textbox] = None):
 
     # Confirmation de la suppression
     def executer_oubli(fuseau_detecte: str):
-        effacer_donnees_utilisateur()
-        gr.Info("Vos données personnelles (profil, notes, conversations, pense-bêtes) ont été définitivement effacées.")
+        # Le même effacement, et le même message, que la confirmation faite depuis le chat
+        gr.Info(effacer_utilisateur())
         p, n, c, pb = rafraichir_memoire(fuseau=fuseau_detecte)
         return (
             gr.update(visible=False),

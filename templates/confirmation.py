@@ -18,6 +18,7 @@ from typing import Optional
 
 import db
 from journal import consigner_activite
+from oubli import effacer_utilisateur
 
 logger = logging.getLogger("goodvibe.confirmation")
 
@@ -145,7 +146,6 @@ def confirmer() -> str:
         return f"Aucun pense-bête trouvé avec l'identifiant {demande.id}. {RIEN_SUPPRIME}"
 
     # TOUT : le même effacement que le bouton « Oublie-moi » de l'onglet Mémoire
-    db.effacer_donnees_utilisateur()
-    consigner_activite("confirmation", "profil effacé")
-    logger.info("[CONFIRMATION] Toutes les données de l'utilisateur ont été effacées")
-    return "Ton profil, tes notes, tes conversations et tes pense-bêtes ont été effacés."
+    consigner_activite("confirmation", "effacement confirmé")
+    logger.info("[CONFIRMATION] Effacement complet confirmé par l'utilisateur")
+    return effacer_utilisateur()

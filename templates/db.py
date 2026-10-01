@@ -377,17 +377,24 @@ def charger_historique(session: str = "default", limite: int = 50) -> List[Dict[
 
 
 def effacer_donnees_utilisateur() -> None:
-    """Efface toutes les données privées de l'utilisateur (profil, notes, conversations, pense-bêtes).
+    """Efface, dans la base, toutes les données de l'utilisateur et ce qui en a été tiré.
 
-    Conserve intacte la table journal qui contient uniquement les métriques techniques.
-    Appelée uniquement sur un geste de l'utilisateur : le bouton de l'onglet Mémoire,
-    ou la confirmation d'une demande déposée par le modèle (voir confirmation.py).
+    Les tables profil, notes, conversations et pense-bêtes, mais aussi les briefs, qui
+    citent le prénom, la ville et l'horoscope, et les verrous anti-doublon du jour
+    (brief:date, image-date), traces que des briefs ont existé. Supprimer une donnée
+    de sa table principale ne suffit pas : ses copies partent avec elle.
+
+    Conserve intacte la table journal, qui ne contient que des mesures techniques, et
+    la grille de prix. Les images sur le disque sont retirées par image.py ; l'ensemble
+    est orchestré par oubli.py, appelé sur un geste de l'utilisateur seulement.
     """
     with get_connection() as conn:
         conn.execute("DELETE FROM profil")
         conn.execute("DELETE FROM notes")
         conn.execute("DELETE FROM conversations")
         conn.execute("DELETE FROM pense_betes")
+        conn.execute("DELETE FROM briefs")
+        conn.execute("DELETE FROM traites WHERE cle LIKE 'brief:%' OR cle LIKE 'image-%'")
         conn.commit()
 
 

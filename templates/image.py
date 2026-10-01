@@ -71,6 +71,24 @@ def _retirer_image_perimee(chemin_fichier: Path) -> None:
         logger.info("Image du jour retirée après l'échec de sa régénération : %s", chemin_fichier.name)
 
 
+def supprimer_toutes_les_images() -> int:
+    """Retire du disque toutes les illustrations produites, lors d'un « Oublie-moi ».
+
+    Une image du jour est tirée du profil (la ville, les centres d'intérêt) et de
+    l'horoscope : c'est une donnée dérivée, qui part avec le reste.
+
+    Returns:
+        Le nombre de fichiers retirés.
+    """
+    if not DOSSIER_IMAGES.exists():
+        return 0
+    fichiers = [f for f in DOSSIER_IMAGES.iterdir() if f.is_file()]
+    for fichier in fichiers:
+        fichier.unlink()
+    logger.info("[IMAGE] %d illustration(s) retirée(s) du disque", len(fichiers))
+    return len(fichiers)
+
+
 def _element_disponible(valeur: Optional[str]) -> str:
     """Rend la valeur nettoyée d'un élément, ou "" s'il est absent ou en erreur.
 

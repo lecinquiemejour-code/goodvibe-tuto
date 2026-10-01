@@ -120,7 +120,10 @@ def test_pense_bete_suit_la_meme_regle():
 
 
 def test_oubli_confirme_vide_les_quatre_tables():
-    """« Oublie-moi » ne fait rien tant que l'utilisateur n'a pas confirmé ; confirmé, il vide tout."""
+    """« Oublie-moi » ne fait rien tant que l'utilisateur n'a pas confirmé ; confirmé, il vide tout.
+
+    Le périmètre complet (briefs, images, verrous) est testé dans test_oubli.py.
+    """
     outils.enregistrer_profil(prenom="Bob", ville="Marseille")
     db.ajouter_note("Note secrète")
     db.sauvegarder_message("user", "Mon message privé")
@@ -142,7 +145,8 @@ def test_oubli_confirme_vide_les_quatre_tables():
     assert db.charger_historique() == []
     assert db.get_pense_betes() == []
     # Le journal, lui, reste : il ne contient aucune donnée personnelle
-    assert any(ligne["detail"] == "profil effacé" for ligne in lignes_confirmation())
+    assert any(ligne["detail"] == "effacement confirmé" for ligne in lignes_confirmation())
+    assert any(e["etape"] == "oubli" for e in journal.get_dernieres_activites())
 
 
 def test_journal_sans_texte_de_note():
