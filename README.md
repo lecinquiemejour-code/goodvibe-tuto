@@ -142,7 +142,6 @@ Le sujet est volontairement léger. L'architecture, elle, est celle d'un vrai ag
 | Observabilité | Un journal d'activité : tokens, latence, coût en euros. Et les coulisses, en direct : la requête envoyée au modèle, sa réflexion, puis chaque appel d'outil avec ses JSON, dans le chat comme dans le brief, et un relevé des tokens sous chaque réponse. Et le flux brut : ce que le modèle envoie vraiment en streaming, événement par événement, dans un panneau à côté du chat et du brief. Coulisses, flux brut et relevé s'affichent à l'écran, sans être enregistrés ni renvoyés au modèle |
 | CI/CD | Déploiement automatique par GitHub Actions à chaque push |
 | Production | Un VPS Ubuntu, `systemd`, Caddy en HTTPS |
-| Sous-agents | La troisième évolution après la V1 : horoscope et météo délégués à des agents IA spécialisés |
 
 ## Contenu de ce dépôt
 

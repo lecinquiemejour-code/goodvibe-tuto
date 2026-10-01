@@ -56,7 +56,7 @@ Ce que ce produit ne cherche **pas** à être :
   - Générer une image du jour inspirée de quatre éléments : la météo du jour, le lieu de résidence, la prévision d'horoscope et les centres d'intérêt de l'utilisateur ; l'afficher au-dessus du brief et sur demande dans le chat.
   - Expliquer dans le chat ce que l'agent vient de faire, outil par outil, à partir de son journal.
 - **Could have** :
-  - Sous-agents : déléguer l'horoscope et la météo à des sous-agents spécialisés, avec comparaison mesurée avant / après (tokens, latence, comportement en panne). C'est la troisième des quatre évolutions prévues après la V1, après le bac à sable d'exécution de code et les skills, avant la base de connaissances.
+  - Sous-agents : confier certaines tâches, comme l'horoscope et la météo, à des agents spécialisés. Une évolution possible, qui se justifie quand un agent unique devient trop chargé : à mesurer avant d'adopter. C'est la troisième des quatre évolutions prévues après la V1, après le bac à sable d'exécution de code et les skills, avant la base de connaissances.
 - **Won't have (pour l'instant)** :
   - Page web adaptée au téléphone, budget quotidien de tokens et mode économe, plusieurs utilisateurs, notifications sortantes, base de connaissances où l'on dépose des fichiers (recherche hybride, par mots-clés et par le sens), chiffrement de la base au repos, authentification à deux facteurs.
 
