@@ -4,7 +4,7 @@
 
 ## 1. À quoi servent ces fichiers
 
-C'est le code de référence de GoodVibe V1 : l'état final du projet, validé en production et couvert par 140 tests automatisés. Ce n'est **pas un projet à copier**. C'est un modèle que l'agent de codage consulte fiche par fiche, pour ne jamais partir d'une page blanche et pour avoir sous les yeux une version qui marche sur les points durs (streaming, MCP, déploiement).
+C'est le code de référence de GoodVibe V1 : l'état final du projet, validé en production et couvert par 169 tests automatisés. Ce n'est **pas un projet à copier**. C'est un modèle que l'agent de codage consulte fiche par fiche, pour ne jamais partir d'une page blanche et pour avoir sous les yeux une version qui marche sur les points durs (streaming, MCP, déploiement).
 
 ## 2. Les règles pour l'agent de codage
 
