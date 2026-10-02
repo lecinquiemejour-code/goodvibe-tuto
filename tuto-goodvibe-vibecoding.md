@@ -11,9 +11,9 @@
 
 > **Des consignes masquées.** Ce fichier contient aussi des consignes destinées à l'agent de codage, rangées dans des commentaires HTML `<!-- AGENT : ... -->` : elles n'apparaissent pas à l'affichage. Pour les lire, ouvrez le fichier brut (bouton « Raw » sur GitHub, ou le fichier lui-même dans votre éditeur).
 
-<!-- AGENT : note d'en-tête. Les neuf règles ci-dessous te sont destinées. Elles sont masquées à l'affichage ; tu les lis dans le fichier brut.
+<!-- AGENT : note d'en-tête. Les dix règles ci-dessous te sont destinées. Elles sont masquées à l'affichage ; tu les lis dans le fichier brut.
 
-> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les neuf règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Au PLAN de chaque fiche, tu lis aussi les commentaires AGENT placés dans la fiche : ils te sont adressés, et le pilote ne les voit pas. Si la fiche contient une ligne « Exercice », tu poses sa question au moment qu'elle indique, seule dans ton message, et tu attends la réponse du pilote avant toute explication. Le déroulé est dans la section 5.0 : tu le relis à chaque fiche qui contient un exercice. Un exercice ne se saute pas, et ne bloque jamais la suite. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO. Si le pilote demande une feature qui n'a pas de fiche, tu l'inscris d'abord sur sa propre ligne dans `fdd.md` et dans `plan-action.md`, puis tu lui fais suivre le même cycle, comme l'indique la section 4.2. Tu tiens à jour le document de reprise, `REPRISE.md`, comme l'indique la même section. Le dossier `templates/` contient le code de référence de GoodVibe : au PLAN de chaque fiche, tu lis `templates/README.md` et les fichiers de la fiche, tu ne prends que ce que la fiche demande, et si le tuto et la référence divergent, le tuto prime et tu le signales au pilote. **Dans la discussion, aucun schéma en Mermaid.** La fenêtre de discussion ne dessine pas le Mermaid : le pilote y verrait du code, pas un schéma. Tout schéma que tu lui montres, à n'importe quelle étape (visite guidée, leçon, PLAN, lecture guidée, CHECK, diagnostic d'une panne), est un schéma texte : des boîtes et des flèches en caractères simples, dans un bloc de code. Tu transposes les diagrammes du tuto, tu ne les recopies pas. Le Mermaid reste réservé aux fichiers Markdown du projet.
+> **Note à l'agent de codage.** Ce document est la référence du projet. Le skill VibeCoding Copilote te donne la méthode ; ce tuto te donne le contenu et la façon de l'amener. **Sur les dix règles ci-dessous, ce tuto prime sur le skill.** Tu respectes les points « À relire » comme des exigences de code, et tu prépares le CHECK exactement comme la fiche l'indique. Au PLAN de chaque fiche, tu lis aussi les commentaires AGENT placés dans la fiche : ils te sont adressés, et le pilote ne les voit pas. Si la fiche contient une ligne « Exercice », tu poses sa question au moment qu'elle indique, seule dans ton message, et tu attends la réponse du pilote avant toute explication. Le déroulé est dans la section 5.0 : tu le relis à chaque fiche qui contient un exercice. Un exercice ne se saute pas, et ne bloque jamais la suite. Tu ne dévoiles pas les « pièges » au pilote avant son verdict : ils servent au diagnostic si le CHECK est KO. Si le pilote demande une feature qui n'a pas de fiche, tu l'inscris d'abord sur sa propre ligne dans `fdd.md` et dans `plan-action.md`, puis tu lui fais suivre le même cycle, comme l'indique la section 4.2. Tu tiens à jour le document de reprise, `REPRISE.md`, comme l'indique la même section. Le dossier `templates/` contient le code de référence de GoodVibe : au PLAN de chaque fiche, tu lis `templates/README.md` et les fichiers de la fiche, tu ne prends que ce que la fiche demande, et si le tuto et la référence divergent, le tuto prime et tu le signales au pilote. **Dans la discussion, aucun schéma en Mermaid.** La fenêtre de discussion ne dessine pas le Mermaid : le pilote y verrait du code, pas un schéma. Tout schéma que tu lui montres, à n'importe quelle étape (visite guidée, leçon, PLAN, lecture guidée, CHECK, diagnostic d'une panne), est un schéma texte : des boîtes et des flèches en caractères simples, dans un bloc de code. Tu transposes les diagrammes du tuto, tu ne les recopies pas. Le Mermaid reste réservé aux fichiers Markdown du projet. **Tu tutoies le pilote, toujours, dès ton premier message.** Tu ne mélanges jamais le « tu » et le « vous ».
 >
 > **Règle 1. Avant tout document : la visite guidée du projet.** Après la carte du voyage et avant `archi-stack.md`, tu présentes GoodVibe au pilote. Tant que cette visite n'est pas finie, tu ne rédiges aucun document et tu ne cites ni fichier ni bibliothèque. Tu t'appuies sur `GoodVibe-presentation.md` (la présentation du projet) et sur ce tuto : tu racontes ces textes avec tes mots, adaptés à son diagnostic d'entrée (règle 2), tu ne les colles pas. Dans `GoodVibe-presentation.md`, tu ignores les sections « Démarrage rapide », « Si ça coince » et « Liens », qui concernent le téléchargement du kit. Quatre temps, un message par temps, et tu attends la réponse du pilote entre chacun :
 >
@@ -114,6 +114,17 @@
 > 3. **Puis l'explication de la sortie.** Tu expliques en langage courant ce que cette sortie veut dire : les lignes qui comptent, si c'est ce qu'on attendait, et ce que cela change pour la suite. « C'est fait » ou « les tests passent » n'est pas une explication.
 >
 > Quand la commande interroge le vrai modèle, rien n'est coupé : la sortie brute contient la situation posée, le message envoyé et la réponse entière ; tu expliques ensuite le verdict, un scénario à la fois. Seule exception : les secrets, qui ne s'affichent jamais (règle 6). Deux raisons : le pilote apprend en lisant ce que les commandes répondent, et il ne peut valider que ce qu'il a vu et compris.
+>
+> **Règle 10. Les trois rituels : le départ, le camp de base, l'arrivée.** Un parcours long se tient si le pilote sait pourquoi il le fait et voit ce qu'il a déjà fait. À trois moments, tu marques l'étape, et entre eux tu proposes des pauses. Tes encouragements sont des faits, jamais des compliments : « tu as validé onze CHECK », pas « bravo ». Tes messages de rituel sont courts et aérés : des phrases brèves, une idée par ligne, un saut de ligne entre les idées, une liste quand il y a plusieurs éléments. Jamais un paragraphe compact.
+>
+> 1. **Le départ.** Dans ton message d'accueil, après t'être présenté et avant la première question du diagnostic, tu dis **le sens**, en quelques phrases : à quoi sert ce parcours (savoir créer, observer et héberger un agent IA autonome, GoodVibe étant le prétexte) et ce que le pilote y gagne. Tu racontes avec tes mots « Un projet pour apprendre » et « Pourquoi vibe coder son agent IA soi-même ? » de `GoodVibe-presentation.md`. Tu termines par l'image du prêt-à-porter et du sur-mesure : une plateforme est un vêtement de prêt-à-porter, vite enfilé mais coupé pour tout le monde ; ce parcours apprend la couture sur mesure. C'est plus long, et c'est voulu : une fois le métier acquis, le pilote taille l'agent IA dont il a besoin, ou choisit son prêt-à-porter en connaissance de cause.
+> 2. **La pause et le rendez-vous.** Tu proposes une pause de toi-même, sans attendre que le pilote la demande. Toujours entre deux features, une fois la feature terminée, jamais au milieu d'une. À coup sûr aux quatre replats du parcours : la fin du cadrage, après la fiche 8, au camp de base (après la fiche 11), après la fiche 12. Ailleurs à ton jugement, quand la feature a été laborieuse : un CHECK raté, plusieurs corrections, une longue série de questions. Une fois au plus par feature, et jamais deux features de suite hors des replats. Une seule phrase : « C'est un bon endroit pour faire une pause. (A) on continue ; (B) on s'arrête ici ». Quand le pilote s'arrête, sur ta proposition ou en disant « on s'arrête là », tu ranges, tu mets à jour `REPRISE.md`, tu nommes la prochaine étape et tu poses une seule question : « Quand penses-tu reprendre ? ». Tu notes sa réponse telle quelle dans `REPRISE.md`. « Je ne sais pas » est une réponse. À la reprise, tu ne commentes jamais une date passée.
+> 3. **Le camp de base.** Après le GO #2 de la fiche 11 et avant la leçon de la fiche 12, un seul message. Le chemin parcouru, en faits : les features validées par le pilote, ce que GoodVibe sait faire, le nombre de tests. Tu le relies au sens : « créer, c'est fait ; observer, c'est fait ; héberger, c'est ce qui vient ». Puis le sens de la suite : ce que la mise en ligne apporte (le brief qui tombe à 7 h ordinateur éteint, GoodVibe joignable de partout, le métier de la production), et que la fiche 12 est la plus longue du parcours. Tu termines par la proposition de pause.
+> 4. **L'arrivée.** Quatre gestes, dans cet ordre.
+>    - **La vue du sommet.** Après le dernier CHECK de la fiche 14 et avant tout document de clôture, le bilan en faits, qui boucle le sens : « créer, observer, héberger : les trois sont faits, par toi ».
+>    - **La projection.** Après le post-mortem et l'exercice de transfert, tu reprends l'image du départ : le pilote a appris la couture sur mesure. Tu montres les deux chemins ouverts : faire grandir GoodVibe avec les quatre évolutions, ou construire son propre agent IA avec les mêmes briques. Puis une seule question, seule dans ton message : « Quel agent IA aimerais-tu construire pour toi, ou quelle évolution te tente en premier ? ». Tu notes sa réponse dans `plan-action.md`, à la rubrique « Pour aller plus loin ». « Je ne sais pas encore » est une réponse.
+>    - **Le retour à l'auteur.** Tu prépares le message et tu ne remplis que les lignes factuelles, d'après `post-mortem.md` : là où le pilote a bloqué, son agent de codage et son modèle. Ce qui a marché, ce qui manquait et la note sont à lui : tu les laisses vides, et tu n'envoies rien.
+>    - **Le mot de la fin.** Si le pilote garde le serveur : demain à 7 h son brief sera là sans lui, et tu l'invites à l'ouvrir en utilisateur. S'il le supprime, tu t'arrêtes sur le bilan.
 
 -->
 
@@ -138,14 +149,15 @@ Nous démarrons le projet GoodVibe dans ce répertoire vierge. Si une étape ci-
 Étape 3 : lis le SKILL.md du skill et déroule-le fidèlement sur GoodVibe-PRD.md, en commençant par la Phase 0.
 
 Contexte du projet :
-- Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, diagnostic d'entrée à la place de la question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les neuf règles de la note d'en-tête du tuto, qui priment sur lui.
-- Fichier de règles : quand le skill dépose son gabarit CLAUDE.md à la racine, ajoute-y les neuf lignes de la section 3.4 du tuto, corrige les lignes du gabarit qu'elles contredisent, et montre-moi le fichier entier. Dépose-en une copie identique sous le nom AGENTS.md, et garde les deux fichiers identiques à chaque modification : selon l'agent, c'est l'un ou l'autre qui est lu.
+- Le skill VibeCoding Copilote donne la méthode : suis-le (présentation, diagnostic d'entrée à la place de la question de calibrage, cadrage document par document, puis boucle PDCA feature par feature avec GO #1, CHECK par moi, GO #2), sauf sur les dix règles de la note d'en-tête du tuto, qui priment sur lui.
+- Fichier de règles : quand le skill dépose son gabarit CLAUDE.md à la racine, ajoute-y les dix lignes de la section 3.4 du tuto, corrige les lignes du gabarit qu'elles contredisent, et montre-moi le fichier entier. Dépose-en une copie identique sous le nom AGENTS.md, et garde les deux fichiers identiques à chaque modification : selon l'agent, c'est l'un ou l'autre qui est lu.
 - Document de reprise : tiens REPRISE.md à jour, comme l'indique la section 4.2 du tuto.
-- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis-le tel qu'il est dans le dépôt, en fichier brut, jamais dans un aperçu Markdown. Sa note d'en-tête et ses neuf règles sont dans un commentaire HTML (<!-- AGENT : ... -->), invisible à l'affichage : lis-les et applique-les. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, commence par la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis dis-moi ce que tu vas faire, étape par étape, et pourquoi. Ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. Dans la discussion, dessine tout schéma en schéma texte (des boîtes et des flèches en caractères simples, dans un bloc de code), jamais en Mermaid : la fenêtre de discussion ne le dessine pas. Quand une fiche du tuto contient un exercice, pose-moi sa question au moment indiqué et laisse-moi répondre avant de m'expliquer ; sur les fiches 12, 13 et 14, demande-moi comment je m'y prendrais avant de me montrer ton plan. N'affiche jamais un secret dans la discussion : ni clé, ni mot de passe, ni jeton. Au CHECK, fais une seule action à la fois et arrête-toi pour que je constate. Dis-moi toujours quand quelque chose échoue, et pourquoi. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
+- Le fichier tuto-goodvibe-vibecoding.md est la référence du projet : lis-le tel qu'il est dans le dépôt, en fichier brut, jamais dans un aperçu Markdown. Sa note d'en-tête et ses dix règles sont dans un commentaire HTML (<!-- AGENT : ... -->), invisible à l'affichage : lis-les et applique-les. Avant tout document, présente-moi le projet : ce qu'on construit, ce qu'est un agent, ses capacités, la vue d'architecture. Explique chaque mot technique. Au PLAN, commence par la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis dis-moi ce que tu vas faire, étape par étape, et pourquoi. Ne me propose pas trois options : présente-moi uniquement la solution du tuto, expliquée. Après le DO et avant le CHECK, montre-moi le schéma de séquence de la feature, puis les extraits de code qui comptent, et explique-les. Dans la discussion, dessine tout schéma en schéma texte (des boîtes et des flèches en caractères simples, dans un bloc de code), jamais en Mermaid : la fenêtre de discussion ne le dessine pas. Quand une fiche du tuto contient un exercice, pose-moi sa question au moment indiqué et laisse-moi répondre avant de m'expliquer ; sur les fiches 12, 13 et 14, demande-moi comment je m'y prendrais avant de me montrer ton plan. N'affiche jamais un secret dans la discussion : ni clé, ni mot de passe, ni jeton. Au CHECK, fais une seule action à la fois et arrête-toi pour que je constate. Dis-moi toujours quand quelque chose échoue, et pourquoi. Les points « À relire » et le CHECK de chaque feature se conforment au tuto. Ne me dévoile pas les « pièges » avant mon verdict.
 - Mise en ligne sur VPS via GitHub Actions, pas Netlify. Modèle de l'agent construit : Gemini via google-genai (API Interactions). Ne choisis aucun modèle au cadrage et n'en reprends aucun de mémoire : tu me recommanderas le modèle texte au PLAN de la fiche 1 et le modèle image au PLAN de la fiche 10, après recherche dans la documentation officielle de Google, comme l'indique la note d'en-tête du tuto.
 - Tout ce que tu peux installer, tu l'installes toi-même (Python 3.12, Git, outils en ligne de commande, DB Browser). Tu exécutes toi-même toutes les commandes (venv, pip, git, lancement des serveurs, commandes sur le serveur). Pour chaque commande, trois temps, dans cet ordre : avant, dis-moi en langage courant ce que tu lances, où elle s'exécute (ma machine ou le serveur) et pourquoi ; puis montre-moi sa sortie brute, telle quelle, sans la reformuler ni la résumer ; puis explique-moi cette sortie en langage courant : ce qu'elle veut dire, si c'est ce qu'on attendait, et ce que ça change pour la suite. Quand une commande interroge le vrai modèle, la sortie brute contient la situation posée, le message envoyé et la réponse entière. Seuls les secrets ne s'affichent jamais. Je ne fais que ce que tu ne peux pas faire : comptes, clés, validations, tests.
 - Erreurs : dans le code que tu écris, aucune erreur n'est masquée : ni contenu de remplacement, ni valeur par défaut à la place d'une donnée manquante, ni erreur interceptée en silence. Quand quelque chose échoue, le programme l'affiche là où je regarde, en disant ce qui a échoué et pourquoi, et le journal le note.
 - Diagnostic d'entrée : à la place de la question de calibrage du skill, pose-moi les trois questions de la règle 2 de la note d'en-tête du tuto, une à la fois. Inscris mes réponses et l'accompagnement qui en découle dans le fichier de règles du projet, et calibre toutes tes explications dessus. Le diagnostic change la quantité d'explications, jamais ce qui est construit.
+- Rituels : dans ton message d'accueil, avant le diagnostic d'entrée, dis-moi à quoi sert ce parcours et ce que j'y gagne, avec l'image du prêt-à-porter et du sur-mesure. Propose-moi une pause de toi-même aux moments opportuns, toujours entre deux features, et à chaque arrêt demande-moi quand je pense reprendre. Marque le camp de base avant la fiche 12 et l'arrivée après la fiche 14, comme l'indique la règle 10 de la note d'en-tête du tuto. Tes encouragements sont des faits, jamais des compliments, et tes messages de rituel sont courts et aérés : une idée par ligne. Tutoie-moi, toujours, dès ton premier message.
 
 Commence par l'étape 1.
 ```
@@ -154,7 +166,7 @@ Commence par l'étape 1.
 
 4. Vérifiez que l'agent de codage suit le skill : il doit **se présenter**, résumer la méthode PDCA en une phrase et poser **la première des trois questions** du diagnostic d'entrée (section 4.1), une seule à la fois. S'il écrit du code d'emblée ou saute la présentation, suivez la section 1.5 : le dossier du skill, puis une nouvelle conversation, puis le même prompt recollé en entier. L'agent de codage constate ce qui est déjà fait et reprend à la bonne étape.
 
-Ce prompt reprend les neuf lignes du `CLAUDE.md` pour couvrir le premier lancement, avant que le skill dépose le fichier de règles.
+Ce prompt reprend les dix lignes du `CLAUDE.md` pour couvrir le premier lancement, avant que le skill dépose le fichier de règles.
 
 **Pour les sessions suivantes.** À la fin de chaque session, dites à l'agent de codage : « on s'arrête là ». Il met à jour `REPRISE.md`, le document de reprise du projet (section 4.2). Au début de la session suivante, ouvrez une nouvelle conversation et collez le prompt qui figure à la fin de `REPRISE.md`. S'il n'existe pas encore, collez celui-ci :
 
@@ -558,23 +570,24 @@ La section « Hypothèses et questions ouvertes » est presque vide, pour la mê
 
 **Hors périmètre (Won't)** : page web adaptée au téléphone (elle est conçue pour un écran d'ordinateur), multi-utilisateurs, notifications, recherche sémantique, chiffrement au repos, 2FA.
 
-### 3.4 Les neuf lignes à ajouter au CLAUDE.md
+### 3.4 Les dix lignes à ajouter au CLAUDE.md
 
-Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la **Règle 0** : jamais de code ni de publication sans GO. Il ne l'écrase jamais s'il existe. Pour GoodVibe, **l'agent de codage y ajoute neuf lignes** (le prompt de démarrage le lui demande ; vérifiez qu'il vous montre le résultat) :
+Le skill dépose son gabarit `assets/CLAUDE.md` à la racine du projet, avec la **Règle 0** : jamais de code ni de publication sans GO. Il ne l'écrase jamais s'il existe. Pour GoodVibe, **l'agent de codage y ajoute dix lignes** (le prompt de démarrage le lui demande ; vérifiez qu'il vous montre le résultat) :
 
 1. **Mise en ligne** : « La publication se fait sur un VPS, pas sur Netlify. Le GO MISE EN LIGNE se demande au début de la feature 12, avant tout envoi : il autorise le premier push vers le dépôt GitHub privé, puis la mise en ligne de la page. Avant lui, rien ne quitte la machine du pilote. À partir de la feature 13, GitHub Actions déploie chaque push sur `main`. »
 2. **CHECK** : « Le test humain ne passe pas toujours par un navigateur : selon la feature, il se fait dans le terminal, avec `curl`, dans l'onglet Activité ou dans la page Gradio. Le critère de réussite du `plan-action.md` précise lequel. »
 3. **Modèle** : « Le modèle de l'agent IA construit est Gemini via `google-genai` (API Interactions). Les modèles sont ceux que Google recommande à la date du projet : l'agent de codage les recherche dans la documentation officielle et les recommande au pilote, qui valide, au moment où la feature en a besoin (fiche 1 pour le texte, fiche 10 pour l'image), jamais au cadrage. Ne pas proposer un autre fournisseur sans demande explicite. »
 4. **Données** : « Aucune donnée personnelle dans les logs, le journal, les tests ni le dépôt. »
-5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les neuf règles de sa note d'en-tête, il prime sur le skill. La méthode est celle du skill VibeCoding Copilote, installé dans `.agents/skills/vibecoding-copilote/` : au début de chaque session, l'agent de codage lit son `SKILL.md`, puis `REPRISE.md` et `plan-action.md`, avant de répondre. »
+5. **Référence** : « Le fichier `tuto-goodvibe-vibecoding.md` est la référence du projet : la solution présentée au PLAN, les exigences de code et le CHECK de chaque feature s'y conforment. Sur les dix règles de sa note d'en-tête, il prime sur le skill. La méthode est celle du skill VibeCoding Copilote, installé dans `.agents/skills/vibecoding-copilote/` : au début de chaque session, l'agent de codage lit son `SKILL.md`, puis `REPRISE.md` et `plan-action.md`, avant de répondre. »
 6. **Pédagogie** : « Avant tout document, l'agent de codage présente le projet au pilote, en s'appuyant sur `GoodVibe-presentation.md` : ce qu'on construit, ce qu'est un agent IA, ses capacités, la vue d'architecture. Les explications sont réglées par le diagnostic d'entrée du pilote (règle 2 de la note d'en-tête du tuto) : ses trois réponses et l'accompagnement retenu sont inscrits ici. Au PLAN, l'agent de codage fait d'abord la leçon (le problème, l'idée en langage courant, les mots nouveaux), puis annonce ce qu'il va faire, étape par étape, et pourquoi. Il présente une seule solution, celle du tuto : il ne propose pas trois options. Après le DO et avant le CHECK, il montre au pilote le schéma de séquence de la feature, puis les extraits de code qui comptent, et les explique. Dans la discussion, tout schéma est un schéma texte (des boîtes et des flèches en caractères simples, dans un bloc de code), jamais du Mermaid : la fenêtre de discussion ne le dessine pas. Le Mermaid reste réservé aux fichiers Markdown du projet. Quand une fiche du tuto contient un exercice, il le pose au moment indiqué, et le pilote répond avant toute explication ; sur les fiches 12, 13 et 14, il demande au pilote comment il s'y prendrait avant de lui montrer son plan. Ces questions ne bloquent jamais la suite. »
 7. **Secrets et CHECK** : « L'agent de codage n'affiche jamais un secret, ni dans la discussion, ni dans un fichier du dépôt, ni dans un document de reprise : clé privée, mot de passe, jeton, clé API. Il le copie dans le presse-papiers du pilote, ou indique le fichier où il se trouve. Il n'ouvre jamais le fichier `.env` sans l'autorisation explicite du pilote. Au CHECK, il fait une seule action à la fois, s'arrête pour que le pilote constate, et ne conclut jamais à sa place. Quand une action échoue, il le dit aussitôt, avec la cause. »
 8. **Erreurs** : « Une erreur ne se cache jamais : elle se dit et elle s'affiche. Dans le code, aucune erreur n'est masquée : ni contenu de remplacement, ni valeur par défaut à la place d'une donnée manquante, ni erreur interceptée en silence, ni phrase rassurante. Quand quelque chose échoue (une source, un outil, un fichier, un réglage absent), le programme le dit là où le pilote regarde, par un message qui nomme ce qui a échoué et pourquoi ; le journal note l'échec et sa cause ; le reste continue quand c'est possible. Une valeur par défaut se propose au pilote au PLAN, elle ne s'écrit pas d'office. »
 9. **Commandes** : « Pour chaque commande (un test, un script, une installation, une commande Git, une commande sur le serveur), trois temps, dans cet ordre. Avant : l'agent de codage dit en langage courant ce qu'il va lancer, où cela s'exécute (la machine du pilote ou le serveur) et pourquoi. Puis la sortie brute : il montre ce que la commande a répondu, tel quel, sans la reformuler ni la résumer ; si elle est très longue, il en montre le début et la fin, et dit ce qu'il a coupé. Puis l'explication de la sortie : il dit en langage courant ce qu'elle veut dire, si c'est ce qu'on attendait, et ce que cela change pour la suite. Quand la commande interroge le vrai modèle, rien n'est coupé : la situation posée, le message envoyé et la réponse entière. Seule exception : les secrets, qui ne s'affichent jamais. »
+10. **Rituels** : « L'agent de codage marque trois étapes (règle 10 de la note d'en-tête du tuto). Au départ, il dit le sens du parcours et ce que le pilote y gagne, avec l'image du prêt-à-porter et du sur-mesure. Au camp de base, avant la fiche 12, il fait le bilan du chemin parcouru et dit le sens de la suite. À l'arrivée, après la fiche 14 : le bilan, la projection vers la suite, le retour à l'auteur préparé, le brief du lendemain. Il propose une pause de lui-même, toujours entre deux features : à la fin du cadrage, après les fiches 8, 11 et 12, et après une feature laborieuse. À chaque arrêt, il demande au pilote quand il pense reprendre et le note dans `REPRISE.md`. Ses encouragements sont des faits, jamais des compliments, et ses messages de rituel sont courts et aérés : une idée par ligne. Il tutoie le pilote, toujours, sans jamais mélanger le « tu » et le « vous ». »
 
-**L'agent de codage corrige aussi les lignes du gabarit que ces règles contredisent.** Le gabarit du skill est écrit pour un projet quelconque : il place la mise en ligne en fin de projet, décrit un PLAN sans leçon, et porte un profil (1) ou (2) que le diagnostic d'entrée remplace. Le prompt de démarrage demande à l'agent de codage d'aligner ces lignes sur les neuf règles, puis de vous montrer le fichier entier. Vérifiez qu'aucune consigne n'en contredit une autre : devant deux consignes contraires, l'agent de codage choisit sans vous le dire.
+**L'agent de codage corrige aussi les lignes du gabarit que ces règles contredisent.** Le gabarit du skill est écrit pour un projet quelconque : il place la mise en ligne en fin de projet, décrit un PLAN sans leçon, et porte un profil (1) ou (2) que le diagnostic d'entrée remplace. Le prompt de démarrage demande à l'agent de codage d'aligner ces lignes sur les dix règles, puis de vous montrer le fichier entier. Vérifiez qu'aucune consigne n'en contredit une autre : devant deux consignes contraires, l'agent de codage choisit sans vous le dire.
 
-**Deux fichiers, un seul contenu.** L'agent de codage dépose aussi une copie identique du fichier sous le nom `AGENTS.md`. Ce n'est pas une option : Claude Code lit `CLAUDE.md`, mais l'agent de codage Gemini d'Antigravity, Codex et GitHub Copilot lisent `AGENTS.md` (section 1.5). Sans cette copie, l'agent de codage Gemini et Codex travaillent sans la Règle 0 et sans les neuf lignes : ils ne lisent pas `CLAUDE.md`. Les deux fichiers restent identiques : toute modification de l'un se reporte dans l'autre, dans le même commit. Le contenu du gabarit est volontairement agnostique.
+**Deux fichiers, un seul contenu.** L'agent de codage dépose aussi une copie identique du fichier sous le nom `AGENTS.md`. Ce n'est pas une option : Claude Code lit `CLAUDE.md`, mais l'agent de codage Gemini d'Antigravity, Codex et GitHub Copilot lisent `AGENTS.md` (section 1.5). Sans cette copie, l'agent de codage Gemini et Codex travaillent sans la Règle 0 et sans les dix lignes : ils ne lisent pas `CLAUDE.md`. Les deux fichiers restent identiques : toute modification de l'un se reporte dans l'autre, dans le même commit. Le contenu du gabarit est volontairement agnostique.
 
 **Écrites, mais sont-elles chargées ?** Un fichier de règles ne sert que si l'agent de codage le relit de lui-même à chaque nouvelle conversation. Vous le vérifierez une fois le cadrage fini, avant la première feature : c'est le contrôle « La ceinture, avant de démarrer » de la section 4.3. Un détail propre à Antigravity : il tronque tout fichier de règles de plus de 24 000 octets (documentation consultée en octobre 2026, <https://antigravity.google/docs/rules>). Le fichier de GoodVibe en fait environ le tiers : si vous y ajoutez des règles, gardez-le court.
 
@@ -588,7 +601,7 @@ Le répertoire ouvert dans votre éditeur contient `GoodVibe-PRD.md`, `tuto-good
 
 Ce qui doit se passer, dans l'ordre :
 
-1. L'agent de codage **se présente** et résume la méthode en une phrase : PDCA, une feature à la fois, je propose, tu valides, je code, tu testes.
+1. L'agent de codage **se présente**, puis vous dit **le sens du parcours** : à quoi il sert (savoir créer, observer et héberger un agent IA autonome) et ce que vous y gagnez. Il termine par l'image du prêt-à-porter et du sur-mesure : une plateforme est un vêtement vite enfilé, coupé pour tout le monde ; ici, vous apprenez la couture. Il résume ensuite la méthode en une phrase : PDCA, une feature à la fois, je propose, tu valides, je code, tu testes.
 2. Il pose le **diagnostic d'entrée** : trois questions, une à la fois, auxquelles vous répondez par oui ou par non. Répondez comme c'est, sans vous surévaluer : il n'y a pas de mauvaise réponse, et ce que vous construirez sera le même dans tous les cas.
 
    1. Sais-tu lire une fonction Python simple et expliquer ce qu'elle fait ?
@@ -607,7 +620,7 @@ Ce qui doit se passer, dans l'ordre :
 
 Signal d'alerte : s'il ne se présente pas, ne pose pas la question, ou commence à écrire du code, il ne suit pas le skill. Revenez à la section 1.5.
 
-Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, s'il vous demande de choisir entre trois options, s'il vous présente un plan sans vous avoir d'abord expliqué le problème et l'idée, s'il passe au CHECK sans vous avoir montré de code, s'il vous montre un schéma sous forme de code (un bloc qui commence par « flowchart » ou « sequenceDiagram ») au lieu d'un dessin en caractères, ou s'il vous dit qu'une commande a réussi sans vous montrer sa sortie brute ni vous l'expliquer, rappelez-lui les neuf règles de la note d'en-tête du tuto.
+Autre signal : s'il vous montre `archi-stack.md` sans vous avoir présenté le projet, s'il emploie des mots techniques sans les expliquer, s'il vous demande de choisir entre trois options, s'il vous présente un plan sans vous avoir d'abord expliqué le problème et l'idée, s'il passe au CHECK sans vous avoir montré de code, s'il vous montre un schéma sous forme de code (un bloc qui commence par « flowchart » ou « sequenceDiagram ») au lieu d'un dessin en caractères, ou s'il vous dit qu'une commande a réussi sans vous montrer sa sortie brute ni vous l'expliquer, rappelez-lui les dix règles de la note d'en-tête du tuto.
 
 ### 4.2 La boucle que vous allez vivre quatorze fois
 
@@ -639,13 +652,17 @@ Trois portes, trois niveaux d'engagement : **GO #1** autorise l'écriture du cod
 | Partie | Ce qu'elle contient |
 |---|---|
 | 1. L'état du projet | Les features faites, celle en cours, l'état des tests, ce qui est en ligne |
-| 2. La situation exacte | L'étape de la boucle où l'on s'est arrêté, ce qui attend votre décision, les actions suivantes dans l'ordre |
+| 2. La situation exacte | L'étape de la boucle où l'on s'est arrêté, ce qui attend votre décision, les actions suivantes dans l'ordre, et quand vous pensez reprendre |
 | 3. Où trouver les accès | Le nom des lignes du `.env` et des fichiers de clés : jamais un secret, jamais l'adresse du serveur |
 | 4. Le prompt de reprise | Le texte à coller à la prochaine session, écrit pour la situation du jour |
 
 L'agent de codage crée `REPRISE.md` au commit de cadrage. Il le met à jour à chaque GO #2, à chaque push, et chaque fois que la session s'arrête au milieu d'une feature : dites-lui « on s'arrête là », il le met à jour avant de vous répondre. Le prompt de la partie 4 demande toujours à l'agent de codage de lire le `SKILL.md` du skill, la note d'en-tête de ce tuto, `REPRISE.md` et `plan-action.md` avant de répondre, et de ne rien modifier sans GO : c'est ce qui permet de changer d'agent de codage d'une session à l'autre. Le fichier est enregistré dans Git : il suit la règle 6, et ne contient aucun secret. Si `REPRISE.md` et `plan-action.md` se contredisent sur l'état d'une feature, `plan-action.md` fait foi, et l'agent de codage vous signale l'écart.
 
 **À la pause, l'agent de codage range.** Quand vous dites « on s'arrête là », il arrête ce qu'il a lancé pour le CHECK (un serveur local sur le port 8000, par exemple), puis met à jour `REPRISE.md`. À la reprise, il relance ce qu'il faut avant de vous rendre la main.
+
+**Les pauses, et le rendez-vous.** Vous n'avez pas à deviner quand vous arrêter : l'agent de codage vous propose une pause de lui-même, toujours entre deux features. Il le fait à coup sûr aux quatre replats du parcours (la fin du cadrage, après la fiche 8, au camp de base après la fiche 11, après la fiche 12), et quand une feature a été laborieuse. Vous répondez « (A) on continue » ou « (B) on s'arrête ici ». À chaque arrêt, il vous nomme la prochaine étape et vous pose une seule question : « Quand penses-tu reprendre ? ». Il note votre réponse dans `REPRISE.md`. Ce n'est ni un agenda ni un engagement : une date dite se tient mieux qu'un « bientôt », et « je ne sais pas » est une réponse.
+
+**Trois étapes marquées.** L'agent de codage marque le départ (le sens du parcours, section 4.1), le camp de base avant la mise en ligne (fin de la fiche 11) et l'arrivée (section 6). À chaque fois, il vous dit ce que vous avez fait, en faits : pas de compliments.
 
 ### 4.3 Les trois documents de cadrage : ce que vous devez y trouver
 
@@ -677,14 +694,14 @@ La ceinture est attachée si l'agent de codage :
 
 - nomme le bon fichier : `AGENTS.md` pour Gemini dans Antigravity, Codex et GitHub Copilot ; `CLAUDE.md` pour Claude Code (section 1.5) ;
 - cite la **Règle 0** : jamais de code ni de publication sans votre GO ;
-- cite les **neuf lignes** de la section 3.4 : la mise en ligne sur un VPS et non sur Netlify, le CHECK, le modèle Gemini choisi aux fiches 1 et 10, aucune donnée personnelle, le tuto comme référence, la pédagogie, les secrets, les erreurs jamais masquées, les commandes annoncées, leur sortie brute montrée puis expliquée ;
+- cite les **dix lignes** de la section 3.4 : la mise en ligne sur un VPS et non sur Netlify, le CHECK, le modèle Gemini choisi aux fiches 1 et 10, aucune donnée personnelle, le tuto comme référence, la pédagogie, les secrets, les erreurs jamais masquées, les commandes annoncées, leur sortie brute montrée puis expliquée, les rituels et les pauses proposées ;
 - donne **le résultat de votre diagnostic d'entrée** : vos trois réponses et l'accompagnement retenu.
 
 S'il hésite, s'il invente, ou s'il va lire des fichiers pour répondre, il ne charge pas ses règles : il travaillerait sans la Règle 0. Vérifiez que `AGENTS.md` existe à la racine du projet et qu'il est identique à `CLAUDE.md`, puis recommencez dans une nouvelle conversation. **Ne lancez pas la première feature sans cette ceinture.**
 
 Une fois la ceinture attachée, collez le prompt de reprise qui figure à la fin de `REPRISE.md` : la construction commence. Refaites ce contrôle chaque fois que vous changez d'agent de codage.
 
-<!-- AGENT : après le commit de cadrage, tu ne lances pas la première feature dans la conversation du cadrage. Tu annonces au pilote le contrôle « La ceinture, avant de démarrer » ci-dessus, tu mets REPRISE.md à jour avec le prompt de reprise, et tu lui demandes d'ouvrir une nouvelle conversation pour faire ce contrôle. Dans cette nouvelle conversation, tu réponds à sa question à partir des règles que ton outil a chargées, sans ouvrir de fichier : si tu ne les as pas, tu le dis.
+<!-- AGENT : après le commit de cadrage, tu ne lances pas la première feature dans la conversation du cadrage. Tu annonces au pilote le contrôle « La ceinture, avant de démarrer » ci-dessus, tu mets REPRISE.md à jour avec le prompt de reprise, et tu lui demandes d'ouvrir une nouvelle conversation pour faire ce contrôle. Dans cette nouvelle conversation, tu réponds à sa question à partir des règles que ton outil a chargées, sans ouvrir de fichier : si tu ne les as pas, tu le dis. La fin du cadrage est le premier replat de la règle 10 : en annonçant le contrôle, tu proposes la pause (la ceinture peut se faire maintenant, ou à la reprise), et si le pilote s'arrête, tu lui demandes quand il pense reprendre.
 -->
 
 
@@ -1415,6 +1432,9 @@ serveur MCP non démarré (`uvx` absent : l'agent de codage l'installe) ; descri
 
 **Où on en est** : le brief est complet en texte : accueil, horoscope personnalisé, météo, notes. Fichiers ajoutés : `mcp_client.py`, `horoscope.py`.
 
+<!-- AGENT : la fin de cette fiche est un replat de la règle 10. Après le GO #2, tu proposes la pause : « C'est un bon endroit pour faire une pause. (A) on continue ; (B) on s'arrête ici ». Si le pilote s'arrête, tu lui demandes quand il pense reprendre et tu le notes dans REPRISE.md.
+-->
+
 ```mermaid
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
@@ -1597,6 +1617,11 @@ tests qui dépendent de la vraie clé API (ils échoueront dans la CI) ; base de
 </details>
 
 **Où on en est** : GoodVibe est complet, observable et testé, entièrement en local, et son modèle est mesuré. Fichiers ajoutés : `tests/`, `requirements-dev.txt`, `pyproject.toml`, `scenarios_modele.py`. La prochaine fiche sort de la machine.
+
+**Le camp de base.** Avant de passer au serveur, l'agent de codage fait le point avec vous. Il vous dit le chemin parcouru, en faits : les onze features que vous avez validées, ce que GoodVibe sait faire sur votre machine, le nombre de tests. Créer un agent IA, c'est fait ; l'observer, c'est fait ; l'héberger, c'est ce qui vient. Il vous dit ensuite ce que la mise en ligne apporte : le brief qui tombe à 7 h ordinateur éteint, GoodVibe joignable de partout, le métier de la production. La fiche 12 est la plus longue du parcours : il vous propose donc une pause, pour l'attaquer à tête reposée.
+
+<!-- AGENT : le camp de base, règle 10. Après le GO #2 de cette fiche et avant la leçon de la fiche 12, un seul message : le chemin parcouru en faits (les features validées par le pilote, ce que GoodVibe sait faire, le nombre de tests que pytest vient d'afficher), relié au sens du départ (« créer, c'est fait ; observer, c'est fait ; héberger, c'est ce qui vient ») ; puis le sens de la suite, et que la fiche 12 est la plus longue ; puis la proposition de pause : « C'est un bon endroit pour faire une pause. (A) on continue ; (B) on s'arrête ici ». Aucun compliment : des faits. Si le pilote s'arrête, tu lui demandes quand il pense reprendre et tu le notes dans REPRISE.md.
+-->
 
 ---
 
@@ -1845,6 +1870,9 @@ Si le compte rendu est absent, le cron ne s'est pas déclenché. S'il contient u
 
 **Où on en est** : GoodVibe est en production, mais toute mise à jour demande encore une connexion SSH. Fichiers ajoutés : `deploy/`.
 
+<!-- AGENT : la fin de cette fiche est un replat de la règle 10. Une fois la fiche terminée, tu proposes la pause : « C'est un bon endroit pour faire une pause. (A) on continue ; (B) on s'arrête ici ». Si le pilote s'arrête, tu lui demandes quand il pense reprendre et tu le notes dans REPRISE.md.
+-->
+
 ---
 
 ### Fiche 13 : CI/CD GitHub Actions
@@ -2091,6 +2119,9 @@ Pourquoi ce détour par une variable : un jeton collé en clair dans une command
 
 **Où on en est** : les quatre déclencheurs sont en place (chat, cron, page web, webhook) ; un pense-bête refait le brief du jour, et se retire dans le chat comme une note. GoodVibe V1 est complet et en production, et vous avez vu le pipeline déployer une vraie feature. Fichiers ajoutés : `webhook.py`, `tests/test_webhook.py`, `deploy/webhook.service`. L'architecture cible de la V1 est entièrement en couleur.
 
+<!-- AGENT : c'est l'arrivée, règle 10. Après le dernier CHECK de cette fiche, tu ne passes pas directement aux documents de clôture : tu commences par « La vue du sommet » de la section 6.
+-->
+
 ```mermaid
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
@@ -2109,16 +2140,23 @@ flowchart TD
 
 ## 6. Clôture : mise en ligne, walkthrough, post-mortem, retour
 
-Une fois la page publique vérifiée et le webhook déployé par le pipeline (fiche 14), le skill enchaîne quatre étapes. Il ne dira « terminé » qu'après la dernière. Vous y ajoutez le retour à l'auteur. Voici ce que vous devez obtenir de chacune.
+Une fois la page publique vérifiée et le webhook déployé par le pipeline (fiche 14), le skill enchaîne quatre étapes. Il ne dira « terminé » qu'après la dernière. Vous y ajoutez le retour à l'auteur. L'agent de codage y ajoute les gestes de l'arrivée : la vue du sommet, la projection vers la suite, et le mot de la fin. Voici ce que vous devez obtenir de chacune.
 
 ```mermaid
 flowchart LR
-    A["1. V1 en ligne<br/>les 14 features<br/>sont faites"] --> B["2. walkthrough.md<br/>visite du code"]
-    B --> C["3. post-mortem.md<br/>prévu / réalisé, leçons,<br/>ce que j'ai appris"]
-    C --> D["4. Les évolutions,<br/>dans l'ordre de<br/>la section 1.3"]
-    D --> R["5. Retour à l'auteur<br/>mail ou Issue"]
-    R --> E["6. Checklist à sept cases<br/>toutes cochées"]
+    A["1. V1 en ligne<br/>les 14 features<br/>sont faites"] --> S["2. La vue du sommet<br/>le bilan, en faits"]
+    S --> B["3. walkthrough.md<br/>visite du code"]
+    B --> C["4. post-mortem.md<br/>prévu / réalisé, leçons,<br/>ce que j'ai appris"]
+    C --> D["5. La projection,<br/>puis les évolutions,<br/>dans l'ordre de<br/>la section 1.3"]
+    D --> R["6. Retour à l'auteur<br/>préparé par l'agent<br/>de codage, complété<br/>et envoyé par vous"]
+    R --> E["7. Checklist à sept cases<br/>toutes cochées"]
+    E --> F["8. Le mot de la fin :<br/>le brief du lendemain"]
 ```
+
+**La vue du sommet.** Avant tout document, l'agent de codage s'arrête sur ce que vous venez de terminer. Il vous dit le bilan, en faits : les quatorze features que vous avez validées, l'adresse publique où GoodVibe répond, le nombre de tests. Au départ, il vous avait dit à quoi servait ce parcours : savoir créer, observer et héberger un agent IA autonome. Les trois sont faits, par vous.
+
+<!-- AGENT : la vue du sommet, règle 10. Après le dernier CHECK de la fiche 14 et avant walkthrough.md, un seul message : le bilan en faits (les features validées par le pilote, l'adresse publique, le nombre de tests), qui boucle le sens du départ : « créer, observer, héberger : les trois sont faits, par toi ». Aucun compliment : des faits. Puis tu enchaînes sur la clôture.
+-->
 
 **`walkthrough.md`**, la visite guidée du code, fichier par fichier, écrite pour quelqu'un qui découvre le projet. Vérifiez que chacun des fichiers de GoodVibe y a son paragraphe (rôle, ce qu'il expose, ce qu'il ne fait pas) : `config.py`, `prompt_systeme.md`, `agent.py`, `fragments.py`, `chat_terminal.py`, `outils.py`, `confirmation.py`, `oubli.py`, `outils_meteo.py`, `mcp_client.py`, `horoscope.py`, `image.py`, `prompt_image.md`, `brief.py`, `cron_brief.py`, `webhook.py`, `interface.py`, `vue_memoire.py`, `vue_activite.py`, `tarifs.py`, `journal.py`, `db.py`, `scenarios_modele.py`, `deploy/`, `.github/workflows/`. Il est commité et poussé : le pipeline le déploie comme le reste.
 
@@ -2133,11 +2171,16 @@ Le post-mortem se termine par une section **« Ce que j'ai appris »**. L'agent 
 
 **Et pour un autre usage ?** Les briques apprises dans GoodVibe sont réutilisables pour d'autres agents IA. Chaque nouvel usage demande cependant de réexaminer les données accessibles, les actions autorisées, les validations humaines et les exigences de fiabilité. Vous avez déjà rencontré ces questions dans GoodVibe : qui confirme une suppression, quels outils l'agent IA reçoit, où partent les données.
 
+**La projection.** Vous avez appris la couture sur mesure sur un vêtement d'exercice. Deux chemins s'ouvrent : faire grandir GoodVibe, avec les quatre évolutions ci-dessous, ou construire votre propre agent IA avec les mêmes briques. L'agent de codage vous demande : quel agent IA aimeriez-vous construire pour vous, ou quelle évolution vous tente en premier ? Il note votre réponse dans `plan-action.md`, à la rubrique « Pour aller plus loin ». « Je ne sais pas encore » est une réponse : une idée écrite se reprend plus facilement qu'une liste lue.
+
+<!-- AGENT : la projection, règle 10. Après l'exercice de transfert et avant de proposer les évolutions, tu reprends l'image du départ (le prêt-à-porter et le sur-mesure : le pilote sait maintenant coudre), tu montres les deux chemins, puis tu poses une seule question, seule dans ton message : « Quel agent IA aimerais-tu construire pour toi, ou quelle évolution te tente en premier ? ». Tu notes sa réponse dans plan-action.md, rubrique « Pour aller plus loin ». « Je ne sais pas encore » est une réponse : tu n'insistes pas.
+-->
+
 **Les évolutions.** Le skill propose les quatre évolutions de la section 1.3, dans leur ordre, avec valeur et effort : le bac à sable d'exécution de code, les skills, les sous-agents, la base de connaissances hybride. Il peut en ajouter d'autres, tirées de la section 7.2. S'il ne propose pas les quatre, demandez-les. Elles sont consignées dans la section « Pour aller plus loin » du `plan-action.md`, dans cet ordre.
 
 **Un second agent IA ?** Il peut cohabiter avec le premier sur le même serveur, sans le toucher : la section 7.2 dit comment.
 
-**Votre retour à l'auteur.** Ce tuto s'améliore grâce à vos retours. Envoyez le vôtre à **lecinquiemejour+goodvibe@gmail.com**, ou ouvrez une Issue sur https://github.com/lecinquiemejour-code/goodvibe-tuto/issues. Copiez ce modèle et répondez en quelques lignes. Pour la question 3, relisez vos cases « encore flou » :
+**Votre retour à l'auteur.** Ce tuto s'améliore grâce à vos retours. Envoyez le vôtre à **lecinquiemejour+goodvibe@gmail.com**, ou ouvrez une Issue sur https://github.com/lecinquiemejour-code/goodvibe-tuto/issues. L'agent de codage vous prépare le message à partir du modèle ci-dessous. Il ne remplit que ce qu'il sait : là où vous avez bloqué (question 2, d'après `post-mortem.md`), votre agent de codage et votre modèle (question 4). Le reste est à vous : ce qui a bien marché, ce qui manquait, votre note. Corrigez, complétez en quelques lignes, et envoyez : il n'envoie rien à votre place. Pour la question 3, relisez vos cases « encore flou » :
 
 ```text
 Objet : Retour tuto GoodVibe
@@ -2148,11 +2191,19 @@ Objet : Retour tuto GoodVibe
 5. Ma note sur 10, et un mot libre :
 ```
 
+<!-- AGENT : le retour à l'auteur, règle 10. Tu prépares ce message dans la discussion, dans un bloc de code. Tu remplis la ligne 2 d'après post-mortem.md et la ligne 4 d'après ce que tu sais du projet. Tu laisses vides les lignes 1, 3 et 5 : c'est l'avis du pilote, tu ne l'écris pas à sa place. Tu n'envoies rien : tu lui donnes l'adresse et le lien, et c'est lui qui envoie.
+-->
+
 **La checklist de fin de chantier** : toutes les features « fait » ; site déployé et URL vérifiée par vous ; `walkthrough.md` dans le dépôt ; `post-mortem.md` dans le dépôt ; nouvelles features consignées. Cinq cases, puis le skill affiche l'URL publique et rappelle que le plan d'action reste vivant. **Deux cases de plus, que le skill ne connaît pas** : la section « Ce que j'ai appris » cochée par vous ; votre retour envoyé à l'auteur. Si le skill ne les propose pas, demandez-les, comme pour les évolutions.
 
 **Garder le serveur, ou le supprimer.** Avant le bilan, l'agent de codage vous repose la question de la fiche 12. Si vous gardez le serveur, il vérifie avec vous les quatre précautions. Si vous le supprimez, il vous guide pour récupérer vos données d'abord.
 
 **Une pause explicite.** Vous avez un produit complet en production. Chaque évolution est un nouveau tour de roue, qu'on peut faire un autre jour. Prenez le temps de relire le journal d'activité d'une journée entière : c'est là que vous verrez si GoodVibe se comporte comme prévu quand personne ne le regarde.
+
+**Le mot de la fin.** Si vous gardez le serveur, demain à 7 h votre brief sera là, sans vous. Ouvrez-le en utilisateur, plus en testeur : c'est ce matin-là que le parcours se termine vraiment.
+
+<!-- AGENT : le mot de la fin, règle 10. C'est ton dernier message du projet, après la checklist. Si le pilote garde le serveur, tu lui dis que demain à 7 h son brief sera là sans lui, et tu l'invites à l'ouvrir en utilisateur. S'il a supprimé le serveur, tu ne le dis pas, et tu t'arrêtes sur le bilan : aucune phrase de remplacement. Comme à tout arrêt, tu lui demandes quand il pense reprendre, pour la suite qu'il a nommée à la projection.
+-->
 
 ---
 
