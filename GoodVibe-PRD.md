@@ -2,11 +2,11 @@
 
 > **Version** 1.0 · **Date** 27 septembre 2026 · **Auteur** Le Cinquième Jour (tuto « Agent Python, webhook et cron en vibe coding ») · **Statut** Validé (fourni prêt à l'emploi pour le parcours pédagogique)
 
-> Ce PRD est **fourni par le tuto**. Copiez-le tel quel à la racine de votre projet sous le nom `GoodVibe-PRD.md` (ou `PRD.md` si votre agent ne le retrouve pas), à côté du tuto `tuto-goodvibe-vibecoding.md` qui sert de référence à l'agent, puis lancez le skill VibeCoding Copilote. Il décrit le **quoi**, jamais le **comment** : c'est le skill qui vous proposera l'architecture et le découpage.
+> Ce PRD est **fourni par le tuto**. Copie-le tel quel à la racine de ton projet sous le nom `GoodVibe-PRD.md` (ou `PRD.md` si ton agent ne le retrouve pas), à côté du tuto `tuto-goodvibe-vibecoding.md` qui sert de référence à l'agent, puis lance le skill VibeCoding Copilote. Il décrit le **quoi**, jamais le **comment** : c'est le skill qui te proposera l'architecture et le découpage.
 
 ## 1. Vision & Objectifs
 
-GoodVibe est un assistant personnel du matin : il apprend qui vous êtes en discutant avec vous, prépare chaque jour un brief personnalisé (horoscope réécrit pour vous, image du jour, météo de votre ville, pense-bêtes), et répond à vos questions dans la journée depuis votre terminal ou une page web privée.
+GoodVibe est un assistant personnel du matin : il apprend qui tu es en discutant avec toi, prépare chaque jour un brief personnalisé (horoscope réécrit pour toi, image du jour, météo de ta ville, pense-bêtes), et répond à tes questions dans la journée depuis ton terminal ou une page web privée.
 
 **Objectifs :**
 - Servir de fil rouge à l'apprentissage des agents autonomes : un seul projet qui gagne, feature après feature, un déclencheur (chat, cron, webhook), une mémoire, un outil MCP et une observabilité complète.

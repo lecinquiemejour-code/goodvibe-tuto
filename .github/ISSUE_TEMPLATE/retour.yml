@@ -1,5 +1,5 @@
 name: Retour sur le tuto
-description: Ce qui a marché, là où vous avez bloqué, ce qui manquait. Cinq questions, quelques lignes.
+description: Ce qui a marché, là où tu as bloqué, ce qui manquait. Cinq questions, quelques lignes.
 title: "Retour tuto GoodVibe : "
 labels: ["retour"]
 body:
@@ -7,8 +7,8 @@ body:
     attributes:
       value: |
         Merci de prendre ce temps : chaque retour améliore le tuto.
-        Pour la question 3, relisez vos cases « encore flou » de la section « Ce que j'ai appris » de votre post-mortem.
-        N'écrivez ici ni clé, ni mot de passe, ni donnée personnelle : cette page est publique.
+        Pour la question 3, relis tes cases « encore flou » de la section « Ce que j'ai appris » de ton post-mortem.
+        N'écris ici ni clé, ni mot de passe, ni donnée personnelle : cette page est publique.
   - type: textarea
     id: marche
     attributes:

@@ -2,7 +2,7 @@ blank_issues_enabled: false
 contact_links:
   - name: Un retour privé, par mail
     url: mailto:lecinquiemejour+goodvibe@gmail.com
-    about: Pour un retour que vous préférez ne pas publier.
+    about: Pour un retour que tu préfères ne pas publier.
   - name: Une licence commerciale
     url: mailto:lecinquiemejour+licence@gmail.com
     about: Formation payante, revente, projet client (voir LICENSE.md).
