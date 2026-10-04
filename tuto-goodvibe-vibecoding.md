@@ -309,6 +309,46 @@ Le tour : le modèle reçoit l'objectif et la description des outils, choisit un
 
 La différence avec un script : le script suit des étapes fixées à l'avance ; l'agent IA décide de l'étape suivante à chaque tour. C'est aussi le critère pour savoir si un agent IA est utile : si la tâche n'exige aucune décision, un script suffit, il est plus rapide, gratuit et prévisible.
 
+**La boucle en code.** Dans `agent.py`, toute la boucle tient dans un `while`. Voici son squelette, réduit à l'essentiel. Ce n'est pas le code exact que l'agent de codage écrira : c'est sa forme, celle que tu dois reconnaître en le relisant.
+
+```python
+while tour_actuel <= MAX_TOURS:                  # le garde-fou
+    reponse = appeler_le_modele(entree)          # 1. on interroge le modèle
+
+    for morceau in reponse:                      # 2. on écoute sa réponse
+        ...                                      #    du texte : on l'affiche
+        ...                                      #    une demande d'outil : on la met de côté
+
+    if appels_outils:                            # 3. il a demandé un outil ?
+        resultats = executer_les_outils(appels_outils)   # notre code l'exécute
+        entree = resultats                       # 4. le résultat devient l'entrée suivante
+        tour_actuel += 1                         #    et on repart pour un tour
+    else:
+        break                                    # 5. aucun outil demandé : c'est fini
+```
+
+Les cinq temps :
+
+1. **Interroger le modèle.** Notre code lui envoie l'entrée du tour, avec le prompt système, les outils et les réglages.
+2. **Écouter la réponse.** Elle arrive par morceaux. Notre code trie : le texte s'affiche, une demande d'outil est mise de côté.
+3. **Exécuter l'outil.** Le modèle ne fait que demander. C'est notre code qui exécute.
+4. **Rendre le résultat au modèle.** Le résultat de l'outil devient l'entrée du tour suivant. C'est cette ligne qui referme la boucle.
+5. **S'arrêter.** Le modèle n'a demandé aucun outil : sa réponse est complète, le `break` fait sortir de la boucle.
+
+La condition d'arrêt normale est donc le `break` : c'est le modèle qui décide de la fin, en répondant sans demander d'outil. `MAX_TOURS`, dans la ligne du `while`, n'est que l'arrêt de secours.
+
+**Un exemple, tour par tour.** Tu demandes « Quel temps fait-il à Lyon ? ». Deux tours suffisent : un pour demander l'outil, un pour rédiger la réponse avec le résultat.
+
+```text
+Tour 1   Toi → modèle             « Quel temps fait-il à Lyon ? »
+         Modèle → notre code      « appelle meteo avec ville = Lyon »
+         Notre code exécute       résultat : 18 °C, nuageux
+
+Tour 2   Notre code → modèle      « voici le résultat : 18 °C, nuageux »
+         Modèle → toi             « Il fait 18 °C à Lyon, ciel nuageux. »
+         Aucun outil demandé      → fin normale
+```
+
 **Ce qu'on envoie au modèle à chaque appel.** Le modèle n'a aucune mémoire : à chaque appel, notre code lui renvoie tout. Quatre choses, toujours les mêmes :
 
 | Ce qu'on envoie | Sa forme | Son rôle | Dans GoodVibe |
