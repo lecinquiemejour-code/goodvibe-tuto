@@ -255,22 +255,28 @@ L'agent de codage doit **se présenter**, résumer la méthode PDCA en une phras
 3. Ouvre une **nouvelle conversation** avec l'agent de codage : c'est cela, « redémarrer la session ». Il relit alors ses fichiers de règles et la liste des skills.
 4. Recolle le prompt de l'étape 3, en entier. L'agent de codage constate ce qui est déjà fait et reprend à la bonne étape.
 
-### 6. Avant la première feature : la ceinture
+### 6. Avant la première feature : le contrôle des règles
 
-Pendant le cadrage, l'agent de codage écrit le fichier de règles du projet (`CLAUDE.md` et sa copie `AGENTS.md`). Avant de lancer la première feature, vérifie qu'il le recharge **tout seul** : ouvre une **nouvelle conversation** et colle cette question, et rien d'autre.
+Pendant le cadrage, l'agent de codage écrit le fichier de règles du projet (`CLAUDE.md` et sa copie `AGENTS.md`). Avant de lancer la première feature, vérifie qu'il le recharge **tout seul** : ouvre une **nouvelle conversation** et colle le prompt qui figure à la fin de `REPRISE.md`, et rien d'autre.
 
 ```text
-Sans ouvrir aucun fichier, dis-moi quelles règles tu dois suivre dans ce projet, une ligne par règle, et dans quel fichier tu les as trouvées.
+Reprends le vibecoding sur GoodVibe. Ce projet est déjà en cours et suit la méthode VibeCoding PDCA.
+
+D'abord, sans ouvrir aucun fichier, dis-moi quelles règles tu dois suivre dans ce projet, une ligne par règle, et dans quel fichier tu les as trouvées. Si tu ne les as pas, dis-le et arrête-toi là.
+
+Ensuite seulement, lis le SKILL.md du skill VibeCoding Copilote (dossier .agents/skills/vibecoding-copilote/), en particulier sa section « Reprise de session », puis la note d'en-tête de tuto-goodvibe-vibecoding.md, REPRISE.md et plan-action.md. Dis-moi où nous en sommes et ce que tu proposes de faire ensuite, puis attends ma réponse. Ne modifie aucun fichier sans mon GO.
 ```
 
-La ceinture est attachée si l'agent de codage :
+Le contrôle est réussi si, avant d'ouvrir le moindre fichier, l'agent de codage :
 
 - nomme le bon fichier : `AGENTS.md` pour Gemini dans Antigravity, Codex et GitHub Copilot ; `CLAUDE.md` pour Claude Code ;
 - cite la **Règle 0** : jamais de code ni de publication sans ton GO ;
 - cite les **dix lignes** propres à GoodVibe : la mise en ligne sur un VPS et non sur Netlify, le CHECK, le modèle Gemini choisi aux fiches 1 et 10, aucune donnée personnelle, le tuto comme référence, la pédagogie, les secrets, les erreurs jamais masquées, les commandes annoncées, leur sortie brute montrée puis expliquée, les rituels et les pauses proposées ;
 - donne **le résultat de ton diagnostic d'entrée** : tes trois réponses et l'accompagnement retenu.
 
-S'il hésite, s'il invente, ou s'il va lire des fichiers pour répondre, il ne charge pas ses règles. Vérifie que `AGENTS.md` existe à la racine du projet et qu'il est identique à `CLAUDE.md`, puis recommence dans une nouvelle conversation. Ne lance pas la première feature sans cette ceinture, et refais ce contrôle chaque fois que tu changes d'agent de codage. Le détail est dans le tuto, section 4.3.
+S'il hésite, s'il invente, ou s'il ouvre un fichier avant d'avoir cité ses règles, il ne charge pas ses règles. Vérifie que `AGENTS.md` existe à la racine du projet et qu'il est identique à `CLAUDE.md`, puis recommence dans une nouvelle conversation. Ne lance pas la première feature sans ce contrôle.
+
+Quand le contrôle est réussi, tu n'as rien d'autre à coller : l'agent de codage lit ensuite les documents du projet, te dit où vous en êtes, et la construction commence. Chaque fois que tu changes d'agent de codage, refais ce contrôle : pose-lui la question seule, dans une nouvelle conversation, avant le prompt de reprise. Le détail est dans le tuto, section 4.3.
 
 ### Pour les sessions suivantes
 
