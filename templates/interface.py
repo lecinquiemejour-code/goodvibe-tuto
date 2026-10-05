@@ -237,35 +237,71 @@ def afficher_demande(question: Optional[str]) -> tuple:
     return gr.update(visible=True), f"**{question}**"
 
 
-def confirmer_suppression() -> tuple:
+def inscrire_issue(historique: Optional[list], ligne: str) -> list:
+    """Ajoute à la conversation la ligne qui dit l'issue d'une demande de suppression.
+
+    La ligne est enregistrée comme un message de GoodVibe : elle reste après un
+    rechargement de la page, et repart au modèle au message suivant.
+
+    Args:
+        historique: La conversation affichée, telle que Gradio la transmet.
+        ligne: La ligne rédigée par confirmation.ligne_issue().
+
+    Returns:
+        La conversation, allongée de cette ligne.
+    """
+    sauvegarder_message(role="assistant", contenu=ligne)
+    logger.info("Issue de la suppression inscrite dans la conversation")
+    return [*(historique or []), {"role": "assistant", "content": ligne}]
+
+
+def confirmer_suppression(historique: Optional[list]) -> tuple:
     """Exécute la suppression en attente, sur le clic « Confirmer » de l'utilisateur.
 
     C'est ce clic, et lui seul, qui supprime : le programme agit sur l'élément qui a
     été affiché, quoi que le modèle ait demandé entre-temps.
 
+    Args:
+        historique: La conversation affichée, à laquelle s'ajoute la ligne d'issue.
+
     Returns:
-        Le cadre caché, la question remise à zéro, et le chat vidé si tout a été effacé
-        (la conversation effacée de la base ne doit pas rester à l'écran, sinon elle
-        repartirait au modèle au message suivant).
+        Le cadre caché, la question remise à zéro, et la conversation : allongée de la
+        ligne d'issue, ou vidée si tout a été effacé (la conversation effacée de la
+        base ne doit pas rester à l'écran, sinon elle repartirait au modèle au message
+        suivant).
     """
     demande = confirmation.en_attente()
     message = confirmation.confirmer()
     gr.Info(message)
     logger.info("Suppression confirmée par l'utilisateur")
-    if demande is not None and demande.type == confirmation.TOUT:
+    if demande is None:
+        # Second clic : il ne reste rien à confirmer, la conversation ne bouge pas
+        return gr.update(visible=False), None, gr.skip(), gr.skip(), gr.skip()
+    if demande.type == confirmation.TOUT:
+        # Tout est effacé, la conversation aussi : on n'y réécrit rien
         return gr.update(visible=False), None, [], [], []
-    return gr.update(visible=False), None, gr.skip(), gr.skip(), gr.skip()
+    conversation = inscrire_issue(historique, confirmation.ligne_issue(message))
+    return gr.update(visible=False), None, conversation, conversation, conversation
 
 
-def annuler_suppression() -> tuple:
+def annuler_suppression(historique: Optional[list]) -> tuple:
     """Abandonne la suppression en attente, sur le clic « Annuler » de l'utilisateur.
 
+    Args:
+        historique: La conversation affichée, à laquelle s'ajoute la ligne d'issue.
+
     Returns:
-        Le cadre caché et la question remise à zéro. Rien n'est supprimé.
+        Le cadre caché, la question remise à zéro, et la conversation allongée de la
+        ligne « Suppression annulée ». Rien n'est supprimé.
     """
-    gr.Info(confirmation.refuser())
+    demande = confirmation.en_attente()
+    message = confirmation.refuser()
+    gr.Info(message)
     logger.info("Suppression refusée par l'utilisateur")
-    return gr.update(visible=False), None
+    if demande is None:
+        return gr.update(visible=False), None, gr.skip(), gr.skip(), gr.skip()
+    conversation = inscrire_issue(historique, confirmation.ligne_issue(message, annulation=True))
+    return gr.update(visible=False), None, conversation, conversation, conversation
 
 
 CSS_INTERFACE = """
@@ -506,13 +542,13 @@ def creer_interface() -> gr.Blocks:
                 )
                 btn_confirmer.click(
                     fn=confirmer_suppression,
-                    inputs=[],
+                    inputs=[chatbot],
                     outputs=[zone_confirmation, demande_suppression, chatbot, chat.chatbot_state, chat.chatbot_value],
                 )
                 btn_annuler.click(
                     fn=annuler_suppression,
-                    inputs=[],
-                    outputs=[zone_confirmation, demande_suppression],
+                    inputs=[chatbot],
+                    outputs=[zone_confirmation, demande_suppression, chatbot, chat.chatbot_state, chat.chatbot_value],
                 )
 
             with gr.Tab("📰 Brief du jour"):

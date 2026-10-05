@@ -18,6 +18,7 @@ from fragments import COULISSES, RELEVE, REPONSE, Fragment, avec_markdown
 from interface import (
     MESSAGE_SANS_BRIEF,
     afficher_demande,
+    annuler_suppression,
     charger_page,
     chat_stream,
     confirmer_suppression,
@@ -287,9 +288,11 @@ def test_oubli_demande_dans_le_chat_attend_la_confirmation(faux_gemini):
         "L'effacement attend ta confirmation.",
     ]
 
-    confirmer_suppression()
+    _, _, conversation, _, _ = confirmer_suppression([{"role": "user", "content": "oublie-moi"}])
 
     assert db.get_profil() is None
+    # Tout est effacé, la conversation aussi : aucune ligne d'issue n'y est réécrite
+    assert conversation == []
     assert db.charger_historique() == []
 
 
@@ -326,10 +329,107 @@ def test_suppression_proposee_dans_le_chat_ouvre_le_cadre(faux_gemini):
     assert "Acheter du pain" in texte
 
     # Le clic de l'utilisateur supprime, et le cadre se referme
-    cadre, question_suivante, _, _, _ = confirmer_suppression()
+    affiche = historique_vu_par_gradio("retire ma note sur le pain", messages)
+    cadre, question_suivante, conversation, etat, valeur = confirmer_suppression(affiche)
     assert cadre == {"__type__": "update", "visible": False}
     assert question_suivante is None
     assert db.get_notes() == []
+
+    # L'issue est inscrite dans la conversation, à l'écran et en base
+    ligne = f"✅ Note n° {id_note} retirée."
+    assert conversation[-1] == {"role": "assistant", "content": ligne}
+    assert len(conversation) == len(affiche) + 1
+    assert etat == conversation
+    assert valeur == conversation
+    assert db.charger_historique()[-1] == {"role": "assistant", "content": ligne}
+
+
+def test_annulation_inscrite_puis_nouvelle_proposition(faux_gemini):
+    """Vérifie qu'après « Annuler », le modèle lit l'annulation au message suivant.
+
+    Sans la ligne d'issue, le modèle relit sa proposition, la croit toujours en attente
+    et ne rappelle pas l'outil quand l'utilisateur redemande.
+    """
+    id_note = db.ajouter_note("Acheter du pain")
+    tour1, tour2 = fabriquer_flux_outil(
+        nom_outil="supprimer_note",
+        arguments={"id_note": id_note},
+        reponse_finale="Confirme, et je retire cette note.",
+    )
+    tour3, tour4 = fabriquer_flux_outil(
+        nom_outil="supprimer_note",
+        arguments={"id_note": id_note},
+        reponse_finale="Confirme, et je retire cette note.",
+    )
+    faux_gemini.interactions.scenarios = [tour1, tour2, tour3, tour4]
+
+    etapes = list(chat_stream("retire ma note sur le pain", [], voir_reflexion=False))
+    affiche = historique_vu_par_gradio("retire ma note sur le pain", etapes[-1][0])
+
+    # Le clic sur « Annuler » ferme le cadre et inscrit l'annulation
+    cadre, question, conversation, etat, valeur = annuler_suppression(affiche)
+    ligne = "❌ Suppression annulée. Rien n'a été supprimé."
+    assert cadre == {"__type__": "update", "visible": False}
+    assert question is None
+    assert conversation[-1] == {"role": "assistant", "content": ligne}
+    assert etat == conversation
+    assert valeur == conversation
+    assert db.charger_historique()[-1] == {"role": "assistant", "content": ligne}
+    assert confirmation.en_attente() is None
+    assert len(db.get_notes()) == 1
+
+    # Au message suivant, l'annulation repart au modèle avec le dialogue
+    chatbot = gr.Chatbot()
+    historique = chatbot.preprocess(chatbot.postprocess(conversation))
+    etapes = list(chat_stream("retire ma note sur le pain", historique, voir_reflexion=False))
+    entree = faux_gemini.interactions.appels[2]["input"]
+    assert entree == (
+        "User: retire ma note sur le pain\n"
+        "Assistant: Confirme, et je retire cette note.\n"
+        f"Assistant: {ligne}\n"
+        "User: retire ma note sur le pain"
+    )
+
+    # Le modèle a rappelé l'outil : la question est de nouveau posée
+    assert etapes[-1][1] == f"Supprimer la note n° {id_note}, « Acheter du pain » ?"
+
+
+def test_second_clic_n_inscrit_rien():
+    """Vérifie qu'un clic sans demande en attente ne touche pas à la conversation."""
+    for clic in (annuler_suppression, confirmer_suppression):
+        _, _, conversation, etat, valeur = clic([{"role": "user", "content": "salut"}])
+        assert conversation == etat == valeur == gr.skip()
+    assert db.charger_historique() == []
+
+
+def test_terminal_annulation_inscrite_dans_la_conversation(faux_gemini, monkeypatch):
+    """Vérifie la même garantie au terminal : le « non » s'inscrit, et repart au modèle."""
+    id_note = db.ajouter_note("Acheter du pain")
+    tour1, tour2 = fabriquer_flux_outil(
+        nom_outil="supprimer_note",
+        arguments={"id_note": id_note},
+        reponse_finale="Confirme, et je retire cette note.",
+    )
+    faux_gemini.interactions.scenarios = [tour1, tour2, fabriquer_flux_texte("D'accord.")]
+    saisies = iter(["retire ma note sur le pain", "non", "ok", "quitte"])
+    monkeypatch.setattr("builtins.input", lambda _: next(saisies))
+    monkeypatch.setattr(chat_terminal, "verifier_config", lambda: None)
+
+    chat_terminal.lancer_chat()
+
+    ligne = "❌ Suppression annulée. Rien n'a été supprimé."
+    entree = faux_gemini.interactions.appels[2]["input"]
+    assert entree == (
+        f"User: retire ma note sur le pain\nAssistant: Confirme, et je retire cette note.\nAssistant: {ligne}\nUser: ok"
+    )
+    assert [m["content"] for m in db.charger_historique()] == [
+        "retire ma note sur le pain",
+        "Confirme, et je retire cette note.",
+        ligne,
+        "ok",
+        "D'accord.",
+    ]
+    assert len(db.get_notes()) == 1
 
 
 def test_nouveau_message_abandonne_la_demande_en_attente(faux_gemini):

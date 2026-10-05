@@ -107,6 +107,27 @@ def refuser() -> str:
     return RIEN_SUPPRIME
 
 
+def ligne_issue(message: str, annulation: bool = False) -> str:
+    """Rédige la ligne inscrite dans la conversation après le geste de l'utilisateur.
+
+    C'est le programme qui écrit cette ligne, pas le modèle. Au message suivant, le
+    modèle la relit et sait que sa proposition n'attend plus : sans elle, il croit la
+    demande toujours en attente et ne la repropose pas quand l'utilisateur redemande.
+
+    Args:
+        message: Le message rendu par confirmer() ou refuser().
+        annulation: True si l'utilisateur a refusé.
+
+    Returns:
+        La ligne à ajouter à la conversation, la même dans la page et dans le terminal.
+    """
+    if annulation:
+        return f"❌ Suppression annulée. {message}"
+    # Une confirmation peut ne rien supprimer (élément déjà parti) : la marque le dit
+    marque = "❌" if RIEN_SUPPRIME in message else "✅"
+    return f"{marque} {message}"
+
+
 def confirmer() -> str:
     """Exécute la demande en attente, et elle seule, puis l'efface.
 

@@ -193,7 +193,7 @@ def test_page_web_confirme_par_le_bouton():
     id_note = db.ajouter_note("Acheter du pain")
     outils.supprimer_note(id_note)
 
-    cadre, question, chat, etat, valeur = confirmer_suppression()
+    cadre, question, chat, etat, valeur = confirmer_suppression([])
 
     assert cadre == {"__type__": "update", "visible": False}
     assert question is None
@@ -206,7 +206,7 @@ def test_page_web_annule_par_le_bouton():
     id_note = db.ajouter_note("Acheter du pain")
     outils.supprimer_note(id_note)
 
-    cadre, question = annuler_suppression()
+    cadre, question, chat, etat, valeur = annuler_suppression([])
 
     assert cadre == {"__type__": "update", "visible": False}
     assert question is None
@@ -218,7 +218,7 @@ def test_page_web_oubli_confirme_vide_le_chat():
     db.sauvegarder_profil(prenom="Zoe", ville="Lille", signe="Lion")
     outils.oublier_utilisateur()
 
-    _, _, chat, etat, valeur = confirmer_suppression()
+    _, _, chat, etat, valeur = confirmer_suppression([])
 
     assert (chat, etat, valeur) == ([], [], [])
     assert db.get_profil() is None

@@ -21,7 +21,8 @@ def demander_confirmation(historique: list) -> None:
     tapée par l'utilisateur qui décide : l'équivalent du bouton de la page web.
 
     Args:
-        historique: La mémoire de travail du chat, vidée si tout a été effacé.
+        historique: La mémoire de travail du chat : vidée si tout a été effacé, sinon
+            allongée de la ligne qui dit l'issue de la demande.
     """
     demande = confirmation.en_attente()
     if demande is None:
@@ -31,11 +32,21 @@ def demander_confirmation(historique: list) -> None:
     except (KeyboardInterrupt, EOFError):
         reponse = "non"
     if reponse in ("oui", "o", "yes", "y"):
-        print(f"[{confirmation.confirmer()}]\n")
+        message = confirmation.confirmer()
+        print(f"[{message}]\n")
         if demande.type == confirmation.TOUT:
+            # Tout est effacé, la conversation aussi : on n'y réécrit rien
             historique.clear()
+            return
+        ligne = confirmation.ligne_issue(message)
     else:
-        print(f"[{confirmation.refuser()}]\n")
+        message = confirmation.refuser()
+        print(f"[{message}]\n")
+        ligne = confirmation.ligne_issue(message, annulation=True)
+    # L'issue s'inscrit dans la conversation : au message suivant, le modèle sait que
+    # sa proposition n'attend plus, et la repropose si l'utilisateur redemande.
+    historique.append({"role": "assistant", "content": ligne})
+    sauvegarder_message(role="assistant", contenu=ligne)
 
 
 def lancer_chat() -> None:
