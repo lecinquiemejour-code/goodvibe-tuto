@@ -56,6 +56,6 @@ Les fichiers Python ne contiennent aucun marqueur : ils tournent tels quels, et 
 ## 5. Ce que ces fichiers ne contiennent pas, exprès
 
 - **Aucun secret** : pas de `.env`. Les clés et mots de passe sont saisis par le pilote.
-- **Aucun nom de modèle** : `MODELE_TEXTE` et `MODELE_IMAGE` sont recommandés par l'agent au PLAN des fiches 1 et 10, d'après la documentation officielle Google du jour. Sans eux, le programme s'arrête avec un message clair.
+- **Aucun nom de modèle** : `MODELE_TEXTE` et `MODELE_IMAGE` sont recommandés par l'agent au PLAN des fiches 1 et 10, d'après la documentation officielle Google du jour, et inscrits dans le `.env` et dans `.env.example`, jamais dans `config.py`, ni en valeur par défaut. Sans eux, le programme s'arrête avec un message clair. Les deux `.env` (ordinateur du pilote, serveur) ont les mêmes lignes, pas les mêmes valeurs : `deploy/deployer.sh` compare les noms de lignes du `.env` du serveur à `.env.example` et s'arrête s'il en manque une, sans afficher une valeur.
 - **Aucun prix** : la grille de prix est relevée par le pilote sur la page des tarifs de Google et saisie dans l'onglet Activité.
 - **Aucun document de cadrage** (`archi-stack.md`, `fdd.md`, `plan-action.md`) : le pilote les co-construit avec l'agent, c'est là qu'il apprend à cadrer.

@@ -61,6 +61,29 @@ else
     echo "Chemin de uvx inscrit dans le .env"
 fi
 
+echo "=== 4 ter. Contrôle des lignes du .env du serveur ==="
+# Les deux .env (celui de l'ordinateur du pilote, celui du serveur) ont les mêmes lignes,
+# pas les mêmes valeurs. .env.example est la référence : chaque ligne NOM= non commentée
+# doit exister dans le .env du serveur. Seuls les noms sont comparés : aucune valeur
+# n'est lue ni affichée. Une ligne absente arrêterait le service au démarrage (config.py) :
+# on s'arrête ici, avant le redémarrage, et on dit laquelle.
+if [ ! -f .env ]; then
+    echo "ERREUR : fichier .env absent sur le serveur. Le déploiement s'arrête."
+    exit 1
+fi
+MANQUANTES=""
+for NOM in $(grep -oE '^[A-Z_]+=' .env.example | tr -d '='); do
+    if ! grep -q "^${NOM}=" .env; then
+        MANQUANTES="$MANQUANTES $NOM"
+    fi
+done
+if [ -n "$MANQUANTES" ]; then
+    echo "ERREUR : lignes absentes du .env du serveur :$MANQUANTES"
+    echo "Ajoutez-les au .env du serveur, sans jamais recopier le .env de l'ordinateur, puis relancez le déploiement."
+    exit 1
+fi
+echo "Toutes les lignes de .env.example sont présentes dans le .env du serveur"
+
 echo "=== 5. Redémarrage des services de l'agent IA {{NOM_AGENT}} ==="
 # Redémarrage propre sans mot de passe grâce à la règle sudoers configurée aux fiches 12 et 14
 sudo systemctl restart {{NOM_AGENT}}-web
