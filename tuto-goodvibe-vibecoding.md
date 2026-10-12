@@ -1737,7 +1737,7 @@ tests qui dépendent de la vraie clé API (ils échoueront dans la CI) ; base de
 
 - *Le problème.* GoodVibe vit sur ton ordinateur : il s'éteint avec lui. Il ne peut donc ni préparer le brief à 7 h, ni te répondre depuis un autre ordinateur, ni recevoir un pense-bête envoyé de ton téléphone.
 - *L'idée.* On l'installe sur un ordinateur loué, allumé en permanence et relié à Internet. C'est déménager l'atelier de ton garage vers un local sur la rue : il lui faut une adresse, une serrure, et quelqu'un qui ouvre le matin.
-- *Les mots nouveaux.* **Serveur** ou **VPS** : cet ordinateur loué. **SSH** : la façon de s'y connecter à distance, avec une clé au lieu d'un mot de passe. **Dépôt GitHub** : la copie en ligne du code, où le serveur vient le chercher. **Adresse IP** : le numéro du serveur sur Internet. **Nom de domaine** : l'adresse en toutes lettres qui mène à ce numéro. **HTTPS** : la serrure, qui chiffre les échanges. **Cron** : l'horloge du serveur, qui lance le brief à 7 h. **Crontab** : la liste des tâches du cron, avec leurs horaires. **Compte rendu** (« log ») : le fichier où un programme note ce qu'il a fait. **Service** : un programme que le serveur relance tout seul s'il s'arrête. **Pare-feu** : ce qui ferme toutes les portes sauf celles qu'on a choisies.
+- *Les mots nouveaux.* **Serveur** ou **VPS** : cet ordinateur loué. **SSH** : la façon de s'y connecter à distance, avec une clé au lieu d'un mot de passe. Cette clé va par paire : un cadenas, qu'on pose sur la porte et qu'on peut montrer à tout le monde, et la clé qui l'ouvre, qu'on garde chez soi et qu'on ne montre jamais. **Dépôt GitHub** : la copie en ligne du code, où le serveur vient le chercher. **Adresse IP** : le numéro du serveur sur Internet. **Nom de domaine** : l'adresse en toutes lettres qui mène à ce numéro. **HTTPS** : la serrure, qui chiffre les échanges. **Cron** : l'horloge du serveur, qui lance le brief à 7 h. **Crontab** : la liste des tâches du cron, avec leurs horaires. **Compte rendu** (« log ») : le fichier où un programme note ce qu'il a fait. **Service** : un programme que le serveur relance tout seul s'il s'arrête. **Pare-feu** : ce qui ferme toutes les portes sauf celles qu'on a choisies.
 
 **À toi d'abord** : après la leçon, et avant de te montrer son plan, l'agent de codage te demande : « Comment t'y prendrais-tu, et comment vérifierais-tu ? ». Réponds en quelques phrases, ou passe : la réponse est facultative. Il te dira ce qui rejoint son plan et ce qui en diffère, puis il suivra son plan, le même pour tous.
 
@@ -1863,6 +1863,20 @@ Le nom et les ports se choisissent une fois, avant tout GO, et s'écrivent à tr
 **Deux mémoires, deux mondes.** C'est le même principe pour la mémoire. La base de GoodVibe ne part jamais sur GitHub : elle contient tes données. Le serveur démarre donc avec une mémoire vide, et il faut t'y présenter de nouveau. Ce que GoodVibe apprend sur ton ordinateur, il ne le sait pas en ligne, et inversement. Quand tu ouvres l'onglet Mémoire, regarde l'adresse de la page : elle te dit laquelle des deux mémoires tu lis.
 
 **Le serveur MCP `fetch` déménage aussi.** En ligne, le principe ne change pas : GoodVibe lance `fetch` sur le VPS, à côté de lui, le temps de lire l'horoscope, puis le laisse s'arrêter. Il n'existe pas de serveur `fetch` hébergé ailleurs, et il n'ouvre aucune porte sur Internet : seul GoodVibe lui parle. Deux conditions : `uvx` est installé sur le VPS, et GoodVibe le trouve. Sur ton ordinateur, le terminal sait où sont rangés les programmes. Sur le serveur, ni le service ni le cron ne le savent : c'est la règle des chemins du cron, appliquée à `uvx`. Son chemin s'écrit en entier. Sinon l'horoscope marche chez toi et échoue en ligne, et le brief te le dit par un message d'erreur.
+
+**Une clé SSH : un cadenas et sa clé.** Le mot « clé » revient souvent à partir d'ici, et il désigne chaque fois la même chose : une paire. La partie publique est un cadenas : on le pose sur la porte de celui qu'on veut laisser entrer, et on peut le montrer à tout le monde sans risque. La partie privée est la clé qui l'ouvre : elle reste chez celui qui entre, elle ne se tape jamais, ne s'affiche jamais, ne part jamais dans le dépôt. Pour savoir de quelle clé on parle, deux questions suffisent : qui tient la clé, et où est le cadenas ? Cette fiche en crée deux :
+
+| La clé | Qui tient la clé | Où est le cadenas | Ce qu'elle ouvre |
+|---|---|---|---|
+| Ta clé | Toi, sur ton ordinateur (`VPS_SSH_KEY_PATH` dit où) | Sur le serveur | Le serveur, pour toi, pour l'agent de codage et pour FileZilla |
+| La clé de lecture du dépôt | Le serveur | Sur ton dépôt GitHub, qui l'appelle « deploy key » | Le code, en lecture seule, pour que le serveur vienne le chercher |
+
+Pourquoi deux clés, et pas une seule copiée partout : une clé par entrant. Si une clé est perdue, ou si un entrant ne doit plus entrer, on retire son cadenas, et les autres continuent d'ouvrir. La fiche 13 ajoute un troisième entrant, le robot GitHub Actions, avec sa propre clé. Attention aux mots : la « deploy key » de GitHub et la « clé de déploiement » de la fiche 13 sont deux clés différentes, dans deux sens opposés.
+
+**Où est ta clé, et pourquoi là.** L'agent de codage la crée dans le dossier `.ssh` de ton dossier personnel : `C:\Users\<toi>\.ssh\` sous Windows, `~/.ssh/` sur Mac et Linux. Deux fichiers y apparaissent : `id_ed25519`, la clé, et `id_ed25519.pub`, le cadenas. Le point devant le nom du dossier le cache dans l'explorateur : c'est voulu, on ne l'ouvre pas tous les jours. Trois raisons d'être là et pas ailleurs. C'est l'endroit où SSH, FileZilla et l'agent de codage cherchent une clé sans qu'on leur dise : une clé rangée ailleurs devrait être désignée à chaque fois. C'est hors du dossier du projet : elle ne part ni dans Git, ni avec le projet si tu le copies ou le partages. Et une clé est à toi, pas au projet : la même ouvrira ton prochain serveur. La ligne `VPS_SSH_KEY_PATH` de ton `.env` dit où elle est, pour mémoire, et ne contient jamais la clé.
+
+<!-- AGENT : les clés, règles 6 et 9. À l'étape 4, avant de créer la clé du pilote, tu fais la leçon du cadenas et de la clé, avec un schéma texte : qui tient la clé, où est le cadenas. Une fois la clé créée, tu montres le chemin du dossier .ssh et la liste de ses deux fichiers par leur nom, jamais leur contenu, et tu dis pourquoi elle est là. À l'étape 6, quand tu crées la clé de lecture du dépôt, tu dis que c'est le deuxième cadenas, dans l'autre sens (le cadenas sur GitHub, la clé sur le serveur), et que GitHub l'appelle « deploy key » : ce n'est pas la clé de déploiement de la fiche 13. Aucune clé privée ne s'affiche, ni dans la discussion ni dans un fichier du dépôt ; si le pilote veut voir à quoi ressemble une clé, tu lui montres le cadenas, la partie publique.
+-->
 
 **Ce qui ne s'écrit jamais dans le dépôt.** Ni le mot de passe de la page, ni une clé, ni l'adresse du serveur. Le document de reprise que tient l'agent de codage est enregistré dans Git : il dit où trouver ces informations, il ne les contient pas. Elles se rangent dans le `.env` de ton ordinateur, qui ne part jamais sur GitHub, à la suite des lignes existantes. L'agent de codage y ajoute les lignes non secrètes par une commande, sans ouvrir le fichier ; le mot de passe de la page en ligne, tu l'y écris toi-même :
 
@@ -2070,7 +2084,7 @@ Si le compte rendu est absent, le cron ne s'est pas déclenché. S'il contient u
 
 - *Le problème.* Chaque modification demande de se connecter au serveur et d'y retaper les mêmes commandes. C'est long, et on finit toujours par en oublier une.
 - *L'idée.* On confie ce travail à un robot. À chaque envoi de code, il rejoue les tests, puis il met le serveur à jour, seulement si les tests sont bons. C'est le contrôle qualité en sortie d'usine : rien ne part en livraison sans y être passé. Et le robot livre exactement ce qu'il a contrôlé : le contrôleur dit au livreur « livre le colis n° 12 », pas « prends le dernier sur l'étagère ».
-- *Les mots nouveaux.* **Intégration continue** (CI) : tester à chaque envoi de code. **Déploiement continu** (CD) : mettre en ligne automatiquement si les tests passent. **Pipeline** : la suite des étapes que suit le robot. **Secret** : une information confiée à GitHub, qu'il utilise sans jamais l'afficher. **Clé de déploiement** : celle qui permet au robot d'entrer sur le serveur. **Identifiant de commit** : le numéro, une suite de lettres et de chiffres, qui désigne une version précise du code.
+- *Les mots nouveaux.* **Intégration continue** (CI) : tester à chaque envoi de code. **Déploiement continu** (CD) : mettre en ligne automatiquement si les tests passent. **Pipeline** : la suite des étapes que suit le robot. **Secret** : un casier fermé chez GitHub. On y range ce que le robot doit savoir sans l'écrire dans le fichier du workflow, qui part dans le dépôt : pas toujours un mot de passe. Ici, trois casiers : l'adresse du serveur, le nom d'utilisateur, et la clé du robot. GitHub les lit, et ne les affiche jamais. **Clé de déploiement** : la troisième clé SSH du parcours, celle du robot : il tient la clé, le cadenas est sur le serveur. Ce n'est pas la « deploy key » de GitHub, qui est la clé de lecture de la fiche 12. **Identifiant de commit** : le numéro, une suite de lettres et de chiffres, qui désigne une version précise du code.
 
 **À toi d'abord** : après la leçon, et avant de te montrer son plan, l'agent de codage te demande : « Comment t'y prendrais-tu, et comment vérifierais-tu ? ». Réponds en quelques phrases, ou passe : la réponse est facultative. Il te dira ce qui rejoint son plan et ce qui en diffère, puis il suivra son plan, le même pour tous.
 
@@ -2080,7 +2094,7 @@ Si le compte rendu est absent, le cron ne s'est pas déclenché. S'il contient u
 
 | Étape | Ce qui se passe | Ce que tu vois et fais |
 |---|---|---|
-| 1. La clé de déploiement | L'agent de codage crée une paire de clés et installe la partie publique sur le serveur | Tu sais d'où vient la clé, où elle est rangée, et à quoi elle sert |
+| 1. La clé de déploiement | L'agent de codage crée la clé du robot et pose son cadenas sur le serveur | Tu sais qui tient cette clé, où est son cadenas, et à quoi elle sert |
 | 2. Les trois secrets | L'agent de codage les dépose sur GitHub avec `gh secret set`, chacun lu depuis un fichier, jamais affiché | Tu ouvres Settings, Secrets and variables, Actions : les trois noms y sont, sans leur valeur |
 | 3. Le premier envoi | L'agent de codage envoie le pipeline sur GitHub | Tu ouvres l'onglet Actions et regardes le robot travailler : orange, puis vert |
 | 4. Le test heureux | L'agent de codage annonce un changement visible, puis l'envoie | Tu constates le changement sur la page publique, et que la version installée est bien celle que le robot a testée |
@@ -2132,28 +2146,36 @@ flowchart LR
 
 Pour lire une panne : clique sur la ligne rouge, puis sur le travail rouge, et lis les **dernières lignes** du compte rendu. La cause y est presque toujours écrite en clair.
 
-**Le trajet des deux clés.**
+**Le trajet des trois clés.**
 
 ```mermaid
 flowchart LR
+    subgraph Ordinateur["Ton ordinateur"]
+        K["Ta clé"]
+    end
     subgraph GitHub
         R["Ton dépôt"]
-        S["Secret VPS_SSH_KEY :<br/>partie privée de la<br/>clé de déploiement"]
+        S["Secret VPS_SSH_KEY :<br/>la clé du robot"]
     end
     subgraph Serveur
-        A["Liste des clés<br/>autorisées :<br/>partie publique de<br/>la clé de déploiement"]
-        L["Partie privée de<br/>la clé de lecture"]
+        A["Liste des clés autorisées :<br/>le cadenas de ta clé<br/>et celui du robot"]
+        L["La clé de lecture"]
     end
-    S -- "fiche 13 : le robot<br/>entre sur le serveur" --> A
+    K -- "fiche 12 : tu entres<br/>sur le serveur" --> A
     L -- "fiche 12 : le<br/>serveur lit le code" --> R
+    S -- "fiche 13 : le robot<br/>entre sur le serveur" --> A
 ```
 
-**Deux clés, deux directions**, à ne pas confondre :
+**Trois clés, trois entrants**, à ne pas confondre. Pour chacune, les deux questions de la fiche 12 : qui tient la clé, où est le cadenas.
 
-| Clé | Elle permet | Où va la partie publique | Créée à la fiche |
-|---|---|---|---|
-| Clé de lecture du dépôt | Au serveur de lire le code sur GitHub | Dans le dépôt GitHub (« Deploy keys ») | 12 |
-| Clé de déploiement | À GitHub Actions d'entrer sur le serveur | Sur le VPS ; la partie privée va dans le secret `VPS_SSH_KEY` | 13 |
+| La clé | Qui tient la clé | Où est le cadenas | Ce qu'elle ouvre | Créée à la fiche | Pour la retirer |
+|---|---|---|---|---|---|
+| Ta clé | Toi, sur ton ordinateur | Sur le serveur | Le serveur, pour toi, l'agent de codage et FileZilla | 12 | Retirer son cadenas de la liste des clés autorisées du serveur |
+| La clé de lecture du dépôt (« deploy key » pour GitHub) | Le serveur | Sur ton dépôt GitHub | Le code, en lecture seule | 12 | Supprimer la deploy key dans les réglages du dépôt |
+| La clé de déploiement | Le robot GitHub Actions, dans le secret `VPS_SSH_KEY` ; une copie reste dans ton dossier `.ssh`, sous un autre nom, pour redéposer le secret si besoin | Sur le serveur | Le serveur, pour le robot seulement | 13 | Retirer son cadenas du serveur, puis supprimer le secret |
+
+<!-- AGENT : les clés et les secrets, règles 6 et 9. À l'étape 1 du déroulé guidé, avant de créer la clé de déploiement, tu redis l'image du cadenas et de la clé et tu montres ce tableau des trois clés en schéma texte : qui tient la clé, où est le cadenas. Tu dis que c'est la troisième clé, celle du robot, et qu'elle n'est pas la « deploy key » de la fiche 12. À l'étape 2, avant `gh secret set`, tu dis ce que contient chacun des trois secrets (l'adresse du serveur, le nom d'utilisateur, la clé du robot) et pourquoi les deux premiers vont dans le casier alors qu'ils ne sont pas secrets : pour ne pas les écrire dans le fichier du workflow, qui est dans le dépôt. Le pilote voit les trois noms sur GitHub, jamais une valeur.
+-->
 
 <details>
 <summary><b>Les trois pannes du premier envoi</b> (dépannage)</summary>
@@ -2188,7 +2210,7 @@ Quand un envoi échoue, l'agent de codage te le dit aussitôt, te montre la lign
 <details>
 <summary><b>Pièges</b> (à ouvrir après le verdict du CHECK)</summary>
 
-envoyer le code avant d'avoir créé les secrets ; poser un fichier à la main sur le serveur ; changer sur le serveur les droits d'un fichier du dépôt (`chmod`), ce qui bloque la mise à jour du déploiement suivant ; script qui retombe sur la dernière version de `main` quand l'identifiant manque (il doit s'arrêter) ; croire qu'une coche verte garantit que la version en ligne est celle qui a été testée, sans avoir comparé les deux identifiants ; annoncer « c'est en ligne » après des tests verts, sans avoir lu le résultat du déploiement ; enchaîner casser et réparer sans laisser le pilote voir la croix rouge ; oublier de retirer le changement visible du test heureux ; afficher la clé privée pour la faire copier ; confondre les deux clés ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 12 manque) ; workflow déclenché sur toutes les branches.
+envoyer le code avant d'avoir créé les secrets ; poser un fichier à la main sur le serveur ; changer sur le serveur les droits d'un fichier du dépôt (`chmod`), ce qui bloque la mise à jour du déploiement suivant ; script qui retombe sur la dernière version de `main` quand l'identifiant manque (il doit s'arrêter) ; croire qu'une coche verte garantit que la version en ligne est celle qui a été testée, sans avoir comparé les deux identifiants ; annoncer « c'est en ligne » après des tests verts, sans avoir lu le résultat du déploiement ; enchaîner casser et réparer sans laisser le pilote voir la croix rouge ; oublier de retirer le changement visible du test heureux ; afficher la clé privée pour la faire copier ; confondre les trois clés, ou la « deploy key » de GitHub avec la clé de déploiement ; « Permission denied » (clé publique absente du VPS, ou mauvais utilisateur dans le secret) ; `sudo` qui demande un mot de passe dans le job (la règle `sudoers` de la fiche 12 manque) ; workflow déclenché sur toutes les branches.
 
 </details>
 
