@@ -2314,7 +2314,7 @@ Un pense-bête en échec reste en base : le brief suivant le reprend, qu'il vien
 
 **Ce que tu fais** : choisir un jeton secret long et l'écrire toi-même dans ton `.env` local, sur une ligne `WEBHOOK_TOKEN=...` sans espace autour du signe égal, puis enregistrer le fichier avant de dire « fait ». Sur le serveur, c'est l'agent de codage qui le recopie, sans l'afficher. Après la coche verte, tu envoies un pense-bête par deux chemins, l'un après l'autre, parce qu'ils ne prouvent pas la même chose.
 
-1. **Depuis un navigateur, avec Hoppscotch.** Ouvre [hoppscotch.io](https://hoppscotch.io) sur ton téléphone ou ton ordinateur, sans compte : méthode `POST`, URL `https://goodvibe.ton-domaine.fr/pense-bete`, onglet *Headers* : `X-Token` = ton jeton, onglet *Body* : JSON `{"texte": "Dentiste à 10 h"}`, puis *Send*. C'est le seul chemin qui prouve que CORS est bien réglé : un navigateur qui bloque se voit ici, jamais dans le terminal.
+1. **Depuis un navigateur, avec Hoppscotch.** Ouvre [hoppscotch.io](https://hoppscotch.io) sur ton téléphone ou ton ordinateur, sans compte : méthode `POST`, URL `https://monagent.1-2-3-4.sslip.io/pense-bete`, onglet *Headers* : `X-Token` = ton jeton, onglet *Body* : JSON `{"texte": "Dentiste à 10 h"}`, puis *Send*. C'est le seul chemin qui prouve que CORS est bien réglé : un navigateur qui bloque se voit ici, jamais dans le terminal.
 2. **Depuis ton terminal, avec `curl.exe`.** Un webhook est une adresse web ordinaire : tout ce qui sait faire une requête HTTP peut l'appeler, ton terminal compris. C'est le chemin que tu réutiliseras au quotidien, et celui que suivra plus tard une automatisation (section 7.2). Dans PowerShell, à la racine du projet :
 
 ```powershell
@@ -2322,7 +2322,7 @@ Un pense-bête en échec reste en base : le brief suivant le reprend, qu'il vien
 $token = (Get-Content .env | Select-String "^WEBHOOK_TOKEN=").Line.Split('=', 2)[1].Trim()
 # Sous Windows PowerShell 5.1, les guillemets du JSON s'écrivent \" : sinon ils sont retirés en route
 $body = '{\"texte\": \"Rappeler le plombier\"}'
-curl.exe -i -X POST "https://goodvibe.ton-domaine.fr/pense-bete" -H "X-Token: $token" -H "Content-Type: application/json" -d $body
+curl.exe -i -X POST "https://monagent.1-2-3-4.sslip.io/pense-bete" -H "X-Token: $token" -H "Content-Type: application/json" -d $body
 ```
 
 Pourquoi ces `\"` : Windows PowerShell 5.1 retire les guillemets doubles d'un argument avant de le passer à un programme extérieur comme `curl.exe`. Le serveur reçoit alors `{texte: Rappeler le plombier}`, qui n'est pas du JSON, et répond `422` avec « JSON decode error ». C'est une erreur de l'envoi, pas du webhook : le jeton, lui, a été accepté. PowerShell 7 n'a pas ce défaut, et la ligne avec `\"` y fonctionne aussi.
