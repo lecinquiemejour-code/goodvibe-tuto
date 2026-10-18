@@ -41,10 +41,10 @@ Un serveur peut héberger plusieurs agents IA, chacun dans son « appartement »
 
 | Marqueur | Rôle | Premier agent IA | Deuxième agent IA |
 |---|---|---|---|
-| `{{NOM_AGENT}}` | Le nom de l'agent IA sur le serveur : utilisateur Linux, dossier `/home/{{NOM_AGENT}}/app`, services `{{NOM_AGENT}}-web` et `{{NOM_AGENT}}-webhook`, fiche Caddy, droits | `goodvibe` | `goodvibe2` |
+| `{{NOM_AGENT}}` | Le nom de l'agent IA sur le serveur : utilisateur Linux, dossier `/home/{{NOM_AGENT}}/app`, services `{{NOM_AGENT}}-web` et `{{NOM_AGENT}}-webhook`, fiche Caddy, droits | `monagent` | `monagent2` |
 | `{{PORT_WEB}}` | Le port de la page (aussi `PORT_GRADIO` dans le `.env`) | `7860` | `7861` |
 | `{{PORT_WEBHOOK}}` | Le port du webhook (aussi `PORT_WEBHOOK` dans le `.env`) | `8000` | `8001` |
-| `{{ADRESSE}}` | L'adresse publique, sans `https://`. Elle contient l'IP du serveur : elle reste hors de Git, et ne se remplace qu'en écrivant la fiche sur le serveur (`/etc/caddy/sites/{{NOM_AGENT}}.caddy`) | `goodvibe.1-2-3-4.sslip.io` | `goodvibe2.1-2-3-4.sslip.io` |
+| `{{ADRESSE}}` | L'adresse publique, sans `https://`. Elle contient l'IP du serveur : elle reste hors de Git, et ne se remplace qu'en écrivant la fiche sur le serveur (`/etc/caddy/sites/{{NOM_AGENT}}.caddy`) | `monagent.1-2-3-4.sslip.io` | `monagent2.1-2-3-4.sslip.io` |
 | `{{FUSEAU}}` | Le fuseau horaire du serveur, commun à tous | `Europe/Paris` | `Europe/Paris` |
 
 Sur le serveur, les fichiers prennent le nom de l'agent IA : `deploy/web.service` devient `/etc/systemd/system/{{NOM_AGENT}}-web.service`, `deploy/webhook.service` devient `{{NOM_AGENT}}-webhook.service`, et `deploy/site.caddy` devient `/etc/caddy/sites/{{NOM_AGENT}}.caddy`. Le `Caddyfile` principal, commun, est écrit une seule fois par `deploy/setup_vps.sh` : il lit toutes les fiches du dossier `sites/`, et n'est jamais écrasé s'il contient déjà autre chose.
