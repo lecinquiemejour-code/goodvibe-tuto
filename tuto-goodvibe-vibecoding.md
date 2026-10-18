@@ -1,7 +1,7 @@
 # Construire un agent IA autonome en Python, en vibe coding : GoodVibe
 
 > Webhook, cron, MCP, mémoire, observabilité et VPS, avec le skill **VibeCoding Copilote** (Le Cinquième Jour).
-> Public : développeurs intermédiaires qui découvrent les agents IA et le vibe coding. Version 1.0, septembre 2026.
+> Public : toute personne qui veut comprendre comment fonctionne un agent IA en construisant le sien, sans niveau requis en développement. Version 1.0, septembre 2026.
 >
 > Conçu et validé pour **Antigravity IDE**. Il doit fonctionner aussi dans VS Code ou l'un de ses forks, sans que ce parcours ait été validé (section 1.5).
 >
@@ -304,7 +304,7 @@ Les autres pistes de la section 7.2 sont libres : chacun les prend quand il veut
 
 - **Antigravity** installé, avec Gemini intégré. Ce tuto est conçu et validé pour Antigravity IDE. Il doit fonctionner aussi dans **VS Code** ou l'un de ses forks, avec Claude Code, Codex ou GitHub Copilot : le prompt de démarrage et les fichiers de règles sont prévus pour eux (section 1.5), mais ce parcours n'a pas été validé.
 - Un compte **Google AI Studio**. La clé API Gemini se crée **le moment venu**, à la fiche 1, quand l'agent de codage prépare le `.env` : inutile de l'anticiper. Les appels de GoodVibe à cette clé se paient à l'usage. **Active la facturation dès la fiche 1**, sur le projet Google de la clé, avec un plafond de dépense de quelques euros : il faut donc une carte bancaire dès le départ. Le modèle texte a bien un niveau gratuit, mais le modèle image de la fiche 10 n'en a pas, et en plan payant Google n'utilise pas tes données pour améliorer ses modèles, même s'il conserve tes échanges un temps (section 2.5). Compte un à deux euros par mois (section 2.7).
-- Un compte **GitHub**. Python 3.12 et Git ne sont pas des prérequis : **l'agent de codage les installe** s'ils manquent, puis gère l'environnement virtuel et les dépendances. « Intermédiaire » signifie ici savoir **lire** le code généré pour le juger au CHECK.
+- Un compte **GitHub**. Python 3.12 et Git ne sont pas des prérequis : **l'agent de codage les installe** s'ils manquent, puis gère l'environnement virtuel et les dépendances. Aucun niveau requis en développement : il suffit de ne pas être réfractaire au code. L'agent de codage l'écrit et l'explique, toi tu le **lis** pour le juger au CHECK.
 - Pour la section déploiement uniquement : un compte **Hetzner Cloud** (ou tout VPS Ubuntu accessible en SSH). Un nom de domaine est facultatif : le tuto utilise une adresse gratuite.
 - Recommandé : **Claude Code dans Antigravity** pour ceux qui ont un abonnement Claude. Antigravity est un fork de VS Code : Claude Code s'y installe comme l'**extension VS Code « Claude Code »**, depuis la marketplace de l'éditeur (l'agent de codage Gemini peut lancer cette installation, tu n'auras qu'à te connecter à ton compte Claude). Avec un plan Google AI gratuit, les quotas limitent l'agent de codage ; Claude Code prend alors le relais et l'atelier ne s'arrête pas.
 
