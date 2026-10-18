@@ -196,7 +196,7 @@
 
 ## Démarrage rapide
 
-1. Crée un **répertoire vierge** (par exemple `goodvibe/`) et ouvre-le avec **Antigravity IDE** (ou, à défaut, VS Code ou l'un de ses forks).
+1. Crée un **répertoire vierge** (par exemple `monagent/`) et ouvre-le avec **Antigravity IDE** (ou, à défaut, VS Code ou l'un de ses forks).
 2. Déposes-y le fichier ZIP du kit, tel quel, sans l'ouvrir : c'est l'agent de codage qui le décompressera. Il contient `GoodVibe-PRD.md`, `tuto-goodvibe-vibecoding.md`, `README.md` (la présentation du projet, que l'agent de codage renommera en `GoodVibe-presentation.md`), `LICENSE.md` et `LICENSES/` (la licence), et `templates/` (le code de référence, que l'agent de codage consulte fiche par fiche). Rien d'autre : pas de venv, pas de Git, pas de skill. L'agent de codage s'occupe du reste.
 
    > Pour lire ce tuto **dans Antigravity** avec ses schémas : ils sont en Mermaid, que l'aperçu Markdown ne dessine pas seul. Ouvre les extensions (**Ctrl + Maj + X**), tape **`bierner.markdown-mermaid`** (la marketplace d'Antigravity est Open VSX, et la recherche en clair classe mal cette extension), installe **Markdown Preview Mermaid Support**, puis ouvre l'aperçu avec **Ctrl + Maj + V**. Sinon, lis le tuto sur GitHub, qui dessine les schémas nativement.

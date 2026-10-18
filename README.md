@@ -191,7 +191,7 @@ Pas besoin d'installer Python, Git, `gh` (l'outil en ligne de commande de GitHub
 
 ### 1. Prépare un répertoire vierge
 
-Crée un dossier vide (par exemple `goodvibe/`) et ouvre-le avec **Antigravity IDE** (ou, à défaut, VS Code ou l'un de ses forks). Tu n'y mettras qu'un seul fichier : le ZIP du kit.
+Crée un dossier vide (par exemple `monagent/`) et ouvre-le avec **Antigravity IDE** (ou, à défaut, VS Code ou l'un de ses forks). Tu n'y mettras qu'un seul fichier : le ZIP du kit.
 
 ### 2. Dépose le ZIP du kit dans le dossier
 
