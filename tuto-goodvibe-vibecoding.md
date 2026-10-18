@@ -1810,7 +1810,7 @@ Si tu le retires et qu'il est **seul dans l'immeuble**, dans cet ordre :
 2. Supprime le serveur dans la console Hetzner (bouton « Delete »), ou demande à l'agent de codage de le faire.
 3. Vérifie que la liste des serveurs est vide, et qu'il ne reste aucune adresse dans « Primary IPs ».
 
-Si tu le retires et qu'**un autre agent IA habite l'immeuble**, le serveur reste. L'agent de codage vide seulement l'appartement `<nom>`, celui de ce projet, dans cet ordre. Il nomme chaque appartement par son nom, jamais « GoodVibe » ni « l'autre agent IA » seuls : deux appartements peuvent faire tourner GoodVibe, et l'un d'eux peut même s'appeler `goodvibe`.
+Si tu le retires et qu'**un autre agent IA habite l'immeuble**, le serveur reste. L'agent de codage vide seulement l'appartement `<nom>`, celui de ce projet. Il nomme chaque appartement par son nom, jamais « GoodVibe » ni « l'autre agent IA » seuls : deux appartements peuvent faire tourner GoodVibe, et l'un d'eux peut même s'appeler `goodvibe`. Dans cet ordre :
 
 1. Tu récupères sur ton ordinateur le dossier des données et celui des sauvegardes de GoodVibe.
 2. Il arrête les services `<nom>-web` et `<nom>-webhook`, et retire leurs fichiers.
