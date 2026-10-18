@@ -158,7 +158,7 @@ Ce dépôt est le kit de départ. Il contient du code de référence, dans `temp
 
 ## Pour qui ?
 
-Pour les **développeurs intermédiaires** qui découvrent les agents IA et le vibe coding. « Intermédiaire » signifie ici savoir **lire** le code généré pour le juger, pas forcément l'écrire.
+Pour toute personne qui veut comprendre comment fonctionne un agent IA en construisant le sien. Aucun niveau requis en développement : il suffit de ne pas être réfractaire au code. L'agent de codage l'écrit et l'explique, toi tu le lis pour le juger, et tes réponses au diagnostic d'entrée règlent la quantité d'explications.
 
 Le principe : **tu es le pilote, l'agent de codage est ton copilote.** Le *pilote*, c'est la personne qui construit GoodVibe : il décide, valide et teste, et le mot revient tout au long du tuto. L'agent de codage tient le terminal : il écrit le code, installe les outils, lance les commandes, gère Git et GitHub, installe le serveur, en expliquant ce qu'il fait. Tout ce qu'une commande permet, c'est lui qui le fait. Toi, tu ne fais que ce qu'il ne peut pas faire :
 
