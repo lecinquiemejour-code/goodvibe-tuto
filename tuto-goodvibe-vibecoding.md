@@ -275,6 +275,7 @@ Chaque fiche du tuto est donc écrite en deux colonnes mentales : **ce que fait 
 ### 1.3 Le parcours
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     A["Skill installé<br/>par l'agent de codage,<br/>clé Gemini créée par toi"] --> B["Copier le PRD GoodVibe<br/>dans le projet<br/>(toi)"]
     B --> C["Cadrage : archi-stack,<br/>fdd, plan-action<br/>(l'agent de codage rédige,<br/>tu valides)"]
@@ -485,6 +486,7 @@ GoodVibe sépare à la source : la boucle distingue ce qu'elle affiche du texte 
 | Dans GoodVibe | Le brief de 7 h | Le pense-bête, qui refait le brief du jour |
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     subgraph Cron
         H["Horloge 7h00"] --> C1["cron_brief.py"] --> C2{"Brief déjà produit ?"}
@@ -507,6 +509,7 @@ Chaque outil branché à un agent IA demande du code sur mesure : décrire l'out
 **Une API n'est pas un MCP.** Une **API** est une source : un service en ligne qu'un programme interroge par une adresse web, et qui répond par des données. Open-Meteo est une API ; freehoroscopeapi.com en est une autre. Le **MCP** n'est pas une source : c'est une façon standard de brancher un outil sur un agent IA. GoodVibe atteint ses deux sources par deux chemins différents, exprès, pour que tu puisses les comparer : la météo par un appel direct (fiche 7), l'horoscope par le MCP (fiche 8).
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     subgraph M["La machine : ton ordinateur en local, le VPS en ligne"]
         C["GoodVibe<br/>(client MCP)"]
@@ -559,6 +562,7 @@ Avec `fetch`, l'agent IA gagne la capacité « lire une URL » sans qu'on écriv
 Le modèle n'a **aucune mémoire**. Tout ce dont l'agent IA « se souvient » est stocké par notre code et réinjecté dans le prompt à chaque appel. Quatre niveaux dans GoodVibe :
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     subgraph Une exécution
         T["Mémoire de travail<br/>historique des<br/>messages du tour"]
@@ -586,6 +590,7 @@ Le pilote peut ouvrir la base et voir **exactement** ce que l'agent IA sait, y c
 GoodVibe détient un prénom, une ville, un signe, des centres d'intérêt. Trois portes d'entrée (chat, webhook, cron) et une sortie (l'API Gemini).
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     U["Utilisateur"] -- "HTTPS + mot de passe" --> G["Gradio"]
     X["Service externe"] -- "HTTPS + jeton" --> W["Webhook FastAPI"]
@@ -620,6 +625,7 @@ Trois précisions, tirées de la documentation de Google consultée le 1er octob
 Le skill VibeCoding Copilote publie normalement sur Netlify : un `push` sur GitHub, et Netlify déploie. Un agent IA en Python, qui tourne en permanence, ne tient pas sur Netlify. On reproduit **exactement la même forme** avec GitHub Actions vers un VPS.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     P["push sur main"] --> T["Job test<br/>ruff + pytest"]
     T -- "vert" --> D["Job deploy<br/>SSH vers le VPS"]
@@ -647,6 +653,7 @@ Google renouvelle ses modèles plusieurs fois par an et retire les anciens. **Ce
 Le skill part toujours d'un **PRD** (Product Requirements Document) : le cahier des charges, en langage courant, qui dit **ce que** l'application fait, sans dire comment. Il en dérive ensuite trois documents de cadrage, puis construit.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     PRD["GoodVibe-PRD.md<br/>le quoi (fourni<br/>par le tuto)"] --> AS["archi-stack.md<br/>le comment technique"]
     AS --> FDD["fdd.md<br/>la liste des features"]
@@ -730,6 +737,7 @@ Autre signal : s'il te montre `archi-stack.md` sans t'avoir présenté le projet
 ### 4.2 La boucle que tu vas vivre quatorze fois
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     P["PLAN<br/>la leçon, puis le plan :<br/>ce que l'agent de codage<br/>va faire, et pourquoi"] --> G1{"GO #1<br/>(A) GO ou (B) question"}
     G1 -- "B : question" --> P
@@ -863,6 +871,7 @@ Tout tourne en local jusqu'à la feature 11. Le webhook (feature 14) est constru
 Le schéma ci-dessous est **l'architecture cible de la V1**. Il réapparaît en fin de chaque fiche, les briques construites en couleur, les autres en gris.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG
     WEB["interface.py (Gradio)"] --> AG
@@ -948,6 +957,7 @@ prompt système trop long (il est facturé à chaque appel) ; consignes contradi
 **Où on en est** : GoodVibe parle, et il sait qui il est. Fichiers : `config.py`, `prompt_systeme.md`, `agent.py`, `chat_terminal.py`, `requirements.txt`, `.env.example`, `.gitignore`.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     PS["prompt_systeme.md"] --> AG
@@ -975,6 +985,7 @@ flowchart TD
 **Ce qu'on construit** : `interface.py` avec Gradio : un onglet Chat en streaming, un mot de passe, un bouton « Se déconnecter ». La page est conçue pour un écran d'ordinateur : elle montrera côte à côte le chat et le travail de l'agent IA (fiche 3), ce qui ne tient pas sur un téléphone. Les autres onglets viendront avec leurs features : Brief du jour (fiche 6), Mémoire et Activité (fiche 9).
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     B["Navigateur<br/>localhost:7860"] -- "mot de passe" --> G["interface.py (Gradio)"]
     G --> T1["Onglet Chat<br/>ChatInterface en streaming"]
@@ -1005,6 +1016,7 @@ Gradio exposé sans `auth` ; croire qu'on est déconnecté parce qu'on a fermé 
 **Où on en est** : GoodVibe parle, dans le terminal et dans le navigateur : deux déclencheurs sur quatre. Fichiers ajoutés : `interface.py`.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     PS["prompt_systeme.md"] --> AG
@@ -1032,6 +1044,7 @@ flowchart TD
 **Ce qu'on construit** : un `logging` qui écrit à la fois dans le terminal et dans une table `journal` en SQLite, la mesure des tokens et des temps, la commande « explique ce que tu viens de faire » la case « Voir les coulisses », qui montre pour l'instant la requête envoyée au modèle et sa réflexion, et le relevé affiché sous chaque réponse : tokens d'entrée, de réflexion et de sortie, nombre de tours, temps avant le premier mot, durée totale. Et, dans la page web, le panneau du **flux brut** : à droite du chat, chaque événement reçu du modèle, tel quel.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     A["agent.py"] -- "log(étape,<br/>tokens, latence)" --> J["journal.py<br/>handler logging"]
     J --> T["Terminal"]
@@ -1076,6 +1089,7 @@ tokens d'entrée qui doublent d'un message au suivant (les coulisses ou le relev
 **Où on en est** : GoodVibe parle et raconte ce qu'il fait. Fichiers ajoutés : `db.py`, `journal.py`.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     PS["prompt_systeme.md"] --> AG
@@ -1177,6 +1191,7 @@ GoodVibe change de ton, ou invente un prénom, juste après avoir appelé un out
 **Où on en est** : GoodVibe parle, raconte, et retient. Fichiers ajoutés : `outils.py`.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     PS["prompt_systeme.md"] --> AG
@@ -1318,6 +1333,7 @@ brief qui salue par un prénom inventé (le profil n'est pas arrivé jusqu'au mo
 **Où on en est** : GoodVibe parle, retient, et produit un brief à la demande, une seule fois par jour : deux déclencheurs sur quatre (terminal, page web) ; le cron et le webhook arriveront avec le serveur. Fichiers ajoutés : `brief.py`, `cron_brief.py`.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     PS["prompt_systeme.md"] --> AG
@@ -1384,6 +1400,7 @@ ville ambiguë (plusieurs « Lyon » dans le géocodage : prendre le premier et 
 **Où on en est** : le brief a sa météo. Fichiers ajoutés : `outils_meteo.py`.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     PS["prompt_systeme.md"] --> AG
@@ -1443,6 +1460,7 @@ sequenceDiagram
 **Météo et horoscope : deux chemins, à comparer.** Les deux vont chercher une donnée dans une API. À la fiche 7, tout le chemin est à nous. Ici, le serveur apporte l'outil tout fait, et notre code n'est plus qu'un adaptateur.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TB
     subgraph F7["Fiche 7 : la météo, tout est écrit par nous"]
         direction LR
@@ -1477,6 +1495,7 @@ Ces points viennent de la documentation du serveur, consultée en septembre 2026
 **Le trajet de la description de l'outil.** C'est le cœur de la leçon. Personne, dans GoodVibe, n'écrit la description de `fetch` : le serveur l'annonce, le client la reçoit, la convertit, et elle rejoint celle de `meteo` dans la liste envoyée à Gemini.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     S["Serveur fetch<br/>annonce son outil : nom,<br/>description, paramètres"] -- "list_tools" --> C["mcp_client.py<br/>reçoit, puis convertit<br/>au format de Gemini"]
     C --> L["La liste des outils<br/>de GoodVibe"]
@@ -1489,6 +1508,7 @@ Si on recopie cette description à la main dans `outils.py`, l'outil marche enco
 **Quand ça échoue.** GoodVibe n'a pas d'horoscope de remplacement. Si la chaîne casse, il le dit : le message d'erreur nomme ce qui a échoué et pourquoi, et tient la place de l'horoscope dans le brief. Le reste du brief sort normalement.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     D["Le modèle demande<br/>fetch(url)"] --> Q1{"Le serveur fetch<br/>a démarré ?"}
     Q1 -- "non" --> E1["Erreur : horoscope<br/>non récupéré,<br/>le serveur fetch<br/>n'a pas démarré"]
@@ -1545,6 +1565,7 @@ serveur MCP non démarré (`uvx` absent : l'agent de codage l'installe) ; descri
 -->
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     PS["prompt_systeme.md"] --> AG
@@ -1573,6 +1594,7 @@ flowchart TD
 **Ce qu'on construit** : deux onglets de lecture de la base. **Mémoire** : tableaux `profil`, `notes`, `conversations`, bouton « Oublie-moi » avec confirmation. La table `traites` n'y figure pas : elle ne dit rien de toi, elle note seulement ce qui a déjà été fait ; elle se consulte avec DB Browser. **Activité** : tableau du journal filtrable par exécution, colonnes tokens (entrée, sortie, réflexion), latence, durée ; compteurs du jour et cumul ; estimation en euros via une grille de prix modifiable ; interrupteur « détails techniques » ; commande « explique ce que tu viens de faire » dans le chat.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     DB["SQLite"] -- lecture seule --> VM["vue_memoire.py<br/>3 tableaux + Oublie-moi"]
     DB -- lecture seule --> VA["vue_activite.py<br/>journal filtré<br/>compteurs jour / cumul<br/>coût estimé"]
@@ -1654,6 +1676,7 @@ facturation non activée pour un modèle image sans niveau gratuit, ou quota att
 **Où on en est** : le brief est complet, texte et image. Fichiers ajoutés : `image.py`, `prompt_image.md`. GoodVibe est complet fonctionnellement : l'architecture cible de la V1 est entièrement en couleur, à l'exception du webhook, construit après la mise en ligne (fiche 14).
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     PS["prompt_systeme.md"] --> AG
@@ -1692,6 +1715,7 @@ flowchart TD
 Un cinquième scénario, l'injection dans un pense-bête, s'ajoutera à la fiche 14 : les pense-bêtes n'existent pas encore.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     T["tests/"] --> F1["fixture : base<br/>SQLite en mémoire"]
     T --> F2["fixture : faux<br/>client Gemini<br/>réponses préenregistrées"]
@@ -1766,6 +1790,7 @@ tests qui dépendent de la vraie clé API (ils échoueront dans la CI) ; base de
 **Ce qu'on construit** : le dépôt GitHub privé et le premier push ; puis le serveur prêt à recevoir GoodVibe : utilisateur dédié non root, code cloné depuis GitHub avec une clé en lecture seule, venv, un service `systemd` (interface), Caddy en HTTPS, le cron du brief à 7 h (premier déclencheur autonome), pare-feu, sauvegarde nocturne de la base. Les sauvegardes sont gardées 7 jours, puis supprimées par le script. « Oublie-moi » ne les purge pas : elles gardent une copie de tes données jusqu'à leur expiration, et son message le dit.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     I["Internet"] -- "443 HTTPS" --> CD["Caddy, concierge commun<br/>lit sites/monagent.caddy<br/>certificat Let's<br/>Encrypt auto"]
     CD -- "/  " --> GR["monagent-web.service<br/>Gradio :7860"]
@@ -1826,6 +1851,7 @@ Dans tous les cas, ton compte Hetzner reste ouvert.
 **Un serveur, plusieurs agents IA : la leçon de l'appartement.** Ton serveur est organisé comme un immeuble. Chaque agent IA y a son appartement, et l'immeuble a ses parties communes. GoodVibe s'installe déjà ainsi, même seul : le jour où un second agent IA arrive, il prend l'appartement d'à côté, et le premier ne s'arrête pas une seconde. Ce second cas est celui de tout pilote qui a déjà un agent IA sur son serveur : l'agent de codage le demande au PLAN de cette fiche, et fait alors cette leçon avant tout GO.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     subgraph I["L'immeuble : le serveur, commun à tous"]
         C["Caddy, le concierge<br/>Caddyfile : une seule ligne,<br/>« lis toutes les fiches<br/>de /etc/caddy/sites/ »"]
@@ -1974,6 +2000,7 @@ En colocation, tu ne vois que ton appartement : le dossier de l'autre agent IA, 
 *1. Du fichier au brief : la chaîne complète.*
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     F["deploy/crontab<br/>le fichier du projet :<br/>la seule source"] -- "le script d'installation<br/>le recopie" --> C["La table du cron,<br/>dans le serveur"]
     C -- "chaque jour à 7 h" --> P["cron_brief.py"]
@@ -2145,6 +2172,7 @@ sequenceDiagram
 **Ce que montre l'onglet Actions.** C'est ta fenêtre sur le robot. Chaque envoi de code y ajoute une ligne, et chaque ligne contient deux travaux, dans l'ordre :
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     P["Ton envoi<br/>sur main"] --> T{"Travail 1 :<br/>les tests"}
     T -- "vert" --> D{"Travail 2 :<br/>le déploiement"}
@@ -2165,6 +2193,7 @@ Pour lire une panne : clique sur la ligne rouge, puis sur le travail rouge, et l
 **Le trajet des trois clés.**
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     subgraph Ordinateur["Ton ordinateur"]
         K["Ta clé"]
@@ -2363,6 +2392,7 @@ Pourquoi ce détour par une variable : un jeton collé en clair dans une command
 -->
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     CHAT["chat_terminal.py"] --> AG["agent.py"] --> GEM["Gemini"]
     PS["prompt_systeme.md"] --> AG
@@ -2383,6 +2413,7 @@ flowchart TD
 Une fois la page publique vérifiée et le webhook déployé par le pipeline (fiche 14), le skill enchaîne quatre étapes. Il ne dira « terminé » qu'après la dernière. Tu y ajoutes le retour à l'auteur. L'agent de codage y ajoute les gestes de l'arrivée : la vue du sommet, la lecture commentée des documents, la projection vers la suite, et le mot de la fin. Voici ce que tu dois obtenir de chacune.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     A["1. V1 en ligne<br/>les 14 features<br/>sont faites"] --> S["2. La vue du sommet<br/>le bilan, en faits"]
     S --> B["3. walkthrough.md<br/>visite du code"]
@@ -2460,6 +2491,7 @@ Objet : Retour tuto GoodVibe
 À relire avant de laisser GoodVibe tourner seul :
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     S1["Secrets hors du code,<br/>.env en chmod 600"] --> S2["HTTPS partout (Caddy)"]
     S2 --> S3["Mot de passe<br/>sur la page web,<br/>jeton sur le webhook"]
