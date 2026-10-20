@@ -20,6 +20,7 @@ Pour apprendre tout cela sur du concret, tu construis un agent IA complet : **Go
 **Un agent IA est un programme autonome : on lui confie un objectif et des outils, et un modèle d'IA décide seul, en boucle, des étapes pour l'atteindre.** À chaque tour, le modèle choisit l'action suivante : appeler un outil, ou répondre. Notre code exécute l'outil, le résultat revient au modèle, et il décide de la suite. La boucle s'arrête quand l'objectif est atteint, ou quand un garde-fou l'arrête.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart LR
     DEC["Déclencheurs<br/>toi, une horloge,<br/>un événement extérieur"] --> M
     CON["Consignes<br/>la fiche de poste"] --> M
@@ -63,6 +64,7 @@ En vibe codant GoodVibe toi-même :
 Le brief du matin de GoodVibe, de bout en bout : l'agent IA rédige le texte en choisissant ses outils, puis l'image suit des étapes fixes.
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     D["1. Un déclencheur<br/>le bouton « Brief »,<br/>l'horloge à 7 h (cron)<br/>ou un pense-bête<br/>reçu (webhook)"] --> P
     P["2. Notre code<br/>prépare la demande<br/>date et heure du jour<br/>+ pense-bêtes en attente<br/>+ consignes, profil,<br/>liste des outils, réglages"] --> M
@@ -90,6 +92,7 @@ Si une source ne répond pas, le brief sort quand même, avec un message d'erreu
 **GoodVibe, c'est cette boucle, avec quatre portes d'entrée et trois appuis :**
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     subgraph E["Les quatre portes d'entrée"]
         T1["Toi, au terminal"]
@@ -314,6 +317,7 @@ Reprends le vibecoding sur GoodVibe. Ce projet est déjà en cours et suit la m�
 ## Le parcours
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600}}}%%
 flowchart TD
     A["Skill installé<br/>par l'agent de codage,<br/>clé Gemini créée par toi"] --> B["PRD et tuto déposés<br/>dans le projet<br/>(toi)"]
     B --> C["Cadrage : architecture<br/>et stack, FDD,<br/>plan d'action<br/>(l'agent de codage rédige,<br/>tu valides)"]
